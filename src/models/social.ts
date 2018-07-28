@@ -1,21 +1,14 @@
-import {
-    IsString,
-    IsNumberString,
-    IsDate,
-    IsBoolean,
-    IsUrl,
-    ValidateNested,
-} from 'class-validator'
+type Service = 'twitter'
 
 export class Account {
-    @IsNumberString() id!: string
-    @IsString() username!: string
-    @IsString() displayName!: string
-    @IsUrl() avatar!: string
-    @IsBoolean() private!: boolean
-    @IsUrl() url!: string
+    id!: string
+    username!: string
+    displayName!: string
+    avatar!: string
+    private!: boolean
+    url!: string
 
-    constructor(service: 'twitter', a: any) {
+    constructor(service: Service, a: any) {
         if (service === 'twitter') {
             Object.assign(this, {
                 id: a.id_str,
@@ -30,13 +23,13 @@ export class Account {
 }
 
 export class Status {
-    @IsNumberString() id!: string
-    @IsDate() date!: Date
-    @IsString() text!: string
-    @IsString() source!: string
-    @ValidateNested() account!: Account
+    id!: string
+    date!: Date
+    text!: string
+    source!: string
+    account!: Account
 
-    constructor(service: 'twitter', s: any) {
+    constructor(service: Service, s: any) {
         if (service === 'twitter') {
             const account = new Account('twitter', s.user)
 
