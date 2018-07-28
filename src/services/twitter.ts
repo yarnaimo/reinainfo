@@ -6,7 +6,12 @@ import axios from 'axios'
 import config from 'config'
 import { URLSearchParams } from 'url'
 
-const consumer = config.get<{ key: string; secret: string }>('twitter.consumer')
+interface Token {
+    key: string
+    secret: string
+}
+
+const consumer = config.get<Token>('twitter.consumer')
 const baseUrl = 'https://api.twitter.com/1.1'
 
 export class Twitter {
@@ -48,7 +53,7 @@ export class Twitter {
 
     async get(path: string, params: { [key: string]: any } = {}) {
         this.formatParams(params)
-        
+
         const { url, headers } = this.getRequestConfigs(path, 'GET', params, {})
         const { data } = await axios.get(url, { headers, params })
         return data
@@ -64,4 +69,19 @@ export class Twitter {
         const { data } = await axios.post(url, params, { headers })
         return data
     }
+
+    async postThread(texts: string[]) {
+        return await texts.reduce(async (prevPromise, text) => {
+            const prevIds = await prevPromise
+
+            const { id_str } = await this.post('statuses/update', {
+                in_reply_to_status_id: prevIds[prevIds.length - 1],
+                status: text,
+            })
+            return [...prevIds, id_str as string]
+        }, Promise.resolve([] as string[]))
+    }
 }
+
+const token = config.get<Token>('twitter.accounts.main.token')
+export const twitter = new Twitter(token.key, token.secret)
