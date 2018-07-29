@@ -1,18 +1,16 @@
+import { Tweet } from 'ts-twitter'
 import { twitter } from '../services/twitter'
-import { Status, Account } from '../models/social'
 import config from 'config'
 
 const userId = config.get('twitter.accounts.main.user_id')
 
 describe('Twitter', () => {
     test('get 3 tweets from home timeline', async () => {
-        const tweets: any[] = await twitter.get('statuses/home_timeline', {
+        const tweets: Tweet[] = await twitter.get('statuses/home_timeline', {
             count: 3,
             a: null,
         })
-        const statuses = tweets.map(t => new Status('twitter', t))
-        expect(statuses.length).toBe(3)
-        expect(statuses[0].account).toBeInstanceOf(Account)
+        expect(tweets.length).toBe(3)
     })
 
     test('post DM to myself and delete it', async () => {

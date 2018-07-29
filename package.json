@@ -8,6 +8,7 @@
     "node": ">=10.5.3"
   },
   "scripts": {
+    "ts-node": "ts-node",
     "test": "NODE_ENV=test jest",
     "dev": "ts-node src/server.ts",
     "build": "tsc"
@@ -20,14 +21,17 @@
     "firebase-admin": "^5.13.1",
     "firestore-simple": "^1.0.1",
     "js-yaml": "^3.12.0",
+    "lazy.js": "^0.5.1",
     "oauth-authorization-header": "^0.0.7",
     "ts-node": "^7.0.0",
+    "ts-twitter": "^0.1.7",
     "typescript": "^2.9.2"
   },
   "devDependencies": {
     "@types/config": "^0.0.34",
     "@types/jest": "^23.3.0",
     "@types/js-yaml": "^3.11.2",
+    "@types/lazy.js": "^0.3.29",
     "@types/node": "^10.5.3",
     "jest": "^23.4.1",
     "ts-jest": "^23.0.1"
