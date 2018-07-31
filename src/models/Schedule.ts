@@ -7,6 +7,7 @@ import {
     IsUrl,
     MinLength,
     MaxLength,
+    validate,
 } from 'class-validator'
 import { getCollection } from '../services/firebase'
 import { timeStr, multilineText, separateWith } from '../utils'
@@ -145,5 +146,10 @@ export class Schedule implements ISchedule {
             time,
             this.url,
         ][multilineText]
+    }
+
+    async validate() {
+        const errors = await validate(this)
+        if (errors.length) throw errors
     }
 }
