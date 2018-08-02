@@ -20,6 +20,10 @@ describe('Schedule', () => {
         s.venue = 'Toyama'
     })
 
+    test('category type', () => {
+        expect(s.categoryType).toBe('appearance')
+    })
+
     test('pass validation', async () => {
         const errors = await validate(s)
         expect(errors.length).toBe(0)

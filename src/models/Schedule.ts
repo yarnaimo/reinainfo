@@ -5,34 +5,48 @@ import {
     IsOptional,
     IsString,
     IsUrl,
-    MinLength,
     MaxLength,
+    MinLength,
     validate,
 } from 'class-validator'
 import { getCollection } from '../services/firebase'
-import { timeStr, multilineText, separateWith } from '../utils'
+import { assignMembers, multilineText, separateWith, timeStr } from '../utils'
 
 export const scheduleFires = getCollection('schedules')
 
-enum CategoryType {
-    appearance,
-    release,
+export const cTypes = {
+    appearance: {
+        live: '🎫',
+        event: '🎤',
+        streaming: '🔴',
+        tv: '📺',
+        radio: '📻',
+    },
+    release: {
+        music: '🎶',
+        video: '📼',
+        game: '🎮 ',
+        book: '📗',
+    },
 }
-const c = (type: CategoryType, emoji: string) => ({ type, emoji })
+type Category =
+    | keyof typeof cTypes['appearance']
+    | keyof typeof cTypes['release']
 
-const categories = {
-    live: c(0, '🎫'),
-    event: c(0, '🎤'),
-    streaming: c(0, '🔴'),
-    tv: c(0, '📺'),
-    radio: c(0, '📻'),
-    music: c(1, '🎶'),
-    video: c(1, '📼'),
-    game: c(1, '🎮'),
-    book: c(1, '📗'),
-}
+type CategoryType = keyof typeof cTypes
 
-type Category = keyof typeof categories
+const categories = Object.entries(cTypes).reduce(
+    (obj, [type, categories]) => {
+        Object.entries(categories).forEach(([category, emoji]) => {
+            obj[category as Category] = {
+                type: type as CategoryType,
+                emoji,
+            }
+        })
+        return obj
+    },
+    {} as { [C in Category]: { type: CategoryType; emoji: string } }
+)
 
 export interface IPart {
     name: string
@@ -86,8 +100,31 @@ export interface ISchedule {
     way?: string
 }
 
-export class Schedule implements ISchedule {
-    id?: string
+class ClassValidator {
+    async validate() {
+        const errors = await validate(this)
+        if (errors.length) {
+            const e = new Error(errors.toString())
+            e.name = 'Validation Error'
+            throw e
+        }
+    }
+}
+
+export class Schedule extends ClassValidator implements ISchedule {
+    static members = [
+        'id',
+        'active',
+        'category',
+        'title',
+        'url',
+        'date',
+        'parts',
+        'venue',
+        'way',
+    ]
+
+    id!: string
 
     @IsBoolean() active: boolean = true
 
@@ -121,8 +158,9 @@ export class Schedule implements ISchedule {
     way?: string
 
     constructor(s?: ISchedule) {
+        super()
         if (s) {
-            Object.assign(this, s)
+            assignMembers(this, s, Schedule.members)
             if (s.parts) {
                 this.parts = s.parts.map(p => new Part(p))
             }
@@ -131,7 +169,7 @@ export class Schedule implements ISchedule {
 
     getText(header: string) {
         const time =
-            this.categoryType === CategoryType.release
+            this.categoryType === 'release'
                 ? null
                 : this.parts
                     ? this.parts.map(p => p.text).join('\n')
@@ -146,10 +184,5 @@ export class Schedule implements ISchedule {
             time,
             this.url,
         ][multilineText]
-    }
-
-    async validate() {
-        const errors = await validate(this)
-        if (errors.length) throw errors
     }
 }
