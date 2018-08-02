@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "reinainfo-117",
+    "dev": "reinainfo-117-dev"
+  }
+}
