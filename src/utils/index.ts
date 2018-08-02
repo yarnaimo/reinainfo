@@ -1,4 +1,4 @@
-import { format } from 'date-fns/fp'
+import { format, parse } from 'date-fns/fp'
 
 export const timeStr = format('H:mm')
 
@@ -28,3 +28,23 @@ Object.defineProperty(Array.prototype, separateWith, {
             .join(separator)
     },
 })
+
+export const pick = (obj: { [key: string]: any }, array: any[]) => {
+    Object.keys(obj).forEach(key => {
+        if (!array.includes(key)) delete obj[key]
+    })
+    return obj
+}
+
+export const assignMembers = (
+    instance: any,
+    obj: { [key: string]: any },
+    array: any[]
+) => {
+    Object.assign(instance, pick(obj, array))
+}
+
+export const parseDate = (str: string) => {
+    if (str.length === 6) str += '0000'
+    return parse(new Date(), 'yyMMddHHmm', str)
+}
