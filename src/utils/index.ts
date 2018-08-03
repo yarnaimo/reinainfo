@@ -45,6 +45,6 @@ export const assignMembers = (
 }
 
 export const parseDate = (str: string) => {
-    if (str.length === 6) str += '0000'
-    return parse(new Date(), 'yyMMddHHmm', str)
+    if (str.length === 6) str += '.0000'
+    return parse(new Date(), 'yyMMdd.HHmm', str)
 }

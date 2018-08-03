@@ -10,7 +10,15 @@ import {
     validate,
 } from 'class-validator'
 import { getCollection } from '../services/firebase'
-import { assignMembers, multilineText, separateWith, timeStr } from '../utils'
+import {
+    assignMembers,
+    multilineText,
+    separateWith,
+    timeStr,
+    parseDate,
+} from '../utils'
+import { parse, format } from 'date-fns/fp'
+import { Timestamp } from '@google-cloud/firestore'
 
 export const scheduleFires = getCollection('schedules')
 
@@ -50,39 +58,45 @@ const categories = Object.entries(cTypes).reduce(
 
 export interface IPart {
     name: string
-    gatherAt?: Date
-    opensAt?: Date
-    startsAt: Date
+    gatherAt?: string
+    opensAt?: string
+    startsAt: string
 }
 
 export class Part implements IPart {
     name!: string
-    gatherAt?: Date
-    opensAt?: Date
-    startsAt!: Date
+    gatherAt?: string
+    opensAt?: string
+    startsAt!: string
 
-    constructor(partArray: [string, Date | undefined, Date | undefined, Date])
+    constructor(str: string)
     constructor(part: IPart)
-    constructor(p: any) {
-        if (Array.isArray(p)) {
-            this.name = p[0]
-            this.gatherAt = p[1]
-            this.opensAt = p[2]
-            this.startsAt = p[3]
+    constructor(init: any) {
+        if (typeof init === 'string') {
+            const getTime = (str?: string) => {
+                if (!str) return
+                return format('H:mm', parse(new Date(), 'HHmm', str))
+            }
+            const [name, ...times] = init.split('.')
+            if (!times.length) throw new Error('Invalid part string')
+
+            this.name = name
+            this.gatherAt = getTime(times[times.length - 3])
+            this.opensAt = getTime(times[times.length - 2])
+            this.startsAt = getTime(times[times.length - 1]) as string
         } else {
-            Object.assign(this, p)
+            Object.assign(this, init)
         }
     }
 
-    timeWithLabel(time: Date | undefined, label: string) {
-        return time && `${timeStr(time)}${label}`
-    }
-
     get text() {
+        const withSuffix = (time: string | undefined, suffix: string) => {
+            return time ? time + suffix : undefined
+        }
         const timesStr = [
-            this.timeWithLabel(this.gatherAt, '集合'),
-            this.timeWithLabel(this.opensAt, '開場'),
-            this.timeWithLabel(this.startsAt, '開演'),
+            withSuffix(this.gatherAt, '集合'),
+            withSuffix(this.opensAt, '開場'),
+            withSuffix(this.startsAt, '開演'),
         ][separateWith](' ')
         return `${this.name} » ${timesStr}`
     }
@@ -145,9 +159,23 @@ export class Schedule extends ClassValidator implements ISchedule {
 
     @IsUrl() url!: string
 
-    @IsInstance(Date) date!: Date
+    private _date!: Date
+    get date(): Date | any {
+        return this._date
+    }
+    set date(d: any) {
+        if (d instanceof Date) this._date = d
+        else if (typeof d === 'string') this._date = parseDate(d)
+        else if (d instanceof Timestamp) this._date = d.toDate()
+    }
 
-    @IsOptional() parts?: Part[]
+    private _parts?: Part[]
+    get parts(): any {
+        return this._parts
+    }
+    set parts(str: any) {
+        this._parts = (str as string).split('#').map(p => new Part(p))
+    }
 
     @IsString()
     @IsOptional()
@@ -172,7 +200,7 @@ export class Schedule extends ClassValidator implements ISchedule {
             this.categoryType === 'release'
                 ? null
                 : this.parts
-                    ? this.parts.map(p => p.text).join('\n')
+                    ? this.parts.map((p: any) => p.text).join('\n')
                     : timeStr(this.date) + '〜'
 
         const venue = this.venue ? `@${this.venue}` : ''

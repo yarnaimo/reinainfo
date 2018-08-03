@@ -42,14 +42,83 @@ const withVerification = (
     }
 }
 
-const respond = (response_url: string, data: any, header: string = '') => {
+const respond = (
+    response_url: string,
+    { data, header = '' }: { data: any; header?: string }
+) => {
+    const text = typeof data === 'string' ? data : dump(data)
+
     return axios.post(response_url, {
         response_type: 'in_channel',
-        text:
-            typeof data === 'string'
-                ? data
-                : header + dump({ _: data }, { indent: 8 }).slice(1),
+        text: header + '\n' + text.replace(/\n/g, '\n        '),
     })
+}
+
+export const perform = async (text: string) => {
+    const alias = {
+        a: 'active',
+        c: 'category',
+        t: 'title',
+        u: 'url',
+        d: 'date',
+        p: 'parts',
+        v: 'venue',
+        w: 'way',
+    }
+    const {
+        _: [action, ...args],
+        ...opts
+    } = getopts(parse(text), { alias })
+
+    try {
+        switch (action) {
+            case 'new': {
+                const schedule = new Schedule(opts as ISchedule)
+                await schedule.validate()
+
+                const doc = await scheduleFires.add(schedule)
+                return {
+                    data: doc,
+                    header: ':heavy_plus_sign: Added a schedule',
+                }
+            }
+
+            case 'update': {
+                const [id] = args
+                const existing = await scheduleFires.fetchDocument(id)
+
+                const schedule = new Schedule({
+                    ...existing,
+                    ...opts,
+                } as ISchedule)
+                await schedule.validate()
+
+                const doc = await scheduleFires.set(schedule)
+                return {
+                    data: doc,
+                    header: ':arrow_clockwise: Updated a schedule',
+                }
+            }
+
+            case 'delete': {
+                const [id] = args
+                const deleted = await scheduleFires.delete(id)
+                return {
+                    data: deleted,
+                    header: ':x: Deleted a schedule',
+                }
+            }
+
+            case 'ls': {
+            }
+
+            default:
+                return { data: 'Action not found' }
+        }
+    } catch (e) {
+        console.error(e)
+        return { data: e.toString() }
+    }
 }
 
 export const slackHandler = post(
@@ -60,68 +129,6 @@ export const slackHandler = post(
         const { command, text, response_url } = req.params
         if (command !== '/rin') return
 
-        try {
-            const alias = {
-                a: 'active',
-                c: 'category',
-                t: 'title',
-                u: 'url',
-                d: 'date',
-                p: 'parts',
-                v: 'venue',
-                w: 'way',
-            }
-            const {
-                _: [action, ...args],
-                ...opts
-            } = getopts(parse(text), { alias })
-
-            if (opts.date) opts.date = parseDate(opts.date)
-            // if (opts.parts) opts.parts =
-
-            switch (action) {
-                case 'new': {
-                    const schedule = new Schedule(opts as ISchedule)
-                    await schedule.validate()
-
-                    const doc = await scheduleFires.add(schedule)
-                    await respond(
-                        response_url,
-                        doc,
-                        ':heavy_plus_sign: Added a new schedule'
-                    )
-                    break
-                }
-
-                case 'update': {
-                    const [id] = args
-                    const existing = await scheduleFires.fetchDocument(id)
-                    existing.date = existing.date.toDate()
-
-                    const schedule = new Schedule({
-                        ...existing,
-                        ...opts,
-                    } as ISchedule)
-                    await schedule.validate()
-
-                    const doc = await scheduleFires.set(schedule)
-                    await respond(
-                        response_url,
-                        doc,
-                        ':arrow_clockwise: Updated schedule'
-                    )
-                    break
-                }
-
-                case 'ls': {
-                }
-
-                default:
-                    break
-            }
-        } catch (e) {
-            console.error(e)
-            await respond(response_url, e.toString())
-        }
+        await respond(response_url, await perform(text))
     })
 )

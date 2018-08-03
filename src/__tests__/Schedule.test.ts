@@ -11,17 +11,18 @@ describe('Schedule', () => {
         s = new Schedule()
         s.category = 'event'
         s.title = 'Release event'
-        s.date = date
-        s.parts = [
-            new Part(['Hiru', , , date]),
-            new Part(['Yoru', date2, , date3]),
-        ]
+        s.date = '180117.1230'
+        s.parts = 'Hiru.1230#Yoru.1730..1830'
         s.url = 'https://google.com'
         s.venue = 'Toyama'
     })
 
     test('category type', () => {
         expect(s.categoryType).toBe('appearance')
+    })
+
+    test('date', () => {
+        expect(s.date).toEqual(date)
     })
 
     test('pass validation', async () => {
