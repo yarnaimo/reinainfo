@@ -8,13 +8,47 @@
             "type": "node",
             "request": "launch",
             "name": "Debug Server",
-            "runtimeArgs": [
-                "-r",
-                "ts-node/register"
-            ],
+            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node-dev",
             "args": [
-                "${workspaceFolder}/src/server/index.ts"
-            ]
+                "${workspaceFolder}/src/server/index.ts",
+            ],
+            "restart": true
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Jest All",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "args": [
+                "--runInBand"
+            ],
+            "env": {
+                "NODE_ENV": "test"
+            },
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "windows": {
+                "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Jest Current File",
+            "program": "${workspaceFolder}/node_modules/.bin/jest",
+            "args": [
+                "${relativeFile}",
+                "--coverage",
+                "false"
+            ],
+            "env": {
+                "NODE_ENV": "test"
+            },
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "windows": {
+                "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+            }
         }
     ]
 }

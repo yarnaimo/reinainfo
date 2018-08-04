@@ -33,6 +33,7 @@
     "qs": "^6.5.2",
     "shell-quote": "^1.6.1",
     "ts-node": "^7.0.0",
+    "ts-node-dev": "^1.0.0-pre.26",
     "ts-twitter": "^0.1.7",
     "typescript": "^2.9.2"
   },
