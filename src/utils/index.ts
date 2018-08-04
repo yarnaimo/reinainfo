@@ -48,3 +48,17 @@ export const parseDate = (str: string) => {
     if (str.length === 6) str += '.0000'
     return parse(new Date(), 'yyMMdd.HHmm', str)
 }
+
+export const stringify = (
+    data: any,
+    replace: { [key: string]: (value: any) => any }
+) => {
+    const target = {} as { [key: string]: any }
+    Object.keys(data)
+        .sort()
+        .forEach(key => {
+            const fn = replace[key]
+            target[key] = fn ? fn(data[key]) : data[key]
+        })
+    return JSON.stringify(target, undefined, 2)
+}
