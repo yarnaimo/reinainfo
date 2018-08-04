@@ -1,5 +1,7 @@
 import { Schedule, Part } from '../models/Schedule'
 import { validate } from 'class-validator'
+import { Timestamp } from '@google-cloud/firestore'
+import { parseDate } from '../utils'
 
 describe('Schedule', () => {
     let s: Schedule
@@ -11,8 +13,8 @@ describe('Schedule', () => {
         s = new Schedule()
         s.category = 'event'
         s.title = 'Release event'
-        s.date = '180117.1230'
-        s.parts = 'Hiru.1230#Yoru.1730..1830'
+        s.date = Timestamp.fromDate(parseDate('180117.1230'))
+        s.parts = Part.parseMultiple('Hiru.1230+Yoru.1730..1830')
         s.url = 'https://google.com'
         s.venue = 'Toyama'
     })
@@ -22,7 +24,7 @@ describe('Schedule', () => {
     })
 
     test('date', () => {
-        expect(s.date).toEqual(date)
+        expect(s.date).toEqual(Timestamp.fromDate(date))
     })
 
     test('pass validation', async () => {

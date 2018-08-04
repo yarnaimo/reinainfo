@@ -1,15 +1,16 @@
+import { Query, Timestamp } from '@google-cloud/firestore'
+import { WebClient } from '@slack/client'
+import axios from 'axios'
 import config from 'config'
 import crypto from 'crypto'
+import { endOfDay } from 'date-fns/fp'
 import getopts from 'getopts'
-import { dump } from 'js-yaml'
 import { send, text } from 'micro'
 import { AugmentedRequestHandler, post } from 'microrouter'
 import qs from 'qs'
-import { ISchedule, Schedule, scheduleFires } from '../models/Schedule'
-import { parseDate } from '../utils'
 import { parse } from 'shell-quote'
-import { WebClient } from '@slack/client'
-import axios from 'axios'
+import { ISchedule, Part, Schedule, scheduleFires } from '../models/Schedule'
+import { parseDate } from '../utils'
 const slackConfig = config.get<any>('slack')
 const slack = new WebClient(slackConfig.bot_token)
 
@@ -46,11 +47,9 @@ const respond = (
     response_url: string,
     { data, header = '' }: { data: any; header?: string }
 ) => {
-    const text = typeof data === 'string' ? data : dump(data)
-
     return axios.post(response_url, {
         response_type: 'in_channel',
-        text: header + '\n' + text.replace(/\n/g, '\n        '),
+        text: header + '\n' + Schedule.toString(data),
     })
 }
 
@@ -70,13 +69,20 @@ export const perform = async (text: string) => {
         ...opts
     } = getopts(parse(text), { alias })
 
+    if (opts.date) {
+        opts.date = Timestamp.fromDate(parseDate(opts.date))
+    }
+    if (opts.parts) {
+        opts.parts = Part.parseMultiple(opts.parts)
+    }
+
     try {
         switch (action) {
             case 'new': {
                 const schedule = new Schedule(opts as ISchedule)
                 await schedule.validate()
 
-                const doc = await scheduleFires.add(schedule)
+                const doc = (await scheduleFires.add(schedule)) as ISchedule
                 return {
                     data: doc,
                     header: ':heavy_plus_sign: Added a schedule',
@@ -85,18 +91,20 @@ export const perform = async (text: string) => {
 
             case 'update': {
                 const [id] = args
-                const existing = await scheduleFires.fetchDocument(id)
+                const existing = (await scheduleFires.fetchDocument(
+                    id
+                )) as ISchedule
 
                 const schedule = new Schedule({
                     ...existing,
                     ...opts,
-                } as ISchedule)
+                })
                 await schedule.validate()
 
-                const doc = await scheduleFires.set(schedule)
+                const doc = (await scheduleFires.set(schedule)) as ISchedule
                 return {
                     data: doc,
-                    header: ':arrow_clockwise: Updated a schedule',
+                    header: ':arrows_clockwise: Updated a schedule',
                 }
             }
 
@@ -110,6 +118,34 @@ export const perform = async (text: string) => {
             }
 
             case 'ls': {
+                const { since, until, id, title } = opts
+                const docs = (await scheduleFires.withQuery(ref => {
+                    let q: Query = ref
+
+                    if (id) {
+                        q = q.where('id', '==', id)
+                        return q
+                    }
+                    q = q.where(
+                        'date',
+                        '>=',
+                        since ? parseDate(since) : new Date()
+                    )
+                    if (until) {
+                        q = q.where('date', '<=', endOfDay(parseDate(until)))
+                    }
+
+                    return q.orderBy('date')
+                })) as ISchedule[]
+
+                const filtered = title
+                    ? docs.filter(s => s.title.includes(title))
+                    : docs
+
+                return {
+                    data: filtered,
+                    header: ':spiral_calendar_pad: Schedule list',
+                }
             }
 
             default:
