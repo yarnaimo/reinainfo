@@ -148,6 +148,10 @@ export const perform = async (text: string) => {
                 }
             }
 
+            case 'reg': {
+                
+            }
+
             default:
                 return { data: 'Action not found' }
         }

@@ -1,4 +1,12 @@
-import { format, parse } from 'date-fns/fp'
+import {
+    format,
+    parse,
+    isBefore,
+    isAfter,
+    setDay,
+    addWeeks,
+    getDate,
+} from 'date-fns/fp'
 
 export const timeStr = format('H:mm')
 
@@ -30,10 +38,11 @@ Object.defineProperty(Array.prototype, separateWith, {
 })
 
 export const pick = (obj: { [key: string]: any }, array: any[]) => {
+    const target = {} as { [key: string]: any }
     Object.keys(obj).forEach(key => {
-        if (!array.includes(key)) delete obj[key]
+        if (array.includes(key)) target[key] = obj[key]
     })
-    return obj
+    return target
 }
 
 export const assignMembers = (
@@ -61,4 +70,45 @@ export const stringify = (
             target[key] = fn ? fn(data[key]) : data[key]
         })
     return JSON.stringify(target, undefined, 2)
+}
+
+export const createCyclicDates = ({
+    dayOfWeek,
+    timeOfDay = '0000',
+    weekNumber,
+    weekInterval = 1,
+    times,
+    since = new Date(),
+    until,
+}: {
+    dayOfWeek: number
+    timeOfDay?: string
+    weekNumber?: number[]
+    weekInterval?: number
+    times?: number
+    since?: Date
+    until?: Date
+}) => {
+    if (!until && !times) {
+        throw new Error('"times" or "until" must be specified.')
+    }
+    until = until || new Date(2024, 0, 1)
+    times = times || 100
+    const dates = [] as Date[]
+
+    let currentDate = parse(setDay(dayOfWeek, since), 'HHmm', timeOfDay)
+
+    if (currentDate.getTime() < since.getTime()) {
+        currentDate = addWeeks(1, currentDate)
+    }
+
+    while (dates.length < times && currentDate.getTime() <= until.getTime()) {
+        const nthWeek = Math.ceil(getDate(currentDate) / 7)
+
+        if (!weekNumber || weekNumber.includes(nthWeek)) {
+            dates.push(currentDate)
+        }
+        currentDate = addWeeks(weekInterval, currentDate)
+    }
+    return dates
 }
