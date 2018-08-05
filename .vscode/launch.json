@@ -23,27 +23,13 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Jest All",
+            "name": "Jest Debug Current File",
+            "preLaunchTask": "build",
             "program": "${workspaceFolder}/node_modules/.bin/jest",
             "args": [
-                "--runInBand"
-            ],
-            "env": {
-                "NODE_ENV": "test"
-            },
-            "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen",
-            "windows": {
-                "program": "${workspaceFolder}/node_modules/jest/bin/jest",
-            }
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Jest Current File",
-            "program": "${workspaceFolder}/node_modules/.bin/jest",
-            "args": [
-                "${relativeFile}",
+                "${fileBasenameNoExtension}.js",
+                "--config",
+                "${workspaceRoot}/jest.debug.json",
                 "--coverage",
                 "false"
             ],

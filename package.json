@@ -13,7 +13,6 @@
   "scripts": {
     "ts-node": "ts-node",
     "test": "NODE_ENV=test jest",
-    "testi": "NODE_ENV=test tsc && node --inspect-brk node_modules/.bin/jest --coverage false",
     "dev": "ts-node src/server",
     "start": "NODE_ENV=production ts-node -T src/server"
   },
@@ -58,6 +57,9 @@
     },
     "testEnvironment": "node",
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "testPathIgnorePatterns": [
+      "/dist/"
+    ],
     "collectCoverage": true,
     "collectCoverageFrom": [
       "src/**/*.ts?(x)"

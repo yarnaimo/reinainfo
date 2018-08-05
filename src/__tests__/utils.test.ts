@@ -24,7 +24,7 @@ describe('Utils', () => {
         )
     })
 
-    test.only('create cyclic dates with weekNumber', () => {
+    test('create cyclic dates with weekNumber', () => {
         expect(
             createCyclicDates({
                 dayOfWeek: 5,
@@ -36,7 +36,7 @@ describe('Utils', () => {
         ).toEqual([new Date(2018, 7, 10, 6, 5), new Date(2018, 7, 24, 6, 5)])
     })
 
-    test.only('create cyclic dates with weekInterval', () => {
+    test('create cyclic dates with weekInterval', () => {
         expect(
             createCyclicDates({
                 dayOfWeek: 1,
