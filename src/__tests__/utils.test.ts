@@ -1,4 +1,9 @@
-import { parseDate, stringify, createCyclicDates } from '../utils'
+import {
+    parseDate,
+    stringify,
+    createCyclicDates,
+    durationStringToMinutes,
+} from '../utils'
 
 describe('Utils', () => {
     test('parse date', () => {
@@ -27,9 +32,9 @@ describe('Utils', () => {
     test('create cyclic dates with weekNumber', () => {
         expect(
             createCyclicDates({
-                dayOfWeek: 5,
+                dayOfWeek: 'fri',
                 timeOfDay: '0605',
-                weekNumber: [2, 4],
+                weekNumbers: [2, 4],
                 since: new Date(2018, 7, 4), // saturday
                 until: new Date(2018, 7, 24, 6, 5),
             })
@@ -39,12 +44,18 @@ describe('Utils', () => {
     test('create cyclic dates with weekInterval', () => {
         expect(
             createCyclicDates({
-                dayOfWeek: 1,
-                timeOfDay: '1300',
+                dayOfWeek: 'mon',
+                timeOfDay: '',
                 weekInterval: 2,
                 since: new Date(2018, 7, 11),
                 times: 2,
             })
-        ).toEqual([new Date(2018, 7, 13, 13, 0), new Date(2018, 7, 27, 13, 0)])
+        ).toEqual([new Date(2018, 7, 13, 0, 0), new Date(2018, 7, 27, 0, 0)])
+    })
+
+    test('duration string to minutes', () => {
+        expect(durationStringToMinutes('2d.1w.3h.4m')).toBe(
+            2 * 24 * 60 + 1 * 7 * 24 * 60 + 3 * 60 + 4
+        )
     })
 })

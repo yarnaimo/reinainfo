@@ -132,19 +132,9 @@ class ClassValidator {
 }
 
 export class Schedule extends ClassValidator implements ISchedule {
-    static members = [
-        'id',
-        'active',
-        'category',
-        'title',
-        'url',
-        'date',
-        'parts',
-        'venue',
-        'way',
-    ]
-
     id!: string
+
+    label?: string
 
     @IsBoolean() active: boolean = true
 
@@ -179,7 +169,7 @@ export class Schedule extends ClassValidator implements ISchedule {
 
     constructor(s?: ISchedule) {
         super()
-        s && assignMembers(this, s, Schedule.members)
+        s && Object.assign(this, s)
     }
 
     static toString(s: ISchedule | ISchedule[] | string) {

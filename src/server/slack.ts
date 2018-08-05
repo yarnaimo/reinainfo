@@ -8,9 +8,9 @@ import getopts from 'getopts'
 import { send, text } from 'micro'
 import { AugmentedRequestHandler, post } from 'microrouter'
 import qs from 'qs'
-import { parse } from 'shell-quote'
+import { parse as parseArgs } from 'shell-quote'
 import { ISchedule, Part, Schedule, scheduleFires } from '../models/Schedule'
-import { parseDate } from '../utils'
+import { createCyclicDates, parseDate, durationStringToMinutes } from '../utils'
 const slackConfig = config.get<any>('slack')
 const slack = new WebClient(slackConfig.bot_token)
 
@@ -67,7 +67,7 @@ export const perform = async (text: string) => {
     const {
         _: [action, ...args],
         ...opts
-    } = getopts(parse(text), { alias })
+    } = getopts(parseArgs(text), { alias })
 
     if (opts.date) {
         opts.date = Timestamp.fromDate(parseDate(opts.date))
@@ -149,7 +149,43 @@ export const perform = async (text: string) => {
             }
 
             case 'reg': {
-                
+                // 'new shigohaji mon.1300 itv.2 --times 2 --since 180811'
+                // 'new fri.0605 num.2+4 --until 180824.0605'
+                // 'shift shigohaji 1w.-2d.30m --since 180811'
+
+                const [type, label, ..._args] = args
+                const { since, until, times } = opts
+
+                switch (type) {
+                    case 'new': {
+                        const [timing, cycle] = _args.map(a => a.split('.'))
+                        const dates = createCyclicDates({
+                            dayOfWeek: timing[0],
+                            timeOfDay: timing[1],
+                            weekNumbers:
+                                cycle[0] === 'num'
+                                    ? cycle[1].split('+').map(Number)
+                                    : undefined,
+                            weekInterval:
+                                cycle[0] === 'itv'
+                                    ? Number(cycle[1])
+                                    : undefined,
+                            since,
+                            until,
+                            times,
+                        })
+                        break
+                    }
+
+                    case 'shift': {
+                        const [duration] = _args
+                        const min = durationStringToMinutes(duration)
+                        break
+                    }
+
+                    default:
+                        break
+                }
             }
 
             default:

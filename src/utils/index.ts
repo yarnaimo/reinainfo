@@ -1,12 +1,4 @@
-import {
-    format,
-    parse,
-    isBefore,
-    isAfter,
-    setDay,
-    addWeeks,
-    getDate,
-} from 'date-fns/fp'
+import { addWeeks, format, getDate, parse } from 'date-fns/fp'
 
 export const timeStr = format('H:mm')
 
@@ -74,29 +66,33 @@ export const stringify = (
 
 export const createCyclicDates = ({
     dayOfWeek,
-    timeOfDay = '0000',
-    weekNumber,
+    timeOfDay,
+    weekNumbers,
     weekInterval = 1,
     times,
     since = new Date(),
     until,
 }: {
-    dayOfWeek: number
+    dayOfWeek: string
     timeOfDay?: string
-    weekNumber?: number[]
+    weekNumbers?: number[]
     weekInterval?: number
     times?: number
     since?: Date
     until?: Date
 }) => {
-    if (!until && !times) {
-        throw new Error('"times" or "until" must be specified.')
+    if (!dayOfWeek && !until && !times) {
+        throw new Error('Invalid parameters')
     }
-    until = until || new Date(2024, 0, 1)
-    times = times || 100
+    until = until || new Date(2021, 0, 1)
+    times = times || 50
     const dates = [] as Date[]
 
-    let currentDate = parse(setDay(dayOfWeek, since), 'HHmm', timeOfDay)
+    let currentDate = parse(
+        parse(since, 'E', dayOfWeek),
+        'HHmm',
+        timeOfDay || '0000'
+    )
 
     if (currentDate.getTime() < since.getTime()) {
         currentDate = addWeeks(1, currentDate)
@@ -105,10 +101,29 @@ export const createCyclicDates = ({
     while (dates.length < times && currentDate.getTime() <= until.getTime()) {
         const nthWeek = Math.ceil(getDate(currentDate) / 7)
 
-        if (!weekNumber || weekNumber.includes(nthWeek)) {
+        if (!weekNumbers || weekNumbers.includes(nthWeek)) {
             dates.push(currentDate)
         }
         currentDate = addWeeks(weekInterval, currentDate)
     }
     return dates
+}
+
+export const durationStringToMinutes = (str: string) => {
+    let min = 0
+    str.split('.').forEach(str => {
+        const n = Number(str.slice(0, -1))
+
+        const unit = ({
+            m: 1,
+            h: 60,
+            d: 24 * 60,
+            w: 7 * 24 * 60,
+        } as any)[str.slice(-1)]
+
+        if (!unit) throw new Error('Invalid unit')
+
+        min += n * unit
+    })
+    return min
 }
