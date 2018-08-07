@@ -3,6 +3,7 @@ import {
     stringify,
     createCyclicDates,
     durationStringToMinutes,
+    pick,
 } from '../utils'
 
 describe('Utils', () => {
@@ -12,6 +13,12 @@ describe('Utils', () => {
 
     test('parse date with time', () => {
         expect(parseDate('180801.0117')).toEqual(new Date(2018, 7, 1, 1, 17))
+    })
+
+    test('pick object', () => {
+        expect(pick({ a: 0, b: 1, c: undefined }, ['a', 'c', 'd'])).toEqual({
+            a: 0,
+        })
     })
 
     test('stringify', () => {
@@ -35,8 +42,8 @@ describe('Utils', () => {
                 dayOfWeek: 'fri',
                 timeOfDay: '0605',
                 weekNumbers: [2, 4],
-                since: new Date(2018, 7, 4), // saturday
-                until: new Date(2018, 7, 24, 6, 5),
+                since: '180804', // saturday
+                until: '180824.0605',
             })
         ).toEqual([new Date(2018, 7, 10, 6, 5), new Date(2018, 7, 24, 6, 5)])
     })
@@ -47,7 +54,7 @@ describe('Utils', () => {
                 dayOfWeek: 'mon',
                 timeOfDay: '',
                 weekInterval: 2,
-                since: new Date(2018, 7, 11),
+                since: '180811',
                 times: 2,
             })
         ).toEqual([new Date(2018, 7, 13, 0, 0), new Date(2018, 7, 27, 0, 0)])

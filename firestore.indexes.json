@@ -4,7 +4,14 @@
       "collectionId": "schedules",
       "fields": [
         { "fieldPath": "active", "mode": "DESCENDING" },
-        { "fieldPath": "date", "mode": "DESCENDING" }
+        { "fieldPath": "date", "mode": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionId": "schedules",
+      "fields": [
+        { "fieldPath": "label", "mode": "ASCENDING" },
+        { "fieldPath": "date", "mode": "ASCENDING" }
       ]
     }
   ]

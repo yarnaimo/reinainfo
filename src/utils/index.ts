@@ -70,7 +70,7 @@ export const createCyclicDates = ({
     weekNumbers,
     weekInterval = 1,
     times,
-    since = new Date(),
+    since,
     until,
 }: {
     dayOfWeek: string
@@ -78,27 +78,31 @@ export const createCyclicDates = ({
     weekNumbers?: number[]
     weekInterval?: number
     times?: number
-    since?: Date
-    until?: Date
+    since?: string
+    until?: string
 }) => {
     if (!dayOfWeek && !until && !times) {
         throw new Error('Invalid parameters')
     }
-    until = until || new Date(2021, 0, 1)
+    const sinceDate = since ? parseDate(since) : new Date()
+    const untilDate = until ? parseDate(until) : new Date(2021, 0, 1)
     times = times || 50
     const dates = [] as Date[]
 
     let currentDate = parse(
-        parse(since, 'E', dayOfWeek),
+        parse(sinceDate, 'E', dayOfWeek),
         'HHmm',
         timeOfDay || '0000'
     )
 
-    if (currentDate.getTime() < since.getTime()) {
+    if (currentDate.getTime() < sinceDate.getTime()) {
         currentDate = addWeeks(1, currentDate)
     }
 
-    while (dates.length < times && currentDate.getTime() <= until.getTime()) {
+    while (
+        dates.length < times &&
+        currentDate.getTime() <= untilDate.getTime()
+    ) {
         const nthWeek = Math.ceil(getDate(currentDate) / 7)
 
         if (!weekNumbers || weekNumbers.includes(nthWeek)) {
@@ -121,7 +125,7 @@ export const durationStringToMinutes = (str: string) => {
             w: 7 * 24 * 60,
         } as any)[str.slice(-1)]
 
-        if (!unit) throw new Error('Invalid unit')
+        if (!unit) return
 
         min += n * unit
     })

@@ -10,20 +10,11 @@ import {
     validate,
 } from 'class-validator'
 import { getCollection } from '../services/firebase'
-import {
-    assignMembers,
-    multilineText,
-    separateWith,
-    timeStr,
-    parseDate,
-    stringify,
-} from '../utils'
+import { multilineText, separateWith, timeStr, stringify } from '../utils'
 import { parse, format } from 'date-fns/fp'
 import { Timestamp } from '@google-cloud/firestore'
-import { dump } from 'js-yaml'
-import { IDocObject } from 'firestore-simple'
 
-export const scheduleFires = getCollection('schedules')
+export const scheduleFires = getCollection<ISchedule>('schedules')
 
 export const cTypes = {
     appearance: {
@@ -32,6 +23,7 @@ export const cTypes = {
         streaming: '🔴',
         tv: '📺',
         radio: '📻',
+        up: '🆙',
     },
     release: {
         music: '🎶',
@@ -110,6 +102,7 @@ export class Part {
 
 export interface ISchedule {
     id?: string
+    label?: string
     active?: boolean
     category: Category
     title: string
