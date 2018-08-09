@@ -29,7 +29,7 @@ describe('Schedule Batch', () => {
 
     test('tomorrow', async () => {
         const batch = new ScheduleBatch(now)
-        const schedules = await batch.schedulesBetween(1, 1)
+        const { schedules } = await batch.schedulesBetween(1, 1)
 
         expect(schedules.length).toBe(1)
         expect(schedules[0].id).toBe(ids[0])
