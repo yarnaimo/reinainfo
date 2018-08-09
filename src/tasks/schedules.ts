@@ -26,11 +26,17 @@ export class ScheduleBatch {
             .toArray()
     }
 
-    async tomorrow() {
-        const schedules = await this.schedulesBetween(1, 1)
+    async createTweetTexts(
+        daySince: number,
+        dayUntil: number,
+        headerPrefix: string
+    ) {
+        const schedules = await this.schedulesBetween(daySince, dayUntil)
 
-        schedules.map((s, i) => {
-            return s.getText(`明日の予定 (${i + 1}/${schedules.length})`)
+        return schedules.map((s, i) => {
+            return s.getText(
+                `${headerPrefix}の予定 (${i + 1}/${schedules.length})`
+            )
         })
     }
 }
