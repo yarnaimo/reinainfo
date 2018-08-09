@@ -189,12 +189,15 @@ export class Schedule extends ClassValidator implements ISchedule {
     }
 
     getText(header: string) {
-        const time =
-            this.categoryType === 'release'
-                ? null
-                : this.parts
-                    ? this.parts.map(p => Part.getText(p)).join('\n')
-                    : timeStr(this.date) + '〜'
+        const shouldIncludeTime =
+            this.categoryType === 'appearance' &&
+            format('HHmm', this.date) !== '0000'
+
+        const time = !shouldIncludeTime
+            ? null
+            : this.parts
+                ? this.parts.map(p => Part.getText(p)).join('\n')
+                : timeStr(this.date) + '〜'
 
         const venue = this.venue ? `@${this.venue}` : ''
 
