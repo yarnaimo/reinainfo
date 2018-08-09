@@ -1,0 +1,11 @@
+{
+    "alias": "reinainfo",
+    "engines": {
+        "node": "^10.5.3"
+    },
+    "env": {
+        "TZ": "Asia/Tokyo",
+        "CONFIG_MAIN": "@config-main",
+        "CONFIG_FIREBASE": "@config-firebase"
+    }
+}

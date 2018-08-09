@@ -1,7 +1,7 @@
 import { Query, Timestamp } from '@google-cloud/firestore'
 import { WebClient } from '@slack/client'
 import axios from 'axios'
-import config from 'config'
+import { config } from '../config'
 import crypto from 'crypto'
 import { endOfDay, addMinutes } from 'date-fns/fp'
 import getopts from 'getopts'
@@ -16,7 +16,7 @@ import {
     durationStringToMinutes,
     pick,
 } from '../utils'
-const slackConfig = config.get<any>('slack')
+const slackConfig = config.slack
 const slack = new WebClient(slackConfig.bot_token)
 
 const getSignature = (data: string) => {
@@ -306,7 +306,7 @@ export const slackHandler = post(
         send(res, 200, { response_type: 'in_channel' })
 
         const { command, text, response_url } = req.params
-        if (command !== '/rin') return
+        if (command !== '/rin' && command !== '/rind') return
 
         const { data, header, schedule } = await commandHandler(text)
         const body = schedule ? Schedule.toString(schedule) : data

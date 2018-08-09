@@ -4,13 +4,8 @@
   "author": "yamaimo <yarnaimo@gmail.com>",
   "license": "MIT",
   "private": true,
-  "engines": {
-    "node": ">=10.5.3"
-  },
-  "env": {
-    "TZ": "Asia/Tokyo"
-  },
   "scripts": {
+    "config-env": "ts-node config-env",
     "ts-node": "ts-node",
     "test": "NODE_ENV=test jest",
     "dev": "ts-node src/server",
@@ -22,6 +17,7 @@
     "class-validator": "^0.9.1",
     "config": "^1.31.0",
     "date-fns": "^2.0.0-alpha.11",
+    "dotenv": "^6.0.0",
     "firebase-admin": "^5.13.1",
     "firestore-simple": "^1.0.1",
     "getopts": "^2.1.2",
@@ -39,6 +35,7 @@
   },
   "devDependencies": {
     "@types/config": "^0.0.34",
+    "@types/dotenv": "^4.0.3",
     "@types/getopts": "^2.0.0",
     "@types/jest": "^23.3.0",
     "@types/js-yaml": "^3.11.2",

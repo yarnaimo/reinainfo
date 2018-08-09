@@ -1,8 +1,8 @@
 import { Tweet } from 'ts-twitter'
 import { twitter } from '../services/twitter'
-import config from 'config'
+import { config } from '../config'
 
-const userId = config.get('twitter.accounts.main.user_id')
+const userId = config.twitter.accounts.reina.user_id
 
 describe('Twitter', () => {
     test('get 3 tweets from home timeline', async () => {

@@ -1,18 +1,10 @@
-import { CollectionReference, Query, Firestore } from '@google-cloud/firestore'
+import { CollectionReference, Query } from '@google-cloud/firestore'
 import admin from 'firebase-admin'
-import {
-    FirestoreSimple,
-    IMapping,
-    IDocObject,
-    IDocData,
-} from 'firestore-simple'
-const key =
-    process.env.NODE_ENV === 'production'
-        ? require('../../config/service-account-key.json')
-        : require('../../config/service-account-key-dev.json')
+import { FirestoreSimple, IDocData, IDocObject } from 'firestore-simple'
+import { firebaseConfig } from '../config'
 
 admin.initializeApp({
-    credential: admin.credential.cert(key),
+    credential: admin.credential.cert(firebaseConfig),
 })
 
 export const firestore = admin.firestore()

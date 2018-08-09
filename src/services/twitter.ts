@@ -3,7 +3,7 @@ import {
     OAuthOptions,
 } from 'oauth-authorization-header'
 import axios from 'axios'
-import config from 'config'
+import { config } from '../config'
 import { URLSearchParams } from 'url'
 
 interface Token {
@@ -11,7 +11,7 @@ interface Token {
     secret: string
 }
 
-const consumer = config.get<Token>('twitter.consumer')
+const consumer = config.twitter.consumer
 const baseUrl = 'https://api.twitter.com/1.1'
 
 export class Twitter {
@@ -83,5 +83,5 @@ export class Twitter {
     }
 }
 
-const token = config.get<Token>('twitter.accounts.main.token')
+const token = config.twitter.accounts.reina.token
 export const twitter = new Twitter(token.key, token.secret)
