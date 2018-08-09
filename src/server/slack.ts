@@ -158,8 +158,8 @@ const scheduleCommandHandler = async (
         }
 
         case 'ls': {
-            const { since, until, id, title } = opts
-            const docs = await scheduleFires.withQuery(ref => {
+            const { since, until, id, title, nc } = opts
+            let docs = await scheduleFires.withQuery(ref => {
                 let q: Query = ref
 
                 if (id) {
@@ -171,12 +171,11 @@ const scheduleCommandHandler = async (
                 return q
             })
 
-            const filtered = title
-                ? docs.filter(s => s.title.includes(title))
-                : docs
+            if (title) docs = docs.filter(s => s.title.includes(title))
+            if (nc) docs = docs.filter(s => s.label == null)
 
             return {
-                schedule: filtered,
+                schedule: docs,
                 header: ':spiral_calendar_pad: Schedule list',
             }
         }
