@@ -213,6 +213,7 @@ export class Schedule extends ClassValidator implements ISchedule {
 
         return [
             header,
+            '',
             [dateString, this.emoji, this.title, venue][separateWith](' '),
             time,
             this.url,

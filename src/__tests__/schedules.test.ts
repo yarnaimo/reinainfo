@@ -38,6 +38,7 @@ describe('Schedule Batch', () => {
         expect(texts).toEqual([
             [
                 `${getDateString(day1)} の予定 (1/1)`,
+                '',
                 '🎤 EVENT1',
                 `${timeStr(day1)}〜`,
                 'URL',
@@ -52,12 +53,14 @@ describe('Schedule Batch', () => {
         expect(texts).toEqual([
             [
                 `${getDateString(day1)} 〜 ${getDateString(day7)} の予定 (1/2)`,
+                '',
                 `${getDateString(day1)} 🎤 EVENT1`,
                 `${timeStr(day1)}〜`,
                 'URL',
             ][multilineText],
             [
                 `${getDateString(day1)} 〜 ${getDateString(day7)} の予定 (2/2)`,
+                '',
                 `${getDateString(day2)} 🎤 EVENT2`,
                 `${timeStr(day2)}〜`,
                 'URL',

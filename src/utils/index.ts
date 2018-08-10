@@ -1,4 +1,11 @@
-import { addWeeks, format, getDate, parse, getDay } from 'date-fns/fp'
+import {
+    addWeeks,
+    format,
+    getDate,
+    parse,
+    getDay,
+    isSameMonth,
+} from 'date-fns/fp'
 
 export const timeStr = format('H:mm')
 
@@ -51,7 +58,10 @@ export const parseDate = (str: string) => {
 }
 
 export const getDateString = (date: Date) => {
-    return `${format('M/d', date)}(${'日月火水木金土'[getDay(date)]})`
+    const dateString = isSameMonth(date, new Date())
+        ? format('d', date)
+        : format('M/d', date)
+    return `${dateString}(${'日月火水木金土'[getDay(date)]})`
 }
 
 export const stringify = (
