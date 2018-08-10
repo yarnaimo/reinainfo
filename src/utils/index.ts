@@ -1,4 +1,4 @@
-import { addWeeks, format, getDate, parse } from 'date-fns/fp'
+import { addWeeks, format, getDate, parse, getDay } from 'date-fns/fp'
 
 export const timeStr = format('H:mm')
 
@@ -8,7 +8,7 @@ export const separateWith = Symbol('Array#separatedText')
 declare global {
     interface Array<T> {
         [multilineText]: string
-        [separateWith](separator: string): string
+        [separateWith](separator: string): string | undefined
     }
 }
 
@@ -22,10 +22,10 @@ Object.defineProperty(Array.prototype, multilineText, {
 })
 Object.defineProperty(Array.prototype, separateWith, {
     value: function(separator: string) {
-        return (this as any[])
+        const filtered = (this as any[])
             .filter(e => typeof e === 'string')
             .map(e => e.trim())
-            .join(separator)
+        return filtered.length ? filtered.join(separator) : undefined
     },
 })
 
@@ -48,6 +48,10 @@ export const assignMembers = (
 export const parseDate = (str: string) => {
     if (str.length === 6) str += '.0000'
     return parse(new Date(), 'yyMMdd.HHmm', str)
+}
+
+export const getDateString = (date: Date) => {
+    return `${format('M/d', date)}(${'日月火水木金土'[getDay(date)]})`
 }
 
 export const stringify = (

@@ -40,9 +40,15 @@ describe('Schedule', () => {
         expect(errors.length).toBe(2)
     })
 
-    test('get text', async () => {
-        expect(s.getText('明日の予定')).toBe(
+    test('get text', () => {
+        expect(s.getTextWith('明日の予定', false)).toBe(
             '明日の予定\n🎤 Release event @Toyama\nHiru » 12:30開演\nYoru » 17:30集合 18:30開演\nhttps://google.com'
+        )
+    })
+
+    test('get text with date', () => {
+        expect(s.getTextWith('来週の予定', true)).toBe(
+            '来週の予定\n1/17(水) 🎤 Release event @Toyama\nHiru » 12:30開演\nYoru » 17:30集合 18:30開演\nhttps://google.com'
         )
     })
 })

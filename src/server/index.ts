@@ -1,6 +1,7 @@
 import micro from 'micro'
-import { slackHandler } from './slack'
 import { router } from 'microrouter'
+import { hookHandler } from './hook'
+import { slackHandler } from './slack'
 
-const server = micro(router(slackHandler))
+const server = micro(router(slackHandler, hookHandler))
 server.listen(3017)

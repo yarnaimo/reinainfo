@@ -1,10 +1,7 @@
-import { scheduleFires, Schedule, ISchedule } from '../models/Schedule'
-import { startOfDay, addDays, endOfDay, format, getDay } from 'date-fns/fp'
+import { addDays, endOfDay, startOfDay } from 'date-fns/fp'
 import lazy from 'lazy.js'
-
-const getDateString = (date: Date) => {
-    return `${format('M/d', date)}(${'日月火水木金土'[getDay(date)]})`
-}
+import { Schedule, scheduleFires } from '../models/Schedule'
+import { getDateString } from '../utils'
 
 export class ScheduleBatch {
     private now: Date
@@ -12,7 +9,7 @@ export class ScheduleBatch {
 
     constructor(now?: Date) {
         this.now = now || new Date()
-        this.today = startOfDay(now)
+        this.today = startOfDay(this.now)
     }
 
     async schedulesBetween(daySince: number, dayUntil: number) {
@@ -47,8 +44,9 @@ export class ScheduleBatch {
         )
 
         return schedules.map((s, i) => {
-            return s.getText(
-                `${dateString} の予定 (${i + 1}/${schedules.length})`
+            return s.getTextWith(
+                `${dateString} の予定 (${i + 1}/${schedules.length})`,
+                daySince !== dayUntil
             )
         })
     }

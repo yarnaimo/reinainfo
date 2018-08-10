@@ -10,7 +10,13 @@ import {
     validate,
 } from 'class-validator'
 import { getCollection } from '../services/firebase'
-import { multilineText, separateWith, timeStr, stringify } from '../utils'
+import {
+    multilineText,
+    separateWith,
+    timeStr,
+    stringify,
+    getDateString,
+} from '../utils'
 import { parse, format } from 'date-fns/fp'
 import { Timestamp } from '@google-cloud/firestore'
 
@@ -188,23 +194,26 @@ export class Schedule extends ClassValidator implements ISchedule {
             : stringifySchedule(s)
     }
 
-    getText(header: string) {
+    getTextWith(header: string, withDate: boolean) {
+        const date = this.date.toDate()
+
         const shouldIncludeTime =
             this.categoryType === 'appearance' &&
-            format('HHmm', this.date) !== '0000'
+            format('HHmm', date) !== '0000'
+
+        const dateString = withDate ? getDateString(date) : null
 
         const time = !shouldIncludeTime
             ? null
             : this.parts
                 ? this.parts.map(p => Part.getText(p)).join('\n')
-                : timeStr(this.date) + '〜'
+                : timeStr(this.date.toDate()) + '〜'
 
         const venue = this.venue ? `@${this.venue}` : ''
 
-        // prettier-ignore
         return [
             header,
-            `${this.emoji} ${this.title} ${venue}`,
+            [dateString, this.emoji, this.title, venue][separateWith](' '),
             time,
             this.url,
         ][multilineText]
