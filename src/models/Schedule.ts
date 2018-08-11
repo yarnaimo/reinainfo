@@ -135,7 +135,8 @@ export class Schedule extends ClassValidator implements ISchedule {
 
     label?: string
 
-    @IsBoolean() active: boolean = true
+    @IsBoolean()
+    active: boolean = true
 
     @IsIn(Object.keys(categories))
     category!: Category
@@ -152,9 +153,11 @@ export class Schedule extends ClassValidator implements ISchedule {
     @MaxLength(64)
     title!: string
 
-    @IsUrl() url!: string
+    @IsUrl()
+    url!: string
 
-    @IsInstance(Timestamp) date!: Timestamp
+    @IsInstance(Timestamp)
+    date!: Timestamp
 
     parts?: IPart[]
 
@@ -197,17 +200,21 @@ export class Schedule extends ClassValidator implements ISchedule {
     getTextWith(header: string, withDate: boolean) {
         const date = this.date.toDate()
 
-        const shouldIncludeTime =
-            this.categoryType === 'appearance' &&
-            format('HHmm', date) !== '0000'
-
         const dateString = withDate ? getDateString(date) : null
 
-        const time = !shouldIncludeTime
-            ? null
-            : this.parts
-                ? this.parts.map(p => Part.getText(p)).join('\n')
-                : timeStr(this.date.toDate()) + '〜'
+        let time = null
+        if (
+            this.categoryType === 'appearance' &&
+            format('HHmm', date) !== '0000'
+        ) {
+            if (this.parts) {
+                time = this.parts.map(p => Part.getText(p)).join('\n')
+            } else {
+                time =
+                    timeStr(this.date.toDate()) +
+                    (this.category === 'up' ? '' : '〜')
+            }
+        }
 
         const venue = this.venue ? `@${this.venue}` : ''
 
