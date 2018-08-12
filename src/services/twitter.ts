@@ -5,6 +5,7 @@ import {
 import axios from 'axios'
 import { config } from '../config'
 import { URLSearchParams } from 'url'
+import lazy from 'lazy.js'
 
 interface Token {
     key: string
@@ -26,47 +27,51 @@ export class Twitter {
         }
     }
 
-    private formatParams(obj: { [key: string]: any }) {
-        obj.tweet_mode = 'extended'
-
-        Object.keys(obj).forEach(key => {
-            if (obj[key] == null) delete obj[key]
-        })
-    }
-
-    private getRequestConfigs(
-        path: string,
+    private buildRequestConfig(
         method: 'GET' | 'POST',
-        queryParams: {},
-        formParams: {}
+        path: string,
+        params: { [key: string]: string }
     ) {
+        const isGET = method === 'GET'
         const url = `${baseUrl}/${path}.json`
+
+        params.tweet_mode = 'extended'
+        const compacted = lazy(params)
+            .pairs()
+            .filter(([k, v]: any) => v != null)
+            .toObject() as { [key: string]: string }
+
         const authHeader = getOAuthAuthorizationHeader({
             oAuth: this.oAuth,
             url,
             method,
-            queryParams,
-            formParams,
-        })
-        return { url, headers: { Authorization: authHeader } }
+            [isGET ? 'queryParams' : 'formParams']: compacted,
+        } as any)
+
+        return {
+            url,
+            searchParams: new URLSearchParams(compacted),
+            headers: { Authorization: authHeader },
+        }
     }
 
     async get(path: string, params: { [key: string]: any } = {}) {
-        this.formatParams(params)
-
-        const { url, headers } = this.getRequestConfigs(path, 'GET', params, {})
-        const { data } = await axios.get(url, { headers, params })
+        const { url, searchParams, headers } = this.buildRequestConfig(
+            'GET',
+            path,
+            params
+        )
+        const { data } = await axios.get(url, { headers, params: searchParams })
         return data
     }
 
     async post(path: string, form: { [key: string]: any } = {}) {
-        this.formatParams(form)
-
-        const params = new URLSearchParams()
-        Object.entries(form).forEach(([k, v]) => params.append(k, v))
-
-        const { url, headers } = this.getRequestConfigs(path, 'POST', {}, form)
-        const { data } = await axios.post(url, params, { headers })
+        const { url, searchParams, headers } = this.buildRequestConfig(
+            'POST',
+            path,
+            form
+        )
+        const { data } = await axios.post(url, searchParams, { headers })
         return data
     }
 
