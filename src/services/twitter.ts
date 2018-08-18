@@ -92,11 +92,11 @@ export class Twitter {
     async searchTweets({
         q,
         maxId,
-        minId,
+        sinceId,
     }: {
         q: string
         maxId?: string
-        minId?: string
+        sinceId?: string
     }) {
         const { statuses } = await twitter.get<{ statuses: ITweet[] }>(
             'search/tweets',
@@ -109,7 +109,7 @@ export class Twitter {
                     bigInt(maxId)
                         .minus(1)
                         .toString(),
-                min_id: minId,
+                since_id: sinceId,
             }
         )
         return statuses as ITweet[]

@@ -18,14 +18,17 @@ export class RetweetBatch {
     }
 
     async searchTweets(prevTweetId: string, until: Date) {
-        const q = '上田麗奈 exclude:retweets -#nowplaying min_retweets:3'
-        const matched = await this.twitter.searchTweets({ q })
+        const q =
+            '上田麗奈 OR #上田麗奈 exclude:retweets -#nowplaying min_retweets:3'
+        const matched = await this.twitter.searchTweets({
+            q,
+            sinceId: bigInt(prevTweetId)
+                .add(1)
+                .toString(),
+        })
 
         return matched.filter(t => {
-            return (
-                isBefore(new Date(t.created_at), until) &&
-                bigInt(t.id_str).greater(bigInt(prevTweetId))
-            )
+            return isBefore(new Date(t.created_at), until)
         })
     }
 
@@ -55,7 +58,9 @@ export class RetweetBatch {
 
         await tweetLogCollection.set({
             id: 'main',
-            prevTweetId: tweetsToClassify[0].id_str,
+            prevTweetId: tweetsToClassify.length
+                ? tweetsToClassify[0].id_str
+                : prevTweetId,
         })
         return ids
     }
