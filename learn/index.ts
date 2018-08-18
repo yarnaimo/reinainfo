@@ -1,5 +1,4 @@
 import * as tf from '@tensorflow/tfjs'
-import '@tensorflow/tfjs-node'
 import { readFileSync } from 'fs'
 import lazy from 'lazy.js'
 import { join } from 'path'

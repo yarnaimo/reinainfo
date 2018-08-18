@@ -1,6 +1,7 @@
-import { loadCsv, tf, IData, store, getSigmoid } from '.'
-import lazy from 'lazy.js'
+import '@tensorflow/tfjs-node'
 import { writeFileSync } from 'fs'
+import lazy from 'lazy.js'
+import { getSigmoid, IData, loadCsv, store, tf } from '.'
 
 type R0 = tf.Tensor<tf.Rank.R0>
 type R1 = tf.Tensor<tf.Rank.R1>
