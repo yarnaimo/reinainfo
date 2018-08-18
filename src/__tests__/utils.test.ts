@@ -12,7 +12,9 @@ describe('Utils', () => {
     })
 
     test('parse date with time', () => {
-        expect(parseDate('180801.0117')).toEqual(new Date(2018, 7, 1, 1, 17))
+        expect(parseDate('0801.0117')).toEqual(
+            new Date(new Date().getFullYear(), 7, 1, 1, 17)
+        )
     })
 
     test('pick object', () => {

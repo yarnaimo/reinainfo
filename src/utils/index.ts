@@ -53,8 +53,12 @@ export const assignMembers = (
 }
 
 export const parseDate = (str: string) => {
-    if (str.length === 6) str += '.0000'
-    return parse(new Date(), 'yyMMdd.HHmm', str)
+    const contextDateStr = format('yyMMdd', new Date())
+    const [strDate, strTime] = [...str.split('.'), '']
+    const paddedDate = contextDateStr.slice(0, -strDate.length) + strDate
+    const paddedTime = strTime + '0000'.slice(strTime.length)
+
+    return parse(new Date(), 'yyMMdd.HHmm', `${paddedDate}.${paddedTime}`)
 }
 
 export const getDateString = (date: Date) => {
