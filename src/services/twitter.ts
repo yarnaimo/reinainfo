@@ -6,6 +6,8 @@ import axios from 'axios'
 import { config } from '../config'
 import { URLSearchParams } from 'url'
 import lazy from 'lazy.js'
+import bigInt from 'big-integer'
+import { ITweet } from '../models/Twitter'
 
 interface Token {
     key: string
@@ -55,36 +57,62 @@ export class Twitter {
         }
     }
 
-    async get(path: string, params: { [key: string]: any } = {}) {
+    async get<T>(path: string, params: { [key: string]: any } = {}) {
         const { url, searchParams, headers } = this.buildRequestConfig(
             'GET',
             path,
             params
         )
         const { data } = await axios.get(url, { headers, params: searchParams })
-        return data
+        return data as T
     }
 
-    async post(path: string, form: { [key: string]: any } = {}) {
+    async post<T>(path: string, form: { [key: string]: any } = {}) {
         const { url, searchParams, headers } = this.buildRequestConfig(
             'POST',
             path,
             form
         )
         const { data } = await axios.post(url, searchParams, { headers })
-        return data
+        return data as T
     }
 
     async postThread(texts: string[]) {
         return await texts.reduce(async (prevPromise, text) => {
             const prevIds = await prevPromise
 
-            const { id_str } = await this.post('statuses/update', {
+            const { id_str } = await this.post<ITweet>('statuses/update', {
                 in_reply_to_status_id: prevIds[prevIds.length - 1],
                 status: text,
             })
             return [...prevIds, id_str as string]
         }, Promise.resolve([] as string[]))
+    }
+
+    async searchTweets({
+        q,
+        maxId,
+        minId,
+    }: {
+        q: string
+        maxId?: string
+        minId?: string
+    }) {
+        const { statuses } = await twitter.get<{ statuses: ITweet[] }>(
+            'search/tweets',
+            {
+                q,
+                count: 100,
+                result_type: 'recent',
+                max_id:
+                    maxId &&
+                    bigInt(maxId)
+                        .minus(1)
+                        .toString(),
+                min_id: minId,
+            }
+        )
+        return statuses as ITweet[]
     }
 }
 
