@@ -2,5 +2,20 @@
 
 声優・上田麗奈さんに関する情報を共有する非公式Webサービスのソースコードです。
 
-- ~~[Webサイト](https://reina.netlify.com)~~ (未完成)
-- [Twitter](https://twitter.com/Unoffishama) (@Unoffishama)
+
+## [Twitter](https://twitter.com/Unoffishama)
+
+- [x] スケジュールのお知らせ  
+毎日夜に翌日の予定一覧を、毎週末に翌週の予定一覧をツイートします。
+
+- [x] 自動リツイート  
+「上田麗奈」の検索結果の中から、各種公式アカウントのツイートを機械学習で自動的に判別してリツイートします。
+
+- [ ] リプライへの返信
+
+- [ ] 1週間のヘッドライン
+
+
+## ~~[Webサイト](https://reina.netlify.com)~~ (未完成)
+
+- [ ] カレンダー
