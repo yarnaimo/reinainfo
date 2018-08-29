@@ -13,7 +13,7 @@ const add = (name: string, value: any) =>
     )
 
 const main = load(readFileSync('config/default.yml', 'utf-8'))
-add('config-main', main)
+if (process.argv.includes('-u')) add('config-main', main)
 
 const firebase = JSON.parse(
     readFileSync('config/service-account-key.json', 'utf-8')
@@ -21,7 +21,7 @@ const firebase = JSON.parse(
 const firebaseDev = JSON.parse(
     readFileSync('config/service-account-key-dev.json', 'utf-8')
 )
-add('config-firebase', firebase)
+if (process.argv.includes('-u')) add('config-firebase', firebase)
 
 writeFileSync(
     '.env',

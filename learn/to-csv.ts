@@ -1,7 +1,6 @@
+import { ITweet } from '@yarnaimo/twimo/dist/Tweet'
 import { readFileSync, writeFileSync } from 'fs'
-import { tmpPath, extractTweetId, utf8 } from '.'
-import { tweetToVectorWithLabel } from '.'
-import { ITweet } from '../src/models/Twitter';
+import { extractTweetId, tmpPath, tweetToVectorWithLabel, utf8 } from '.'
 
 const csvPath = tmpPath('tweets.csv')
 const jsonPath = tmpPath('tweets.json')

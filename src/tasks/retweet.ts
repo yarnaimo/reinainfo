@@ -1,9 +1,7 @@
-import bigInt from 'big-integer'
+import { plusOne, Twitter } from '@yarnaimo/twimo'
 import { addMinutes, isBefore } from 'date-fns'
 import { TweetClassifier } from '../../learn'
 import { getCollection } from '../services/firebase'
-import { Twitter } from '../services/twitter'
-import { ITweet } from '../models/Twitter'
 
 interface ITweetLog {
     prevTweetId: string
@@ -22,9 +20,7 @@ export class RetweetBatch {
             '上田麗奈 OR #上田麗奈 exclude:retweets -#nowplaying min_retweets:3'
         const matched = await this.twitter.searchTweets({
             q,
-            sinceId: bigInt(prevTweetId)
-                .add(1)
-                .toString(),
+            sinceId: plusOne(prevTweetId),
         })
 
         return matched.filter(t => {
@@ -46,15 +42,9 @@ export class RetweetBatch {
             return this.tc.isOfficialTweet(t)
         })
 
-        const tasks = officialTweets.map(async ({ id_str: id }) => {
-            const { id_str } = await this.twitter
-                .post<ITweet>('statuses/retweet', { id })
-                .catch(() => ({
-                    id_str: null,
-                }))
-            return id_str
-        })
-        const ids = await Promise.all(tasks)
+        const retweets = await this.twitter.retweet(
+            officialTweets.map(t => t.id_str)
+        )
 
         await tweetLogCollection.set({
             id: 'main',
@@ -62,6 +52,6 @@ export class RetweetBatch {
                 ? tweetsToClassify[0].id_str
                 : prevTweetId,
         })
-        return ids
+        return retweets
     }
 }

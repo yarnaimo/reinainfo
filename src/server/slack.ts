@@ -1,23 +1,20 @@
 import { Query, Timestamp } from '@google-cloud/firestore'
-import { WebClient } from '@slack/client'
 import axios from 'axios'
-import { config } from '../config'
 import crypto from 'crypto'
-import { endOfDay, addMinutes } from 'date-fns/fp'
+import { addMinutes, endOfDay } from 'date-fns/fp'
 import getopts from 'getopts'
-import { parse as parseArgs } from 'shell-quote'
 import { send, text } from 'micro'
 import { AugmentedRequestHandler, post } from 'microrouter'
 import qs from 'qs'
+import { parse as parseArgs } from 'shell-quote'
 import { ISchedule, Part, Schedule, scheduleFires } from '../models/Schedule'
+import { slackConfig } from '../services/slack'
 import {
     createCyclicDates,
-    parseDate,
     durationStringToMinutes,
+    parseDate,
     pick,
 } from '../utils'
-const slackConfig = config.slack
-const slack = new WebClient(slackConfig.bot_token)
 
 const getSignature = (data: string) => {
     return (

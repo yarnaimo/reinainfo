@@ -1,9 +1,9 @@
-import { post } from 'microrouter'
 import { json, send } from 'micro'
+import { post } from 'microrouter'
 import { config } from '../config'
-import { ScheduleBatch } from '../tasks/schedules'
 import { twitter } from '../services/twitter'
 import { RetweetBatch } from '../tasks/retweet'
+import { ScheduleBatch } from '../tasks/schedules'
 
 export const hookHandler = post('/hook', async (req, res) => {
     const { token, type, ...params } = (await json(req)) as any
@@ -12,25 +12,23 @@ export const hookHandler = post('/hook', async (req, res) => {
 
     switch (type) {
         case 'schedule_batch': {
-            const batch = new ScheduleBatch()
-            const texts = await batch.createTweetTexts(
+            const batch = new ScheduleBatch(twitter)
+            const thread = await batch.run(
                 Number(params.since),
                 Number(params.until)
             )
-            const ids = await twitter.postThread(texts)
-
-            return send(res, 200, ids)
+            return send(res, 200, thread)
         }
 
         case 'retweet_batch': {
-            if (process.env.NODE_ENV === 'development') {
+            if (process.env.NODE_ENV !== 'production') {
                 const _post = twitter.post
-                
-                twitter.post = async <ITweet>(path: string, form?: any) => {
+
+                twitter.post = async (path: string, form?: any) => {
                     if (path === 'statuses/retweet') {
-                        return ({ id_str: form.id } as any) as ITweet
+                        return { id_str: form.id } as any
                     } else {
-                        return await _post<ITweet>(path, form)
+                        return await _post(path, form)
                     }
                 }
             }
