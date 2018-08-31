@@ -1,11 +1,14 @@
+import { ITweet } from '@yarnaimo/twimo/dist/Tweet'
 import {
     addWeeks,
     format,
     getDate,
-    parse,
     getDay,
     isSameMonth,
+    parse,
 } from 'date-fns/fp'
+
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
 export const timeStr = format('H:mm')
 
@@ -149,3 +152,6 @@ export const durationStringToMinutes = (str: string) => {
     })
     return min
 }
+
+export const tweetUrl = (t: ITweet) =>
+    `https://twitter.com/${t.user.screen_name}/status/${t.id_str}`
