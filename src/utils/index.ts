@@ -1,4 +1,3 @@
-import { ITweet } from '@yarnaimo/twimo/dist/Tweet'
 import {
     addWeeks,
     format,
@@ -38,6 +37,8 @@ Object.defineProperty(Array.prototype, separateWith, {
         return filtered.length ? filtered.join(separator) : undefined
     },
 })
+
+export const notNull = <T>(v: T | null): v is T => v != null
 
 export const pick = (obj: { [key: string]: any }, array: any[]) => {
     const target = {} as { [key: string]: any }
@@ -152,6 +153,3 @@ export const durationStringToMinutes = (str: string) => {
     })
     return min
 }
-
-export const tweetUrl = (t: ITweet) =>
-    `https://twitter.com/${t.user.screen_name}/status/${t.id_str}`

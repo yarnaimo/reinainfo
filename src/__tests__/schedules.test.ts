@@ -1,10 +1,8 @@
-import { ScheduleBatch } from '../tasks/schedules'
-import { scheduleFires } from '../models/Schedule'
 import { Timestamp } from '@google-cloud/firestore'
-import { parseDate, getDateString, timeStr } from '../utils'
 import { addDays } from 'date-fns/fp'
-import { multilineText } from '../utils'
-import { twitter } from '../services/twitter'
+import { scheduleFires } from '../models/Schedule'
+import { ScheduleBatch } from '../tasks/schedules'
+import { getDateString, multilineText, parseDate, timeStr } from '../utils'
 
 describe('Schedule Batch', () => {
     const now = parseDate('000801.2200')
@@ -33,7 +31,7 @@ describe('Schedule Batch', () => {
     })
 
     test('tomorrow', async () => {
-        const batch = new ScheduleBatch(twitter, now)
+        const batch = new ScheduleBatch(now)
         const texts = await batch.createTweetTexts(1, 1)
 
         expect(texts).toEqual([
@@ -48,7 +46,7 @@ describe('Schedule Batch', () => {
     })
 
     test('next week', async () => {
-        const batch = new ScheduleBatch(twitter, now)
+        const batch = new ScheduleBatch(now)
         const texts = await batch.createTweetTexts(1, 7)
 
         expect(texts).toEqual([

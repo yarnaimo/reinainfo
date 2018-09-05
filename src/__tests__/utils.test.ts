@@ -1,10 +1,11 @@
 import {
-    parseDate,
-    stringify,
     createCyclicDates,
     durationStringToMinutes,
+    parseDate,
     pick,
+    stringify,
 } from '../utils'
+import { tweetToUrl, urlToTweetId } from '../utils/twitter'
 
 describe('Utils', () => {
     test('parse date', () => {
@@ -65,6 +66,25 @@ describe('Utils', () => {
     test('duration string to minutes', () => {
         expect(durationStringToMinutes('2d.1w.3h.4m')).toBe(
             2 * 24 * 60 + 1 * 7 * 24 * 60 + 3 * 60 + 4
+        )
+    })
+})
+
+describe('Utils - Twitter', () => {
+    test('tweet to url', () => {
+        expect(
+            tweetToUrl({
+                retweeted_status: {
+                    id_str: '1234',
+                    user: { screen_name: 'yarnaimo' },
+                },
+            } as any)
+        ).toEqual('https://twitter.com/yarnaimo/status/1234')
+    })
+
+    test('url to tweet id', () => {
+        expect(urlToTweetId('https://twitter.com/yarnaimo/status/1234')).toBe(
+            '1234'
         )
     })
 })

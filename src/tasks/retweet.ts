@@ -1,7 +1,9 @@
-import { plusOne, Twitter } from '@yarnaimo/twimo'
+import { plusOne } from '@yarnaimo/twimo'
 import { addMinutes, isBefore } from 'date-fns'
 import { TweetClassifier } from '../../learn'
 import { getCollection } from '../services/firebase'
+import { retweetWithNotification } from '../services/integrated'
+import { twitter } from '../services/twitter'
 
 interface ITweetLog {
     prevTweetId: string
@@ -11,14 +13,14 @@ const tweetLogCollection = getCollection<ITweetLog>('tweetLog')
 export class RetweetBatch {
     private tc: TweetClassifier
 
-    constructor(private twitter: Twitter) {
+    constructor() {
         this.tc = new TweetClassifier()
     }
 
     async searchTweets(prevTweetId: string, until: Date) {
         const q =
             '上田麗奈 OR #上田麗奈 exclude:retweets -#nowplaying min_retweets:3'
-        const matched = await this.twitter.searchTweets({
+        const matched = await twitter.searchTweets({
             q,
             sinceId: plusOne(prevTweetId),
         })
@@ -42,7 +44,8 @@ export class RetweetBatch {
             return this.tc.isOfficialTweet(t)
         })
 
-        const retweets = await this.twitter.retweet(
+        const retweets = await retweetWithNotification(
+            twitter,
             officialTweets.map(t => t.id_str)
         )
 
@@ -52,6 +55,7 @@ export class RetweetBatch {
                 ? tweetsToClassify[0].id_str
                 : prevTweetId,
         })
+
         return retweets
     }
 }

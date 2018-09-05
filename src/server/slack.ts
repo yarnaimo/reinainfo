@@ -10,14 +10,18 @@ import { AugmentedRequestHandler, post } from 'microrouter'
 import qs from 'qs'
 import { parse as parseArgs } from 'shell-quote'
 import { ISchedule, Part, Schedule, scheduleFires } from '../models/Schedule'
+import { retweetWithNotification } from '../services/integrated'
 import { slackConfig } from '../services/slack'
+import { twitter } from '../services/twitter'
 import {
     createCyclicDates,
     durationStringToMinutes,
+    notNull,
     Omit,
     parseDate,
     pick,
 } from '../utils'
+import { urlToTweetId } from '../utils/twitter'
 
 const getSignature = (data: string) => {
     return (
@@ -95,12 +99,20 @@ export const commandHandler = async (done: ResponseHandler, text: string) => {
         if (action === 'cycle') {
             return await cyclicScheduleCommandHandler(done, args, opts)
         }
+        if (action === 'rt') {
+            return await retweetCommandHandler(done, args)
+        }
 
         return await scheduleCommandHandler(done, action, args, opts)
     } catch (e) {
         console.error(e)
         return done({ text: (e as Error).toString() })
     }
+}
+
+const retweetCommandHandler = async (done: ResponseHandler, urls: string[]) => {
+    const ids = urls.map(urlToTweetId).filter(notNull)
+    await retweetWithNotification(twitter, ids)
 }
 
 const scheduleCommandHandler = async (
