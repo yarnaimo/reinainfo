@@ -3,11 +3,19 @@ import { config } from '../config'
 
 export const twitter = new Twitter(config.twitter)
 
+const isNotProduction = process.env.NODE_ENV !== 'production'
+
+if (isNotProduction) {
+    twitter.post = async (path: string, form?: any) => {
+        throw new Error(`${path} is not mocked`)
+    }
+}
+
 export const mightMockTwitterPost = (
     targetPath: string,
     responseFn: (requestData: any) => any
 ) => {
-    if (process.env.NODE_ENV !== 'production') {
+    if (isNotProduction) {
         const _post = twitter.post
 
         twitter.post = async (path: string, form?: any) => {
