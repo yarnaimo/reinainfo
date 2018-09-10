@@ -1,6 +1,6 @@
-import { Schedule, Part } from '../models/Schedule'
-import { validate } from 'class-validator'
 import { Timestamp } from '@google-cloud/firestore'
+import { validate } from 'class-validator'
+import { Part, Schedule } from '../models/Schedule'
 import { parseDate } from '../utils'
 
 describe('Schedule', () => {
@@ -17,6 +17,31 @@ describe('Schedule', () => {
         s.parts = Part.parseMultiple('Hiru.1230+Yoru.1730..1830')
         s.url = 'https://google.com'
         s.venue = 'Toyama'
+    })
+
+    test('to attachment', () => {
+        const attachment = Schedule.toAttachment(s)
+
+        expect(attachment).toEqual({
+            color: '#ef9a9a',
+            author_name: s.category,
+            title: s.title,
+            text: '2018/01/17 12:30',
+            fields: [
+                {
+                    title: 'parts',
+                    value: s.parts!.map(Part.getText).join('\n'),
+                },
+                {
+                    title: 'url',
+                    value: s.url,
+                },
+                {
+                    title: 'venue',
+                    value: s.venue,
+                },
+            ],
+        })
     })
 
     test('category type', () => {
