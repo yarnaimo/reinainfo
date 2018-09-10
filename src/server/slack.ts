@@ -73,29 +73,29 @@ export type ResponseHandler = (
 ) => Promise<any>
 
 export const commandHandler = async (done: ResponseHandler, text: string) => {
-    const alias = {
-        a: 'active',
-        c: 'category',
-        t: 'title',
-        u: 'url',
-        d: 'date',
-        p: 'parts',
-        v: 'venue',
-        w: 'way',
-    }
-    const {
-        _: [action, ...args],
-        ...opts
-    } = getopts(parseArgs(text), { alias })
-
-    if (opts.date) {
-        opts.date = Timestamp.fromDate(parseDate(opts.date))
-    }
-    if (opts.parts) {
-        opts.parts = Part.parseMultiple(opts.parts)
-    }
-
     try {
+        const alias = {
+            a: 'active',
+            c: 'category',
+            t: 'title',
+            u: 'url',
+            d: 'date',
+            p: 'parts',
+            v: 'venue',
+            w: 'way',
+        }
+        const {
+            _: [action, ...args],
+            ...opts
+        } = getopts(parseArgs(text), { alias })
+
+        if (opts.date) {
+            opts.date = Timestamp.fromDate(parseDate(opts.date))
+        }
+        if (opts.parts) {
+            opts.parts = Part.parseMultiple(opts.parts)
+        }
+
         if (action === 'cycle') {
             return await cyclicScheduleCommandHandler(done, args, opts)
         }
