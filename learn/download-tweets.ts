@@ -1,9 +1,9 @@
-import { twitter } from '../src/services/twitter'
+import { minusOne } from '@yarnaimo/twimo'
+import { ITweet } from '@yarnaimo/twimo/dist/Tweet'
+import { existsSync, mkdirSync, writeFileSync } from 'fs'
 import lazy from 'lazy.js'
-import { writeFileSync, mkdirSync, existsSync } from 'fs'
-import { tmpPath } from '.'
-import { extractTweetId } from '.'
-import { ITweet } from '../src/models/Twitter';
+import { extractTweetId, tmpPath } from '.'
+import { twitter } from '../src/services/twitter'
 
 if (!existsSync(tmpPath())) {
     mkdirSync(tmpPath())
@@ -27,7 +27,7 @@ const main = async () => {
 
             const matchedTweets = await twitter.searchTweets({
                 q,
-                maxId: lastTweet && lastTweet.id_str,
+                maxId: lastTweet && minusOne(lastTweet.id_str),
             })
             tweets.push(...matchedTweets)
             if (matchedTweets.length < 100) break

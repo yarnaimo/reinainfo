@@ -1,9 +1,8 @@
-import { ScheduleBatch } from '../tasks/schedules'
-import { scheduleFires } from '../models/Schedule'
 import { Timestamp } from '@google-cloud/firestore'
-import { parseDate, getDateString, timeStr } from '../utils'
 import { addDays } from 'date-fns/fp'
-import { multilineText } from '../utils'
+import { scheduleFires } from '../models/Schedule'
+import { ScheduleBatch } from '../tasks/schedules'
+import { getDateString, multilineText, parseDate, timeStr } from '../utils'
 
 describe('Schedule Batch', () => {
     const now = parseDate('000801.2200')

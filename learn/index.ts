@@ -1,8 +1,8 @@
 import * as tf from '@tensorflow/tfjs'
+import { ITweet } from '@yarnaimo/twimo/dist/Tweet'
 import { readFileSync } from 'fs'
 import lazy from 'lazy.js'
 import { join } from 'path'
-import { ITweet } from '../src/models/Twitter'
 
 type R0 = tf.Tensor<tf.Rank.R0>
 type R1 = tf.Tensor<tf.Rank.R1>

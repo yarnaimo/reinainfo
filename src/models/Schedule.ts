@@ -1,3 +1,5 @@
+import { Timestamp } from '@google-cloud/firestore'
+import { MessageAttachment } from '@slack/client'
 import {
     IsBoolean,
     IsIn,
@@ -9,16 +11,16 @@ import {
     MinLength,
     validate,
 } from 'class-validator'
+import { format, parse } from 'date-fns/fp'
+import { IDocObject } from 'firestore-simple'
 import { getCollection } from '../services/firebase'
 import {
+    getDateString,
     multilineText,
     separateWith,
-    timeStr,
     stringify,
-    getDateString,
+    timeStr,
 } from '../utils'
-import { parse, format } from 'date-fns/fp'
-import { Timestamp } from '@google-cloud/firestore'
 
 export const scheduleFires = getCollection<ISchedule>('schedules')
 
@@ -195,6 +197,26 @@ export class Schedule extends ClassValidator implements ISchedule {
         return Array.isArray(s)
             ? s.map(stringifySchedule)[multilineText]
             : stringifySchedule(s)
+    }
+
+    static toAttachment(s: ISchedule & IDocObject) {
+        const target = Object.assign({}, s, {
+            date: format('yyyy/MM/dd HH:mm', s.date.toDate()),
+            ...(s.parts ? { parts: s.parts.map(Part.getText) } : {}),
+        })
+        const { title } = target
+        delete target.title
+
+        return {
+            title,
+            fields: Object.keys(s)
+                .sort()
+                .map(key => ({
+                    short: true,
+                    title: key,
+                    value: s[key],
+                })),
+        } as MessageAttachment
     }
 
     getTextWith(header: string, withDate: boolean) {

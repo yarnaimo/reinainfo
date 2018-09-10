@@ -1,6 +1,7 @@
 import { addDays, endOfDay, startOfDay } from 'date-fns/fp'
 import lazy from 'lazy.js'
 import { Schedule, scheduleFires } from '../models/Schedule'
+import { twitter } from '../services/twitter'
 import { getDateString } from '../utils'
 
 export class ScheduleBatch {
@@ -49,5 +50,11 @@ export class ScheduleBatch {
                 daySince !== dayUntil
             )
         })
+    }
+
+    async run(since: number, until: number) {
+        const texts = await this.createTweetTexts(since, until)
+        const thread = await twitter.postThread(texts)
+        return thread
     }
 }

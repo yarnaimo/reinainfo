@@ -14,43 +14,37 @@
             "type": "node",
             "request": "launch",
             "name": "Debug Server",
-            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node-dev",
-            "args": [
-                "${workspaceFolder}/src/server/index.ts",
-            ],
-            "restart": true
+            "useWSL": true,
+            "runtimeArgs": ["-r", "ts-node/register"],
+            "args": ["src/server/index.ts"],
+            "sourceMapPathOverrides": { "/mnt/c/*": "C:\\*" }
         },
         {
             "type": "node",
             "request": "launch",
             "name": "Debug Train",
-            "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node-dev",
-            "args": [
-                "${workspaceFolder}/learn/train.ts",
-            ],
-            "restart": true
+            "useWSL": true,
+            "runtimeArgs": ["-r", "ts-node/register"],
+            "args": ["learn/train.ts"],
+            "sourceMapPathOverrides": { "/mnt/c/*": "C:\\*" }
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Jest Debug Current File",
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/node_modules/.bin/jest",
-            "args": [
-                "${fileBasenameNoExtension}.js",
-                "--config",
-                "${workspaceRoot}/jest.debug.json",
-                "--coverage",
-                "false"
-            ],
+            "name": "Jest Current",
+            "useWSL": true,
+            "sourceMaps": true,
+            "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+            "args": ["--runInBand", "${relativeFile}", "--coverage", "false"],
+            "sourceMapPathOverrides": { "/mnt/c/*": "C:\\*" },
             "env": {
                 "NODE_ENV": "test"
             },
             "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen",
-            "windows": {
-                "program": "${workspaceFolder}/node_modules/jest/bin/jest",
-            }
+            "internalConsoleOptions": "neverOpen"
+            // "windows": {
+            //     "program": "${workspaceFolder}/node_modules/jest/bin/jest"
+            // }
         }
     ]
 }

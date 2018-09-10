@@ -1,23 +1,27 @@
 import { Query, Timestamp } from '@google-cloud/firestore'
-import { WebClient } from '@slack/client'
+import { ChatPostMessageArguments } from '@slack/client'
 import axios from 'axios'
-import { config } from '../config'
 import crypto from 'crypto'
-import { endOfDay, addMinutes } from 'date-fns/fp'
+import { addMinutes, endOfDay } from 'date-fns/fp'
+import { IDocObject } from 'firestore-simple'
 import getopts from 'getopts'
-import { parse as parseArgs } from 'shell-quote'
 import { send, text } from 'micro'
 import { AugmentedRequestHandler, post } from 'microrouter'
 import qs from 'qs'
+import { parse as parseArgs } from 'shell-quote'
 import { ISchedule, Part, Schedule, scheduleFires } from '../models/Schedule'
+import { retweetWithNotification } from '../services/integrated'
+import { slackConfig } from '../services/slack'
+import { twitter } from '../services/twitter'
 import {
     createCyclicDates,
-    parseDate,
     durationStringToMinutes,
+    notNull,
+    Omit,
+    parseDate,
     pick,
 } from '../utils'
-const slackConfig = config.slack
-const slack = new WebClient(slackConfig.bot_token)
+import { urlToTweetId } from '../utils/twitter'
 
 const getSignature = (data: string) => {
     return (
@@ -62,52 +66,60 @@ const dateRangeQuery = (
     return q.orderBy('date')
 }
 
-export const commandHandler = async (text: string) => {
-    const alias = {
-        a: 'active',
-        c: 'category',
-        t: 'title',
-        u: 'url',
-        d: 'date',
-        p: 'parts',
-        v: 'venue',
-        w: 'way',
-    }
-    const {
-        _: [action, ...args],
-        ...opts
-    } = getopts(parseArgs(text), { alias })
+export type ResponseHandler = (
+    message: Omit<ChatPostMessageArguments, 'channel'>,
+    schedules?: (ISchedule & IDocObject)[]
+) => Promise<any>
 
-    if (opts.date) {
-        opts.date = Timestamp.fromDate(parseDate(opts.date))
-    }
-    if (opts.parts) {
-        opts.parts = Part.parseMultiple(opts.parts)
-    }
-
+export const commandHandler = async (done: ResponseHandler, text: string) => {
     try {
-        if (action === 'cycle') {
-            return await cyclicScheduleCommandHandler(args, opts)
+        const alias = {
+            a: 'active',
+            c: 'category',
+            t: 'title',
+            u: 'url',
+            d: 'date',
+            p: 'parts',
+            v: 'venue',
+            w: 'way',
+        }
+        const {
+            _: [action, ...args],
+            ...opts
+        } = getopts(parseArgs(text), { alias })
+
+        if (opts.date) {
+            opts.date = Timestamp.fromDate(parseDate(opts.date))
+        }
+        if (opts.parts) {
+            opts.parts = Part.parseMultiple(opts.parts)
         }
 
-        return await scheduleCommandHandler(action, args, opts)
+        if (action === 'cycle') {
+            return await cyclicScheduleCommandHandler(done, args, opts)
+        }
+        if (action === 'rt') {
+            return await retweetCommandHandler(done, args)
+        }
+
+        return await scheduleCommandHandler(done, action, args, opts)
     } catch (e) {
         console.error(e)
-        return { data: (e as Error).toString() }
+        return done({ text: (e as Error).toString() })
     }
 }
 
-type Result = {
-    data?: string
-    header?: string
-    schedule?: ISchedule | ISchedule[]
+const retweetCommandHandler = async (done: ResponseHandler, urls: string[]) => {
+    const ids = urls.map(urlToTweetId).filter(notNull)
+    await retweetWithNotification(twitter, ids)
 }
 
 const scheduleCommandHandler = async (
+    done: ResponseHandler,
     action: string,
     args: string[],
     opts: { [key: string]: any }
-): Promise<Result> => {
+) => {
     const picked = pick(opts, [
         'active',
         'category',
@@ -119,16 +131,17 @@ const scheduleCommandHandler = async (
         'way',
     ])
 
+    const message = (emoji: string, text: string) => ({
+        text: `:${emoji}: ${text}`,
+    })
+
     switch (action) {
         case 'new': {
             const schedule = new Schedule(picked as ISchedule)
             await schedule.validate()
-
             const doc = await scheduleFires.add(schedule)
-            return {
-                schedule: doc,
-                header: ':heavy_plus_sign: Added a schedule',
-            }
+
+            return done(message('tada', 'Added a schedule'), [doc])
         }
 
         case 'update': {
@@ -140,21 +153,19 @@ const scheduleCommandHandler = async (
                 ...picked,
             })
             await schedule.validate()
-
             const doc = await scheduleFires.set(schedule)
-            return {
-                schedule: doc,
-                header: ':arrows_clockwise: Updated a schedule',
-            }
+
+            return done(message('pencil2', 'Updated a schedule'), [doc])
         }
 
         case 'delete': {
             const [id] = args
-            const deleted = await scheduleFires.delete(id)
-            return {
-                data: deleted,
-                header: ':x: Deleted a schedule',
-            }
+            const existing = await scheduleFires.fetchDocument(id)
+            await scheduleFires.delete(id)
+
+            return done(message('wastebasket', 'Deleted a schedule'), [
+                existing,
+            ])
         }
 
         case 'ls': {
@@ -174,22 +185,20 @@ const scheduleCommandHandler = async (
             if (title) docs = docs.filter(s => s.title.includes(title))
             if (nc) docs = docs.filter(s => s.label == null)
 
-            return {
-                schedule: docs,
-                header: ':spiral_calendar_pad: Schedule list',
-            }
+            return done(message('calendar', 'Schedule list'), docs)
         }
 
         default: {
-            return { data: 'Action not found' }
+            return done({ text: 'Action not found' })
         }
     }
 }
 
 const cyclicScheduleCommandHandler = async (
+    done: ResponseHandler,
     args: string[],
     opts: { [key: string]: any }
-): Promise<Result> => {
+) => {
     // 'new shigohaji mon.1300 itv.2 --times 2 --since 180811'
     // 'new fri.0605 num.2+4 --until 180824.0605'
     // 'shift shigohaji 1w.-2d.30m --since 180811'
@@ -198,6 +207,21 @@ const cyclicScheduleCommandHandler = async (
     const { since, until, times, title, url } = opts
 
     if (!label) throw new Error('"label" is required')
+
+    const message = (
+        emoji: string,
+        type: string,
+        docs: (ISchedule & IDocObject)[]
+    ) => {
+        return [
+            {
+                text: `:${emoji}: ${type} ${
+                    docs.length
+                } cyclic schedules (Showing first and last item)`,
+            },
+            [docs[0], docs[docs.length - 1]],
+        ] as [{ text: string }, (ISchedule & IDocObject)[]]
+    }
 
     switch (type) {
         case 'new': {
@@ -230,12 +254,7 @@ const cyclicScheduleCommandHandler = async (
 
             const docs = await Promise.all(tasks)
 
-            return {
-                header: `:heavy_plus_sign: Added ${
-                    docs.length
-                } cyclic schedules (Showing first and last item)`,
-                schedule: [docs[0], docs[docs.length - 1]],
-            }
+            return done(...message('tada', 'Added', docs))
         }
 
         case 'shift': {
@@ -263,15 +282,7 @@ const cyclicScheduleCommandHandler = async (
             )
             await scheduleFires.bulkSet(schedulesToUpdate)
 
-            return {
-                header: `:arrows_clockwise: Updated ${
-                    schedulesToUpdate.length
-                } cyclic schedules (Showing first and last item)`,
-                schedule: [
-                    schedulesToUpdate[0],
-                    schedulesToUpdate[schedulesToUpdate.length - 1],
-                ],
-            }
+            return done(...message('pencil2', 'Updated', schedulesToUpdate))
         }
 
         case 'delete': {
@@ -285,16 +296,11 @@ const cyclicScheduleCommandHandler = async (
             const ids = existings.map(s => s.id)
             await scheduleFires.bulkDelete(ids)
 
-            return {
-                header: `:arrows_clockwise: Deleted ${
-                    existings.length
-                } cyclic schedules (Showing first and last item)`,
-                schedule: [existings[0], existings[existings.length - 1]],
-            }
+            return done(...message('wastebasket', 'Deleted', existings))
         }
 
         default: {
-            return { data: 'Action of cycle not found' }
+            return done({ text: 'Action for cyclic schedule not found' })
         }
     }
 }
@@ -307,12 +313,15 @@ export const slackHandler = post(
         const { command, text, response_url } = req.params
         if (command !== '/rin' && command !== '/rind') return
 
-        const { data, header, schedule } = await commandHandler(text)
-        const body = schedule ? Schedule.toString(schedule) : data
+        await commandHandler((message, schedules) => {
+            const attachments =
+                schedules && schedules.map(Schedule.toAttachment)
 
-        await axios.post(response_url, {
-            response_type: 'in_channel',
-            text: header + '\n' + body,
-        })
+            return axios.post(response_url, {
+                response_type: 'in_channel',
+                ...message,
+                attachments,
+            })
+        }, text)
     })
 )

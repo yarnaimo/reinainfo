@@ -2,10 +2,12 @@ import {
     addWeeks,
     format,
     getDate,
-    parse,
     getDay,
     isSameMonth,
+    parse,
 } from 'date-fns/fp'
+
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
 export const timeStr = format('H:mm')
 
@@ -35,6 +37,8 @@ Object.defineProperty(Array.prototype, separateWith, {
         return filtered.length ? filtered.join(separator) : undefined
     },
 })
+
+export const notNull = <T>(v: T | null): v is T => v != null
 
 export const pick = (obj: { [key: string]: any }, array: any[]) => {
     const target = {} as { [key: string]: any }
