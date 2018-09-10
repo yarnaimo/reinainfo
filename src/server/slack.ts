@@ -67,9 +67,8 @@ const dateRangeQuery = (
 }
 
 export type ResponseHandler = (
-    message: Omit<ChatPostMessageArguments, 'channel'> & {
-        schedules?: (ISchedule & IDocObject)[]
-    }
+    message: Omit<ChatPostMessageArguments, 'channel'>,
+    schedules?: (ISchedule & IDocObject)[]
 ) => Promise<any>
 
 export const commandHandler = async (done: ResponseHandler, text: string) => {
@@ -132,13 +131,8 @@ const scheduleCommandHandler = async (
         'way',
     ])
 
-    const message = (
-        emoji: string,
-        text: string,
-        docs: (ISchedule & IDocObject)[]
-    ) => ({
+    const message = (emoji: string, text: string) => ({
         text: `:${emoji}: ${text}`,
-        schedules: docs,
     })
 
     switch (action) {
@@ -147,7 +141,7 @@ const scheduleCommandHandler = async (
             await schedule.validate()
             const doc = await scheduleFires.add(schedule)
 
-            return done(message('tada', 'Added a schedule', [doc]))
+            return done(message('tada', 'Added a schedule'), [doc])
         }
 
         case 'update': {
@@ -161,7 +155,7 @@ const scheduleCommandHandler = async (
             await schedule.validate()
             const doc = await scheduleFires.set(schedule)
 
-            return done(message('pencil2', 'Updated a schedule', [doc]))
+            return done(message('pencil2', 'Updated a schedule'), [doc])
         }
 
         case 'delete': {
@@ -169,9 +163,9 @@ const scheduleCommandHandler = async (
             const existing = await scheduleFires.fetchDocument(id)
             await scheduleFires.delete(id)
 
-            return done(
-                message('wastebasket', 'Deleted a schedule', [existing])
-            )
+            return done(message('wastebasket', 'Deleted a schedule'), [
+                existing,
+            ])
         }
 
         case 'ls': {
@@ -191,7 +185,7 @@ const scheduleCommandHandler = async (
             if (title) docs = docs.filter(s => s.title.includes(title))
             if (nc) docs = docs.filter(s => s.label == null)
 
-            return done(message('calendar', 'Schedule list', docs))
+            return done(message('calendar', 'Schedule list'), docs)
         }
 
         default: {
@@ -218,12 +212,16 @@ const cyclicScheduleCommandHandler = async (
         emoji: string,
         type: string,
         docs: (ISchedule & IDocObject)[]
-    ) => ({
-        text: `:${emoji}: ${type} ${
-            docs.length
-        } cyclic schedules (Showing first and last item)`,
-        schedules: [docs[0], docs[docs.length - 1]],
-    })
+    ) => {
+        return [
+            {
+                text: `:${emoji}: ${type} ${
+                    docs.length
+                } cyclic schedules (Showing first and last item)`,
+            },
+            [docs[0], docs[docs.length - 1]],
+        ] as [{ text: string }, (ISchedule & IDocObject)[]]
+    }
 
     switch (type) {
         case 'new': {
@@ -256,7 +254,7 @@ const cyclicScheduleCommandHandler = async (
 
             const docs = await Promise.all(tasks)
 
-            return done(message('tada', 'Added', docs))
+            return done(...message('tada', 'Added', docs))
         }
 
         case 'shift': {
@@ -284,7 +282,7 @@ const cyclicScheduleCommandHandler = async (
             )
             await scheduleFires.bulkSet(schedulesToUpdate)
 
-            return done(message('pencil2', 'Updated', schedulesToUpdate))
+            return done(...message('pencil2', 'Updated', schedulesToUpdate))
         }
 
         case 'delete': {
@@ -298,7 +296,7 @@ const cyclicScheduleCommandHandler = async (
             const ids = existings.map(s => s.id)
             await scheduleFires.bulkDelete(ids)
 
-            return done(message('wastebasket', 'Deleted', existings))
+            return done(...message('wastebasket', 'Deleted', existings))
         }
 
         default: {
@@ -315,10 +313,9 @@ export const slackHandler = post(
         const { command, text, response_url } = req.params
         if (command !== '/rin' && command !== '/rind') return
 
-        await commandHandler(message => {
+        await commandHandler((message, schedules) => {
             const attachments =
-                message.schedules &&
-                message.schedules.map(Schedule.toAttachment)
+                schedules && schedules.map(Schedule.toAttachment)
 
             return axios.post(response_url, {
                 response_type: 'in_channel',

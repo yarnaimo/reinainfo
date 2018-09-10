@@ -1,11 +1,11 @@
-import { IDocObject } from 'firestore-simple';
-import { ISchedule } from '../models/Schedule';
-import { commandHandler } from '../server/slack';
-import { parseDate } from '../utils';
+import { IDocObject } from 'firestore-simple'
+import { ISchedule } from '../models/Schedule'
+import { commandHandler } from '../server/slack'
+import { parseDate } from '../utils'
 
 const h = (text: string) =>
     new Promise<(ISchedule & IDocObject)[]>(resolve => {
-        commandHandler(async message => resolve(message.schedules), text)
+        commandHandler(async (message, schedules) => resolve(schedules), text)
     })
 
 jest.setTimeout(10000)
