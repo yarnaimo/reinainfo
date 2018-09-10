@@ -200,21 +200,24 @@ export class Schedule extends ClassValidator implements ISchedule {
     }
 
     static toAttachment(s: ISchedule & IDocObject) {
-        const target = Object.assign({}, s, {
+        const obj = {
+            ...s,
             date: format('yyyy/MM/dd HH:mm', s.date.toDate()),
-            ...(s.parts ? { parts: s.parts.map(Part.getText) } : {}),
-        })
-        const { title } = target
-        delete target.title
+            ...(s.parts ? { parts: s.parts.map(Part.getText).join('\n') } : {}),
+        }
+        const { category, active, title, date, ...otherFields } = obj
+        console.log(otherFields)
 
         return {
+            color: active ? '#ef9a9a' : '#E0E0E0',
+            author_name: category,
             title,
-            fields: Object.keys(s)
+            text: date,
+            fields: Object.keys(otherFields)
                 .sort()
                 .map(key => ({
-                    short: true,
                     title: key,
-                    value: s[key],
+                    value: otherFields[key as keyof typeof otherFields],
                 })),
         } as MessageAttachment
     }
