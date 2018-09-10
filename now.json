@@ -1,7 +1,14 @@
 {
+    "name": "reinainfo",
     "alias": "reinainfo",
     "engines": {
-        "node": "^10.5.3"
+        "node": "^10.7.0"
+    },
+    "scale": {
+        "sfo1": {
+            "min": 1,
+            "max": 1
+        }
     },
     "env": {
         "TZ": "Asia/Tokyo",
