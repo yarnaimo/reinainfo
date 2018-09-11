@@ -1,10 +1,10 @@
 import { Query, Timestamp } from '@google-cloud/firestore'
 import { ChatPostMessageArguments } from '@slack/client'
-import axios from 'axios'
 import crypto from 'crypto'
 import { addMinutes, endOfDay } from 'date-fns/fp'
 import { IDocObject } from 'firestore-simple'
 import getopts from 'getopts'
+import got from 'got'
 import { send, text } from 'micro'
 import { AugmentedRequestHandler, post } from 'microrouter'
 import qs from 'qs'
@@ -317,10 +317,13 @@ export const slackHandler = post(
             const attachments =
                 schedules && schedules.map(Schedule.toAttachment)
 
-            return axios.post(response_url, {
-                response_type: 'in_channel',
-                ...message,
-                attachments,
+            return got.post(response_url, {
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({
+                    response_type: 'in_channel',
+                    ...message,
+                    attachments,
+                }),
             })
         }, text)
     })
