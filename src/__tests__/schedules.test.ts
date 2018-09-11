@@ -1,8 +1,9 @@
 import { Timestamp } from '@google-cloud/firestore'
+import { multiline } from '@yarnaimo/arraymo'
 import { addDays } from 'date-fns/fp'
 import { scheduleFires } from '../models/Schedule'
 import { ScheduleBatch } from '../tasks/schedules'
-import { getDateString, multilineText, parseDate, timeStr } from '../utils'
+import { getDateString, parseDate, timeStr } from '../utils'
 
 describe('Schedule Batch', () => {
     const now = parseDate('000801.2200')
@@ -41,7 +42,7 @@ describe('Schedule Batch', () => {
                 '🎤 EVENT1',
                 `${timeStr(day1)}〜`,
                 'URL',
-            ][multilineText],
+            ][multiline](),
         ])
     })
 
@@ -56,14 +57,14 @@ describe('Schedule Batch', () => {
                 `${getDateString(day1)} 🎤 EVENT1`,
                 `${timeStr(day1)}〜`,
                 'URL',
-            ][multilineText],
+            ][multiline](),
             [
                 `${getDateString(day1)} 〜 ${getDateString(day7)} の予定 (2/2)`,
                 '',
                 `${getDateString(day2)} 🎤 EVENT2`,
                 `${timeStr(day2)}〜`,
                 'URL',
-            ][multilineText],
+            ][multiline](),
         ])
     })
 

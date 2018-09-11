@@ -445,6 +445,10 @@
     "@types/events" "*"
     "@types/node" "*"
 
+"@yarnaimo/arraymo@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@yarnaimo/arraymo/-/arraymo-1.0.1.tgz#3f2062096d7296866660a963d618227668e009c4"
+
 "@yarnaimo/twimo@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@yarnaimo/twimo/-/twimo-1.1.1.tgz#d9e8179469dda28f88e5a248feec1b305bf56dc7"

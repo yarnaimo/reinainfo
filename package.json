@@ -39,6 +39,7 @@
     "@slack/client": "^4.3.1",
     "@tensorflow/tfjs": "^0.12.4",
     "@tensorflow/tfjs-node": "^0.1.12",
+    "@yarnaimo/arraymo": "^1.0.1",
     "@yarnaimo/twimo": "^1.1.1",
     "class-validator": "^0.9.1",
     "date-fns": "^2.0.0-alpha.11",
