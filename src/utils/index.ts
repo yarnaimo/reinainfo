@@ -11,33 +11,6 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 
 export const timeStr = format('H:mm')
 
-export const multilineText = Symbol('Array#multilineText')
-export const separateWith = Symbol('Array#separatedText')
-
-declare global {
-    interface Array<T> {
-        [multilineText]: string
-        [separateWith](separator: string): string | undefined
-    }
-}
-
-Object.defineProperty(Array.prototype, multilineText, {
-    get() {
-        return (this as any[])
-            .filter(e => typeof e === 'string')
-            .map(e => e.trim())
-            .join('\n')
-    },
-})
-Object.defineProperty(Array.prototype, separateWith, {
-    value: function(separator: string) {
-        const filtered = (this as any[])
-            .filter(e => typeof e === 'string')
-            .map(e => e.trim())
-        return filtered.length ? filtered.join(separator) : undefined
-    },
-})
-
 export const notNull = <T>(v: T | null): v is T => v != null
 
 export const pick = (obj: { [key: string]: any }, array: any[]) => {

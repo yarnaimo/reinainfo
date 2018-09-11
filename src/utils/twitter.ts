@@ -1,4 +1,4 @@
-import { ITweet } from '@yarnaimo/twimo/dist/Tweet'
+import { ITweet } from '@yarnaimo/twimo'
 
 export const tweetToUrl = (t: ITweet) => {
     const {

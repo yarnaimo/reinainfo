@@ -1,5 +1,6 @@
 import { Timestamp } from '@google-cloud/firestore'
 import { MessageAttachment } from '@slack/client'
+import { joinWith, multiline } from '@yarnaimo/arraymo'
 import {
     IsBoolean,
     IsIn,
@@ -14,13 +15,7 @@ import {
 import { format, parse } from 'date-fns/fp'
 import { IDocObject } from 'firestore-simple'
 import { getCollection } from '../services/firebase'
-import {
-    getDateString,
-    multilineText,
-    separateWith,
-    stringify,
-    timeStr,
-} from '../utils'
+import { getDateString, timeStr } from '../utils'
 
 export const scheduleFires = getCollection<ISchedule>('schedules')
 
@@ -103,7 +98,7 @@ export class Part {
             withSuffix(p.gatherAt, '集合'),
             withSuffix(p.opensAt, '開場'),
             withSuffix(p.startsAt, '開演'),
-        ][separateWith](' ')
+        ][joinWith](' ')
         return `${p.name} » ${timesStr}`
     }
 }
@@ -176,29 +171,6 @@ export class Schedule extends ClassValidator implements ISchedule {
         s && Object.assign(this, s)
     }
 
-    static toString(s: ISchedule | ISchedule[] | string) {
-        if (typeof s === 'string') return s
-
-        const stringifySchedule = (s: ISchedule) => {
-            return (
-                '```' +
-                stringify(s, {
-                    date: date =>
-                        format(
-                            'yyyy/MM/dd HH:mm',
-                            (date as Timestamp).toDate()
-                        ),
-                    parts: parts => parts.map(Part.getText),
-                }) +
-                '```'
-            )
-        }
-
-        return Array.isArray(s)
-            ? s.map(stringifySchedule)[multilineText]
-            : stringifySchedule(s)
-    }
-
     static toAttachment(s: ISchedule & IDocObject) {
         const obj = {
             ...s,
@@ -246,9 +218,9 @@ export class Schedule extends ClassValidator implements ISchedule {
         return [
             header,
             '',
-            [dateString, this.emoji, this.title, venue][separateWith](' '),
+            [dateString, this.emoji, this.title, venue][joinWith](' '),
             time,
             this.url,
-        ][multilineText]
+        ][multiline]()!
     }
 }

@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs'
-import { ITweet } from '@yarnaimo/twimo/dist/Tweet'
+import { ITweet } from '@yarnaimo/twimo'
 import { readFileSync } from 'fs'
 import lazy from 'lazy.js'
 import { join } from 'path'

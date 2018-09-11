@@ -1,10 +1,10 @@
 import { Query, Timestamp } from '@google-cloud/firestore'
 import { ChatPostMessageArguments } from '@slack/client'
-import axios from 'axios'
 import crypto from 'crypto'
 import { addMinutes, endOfDay } from 'date-fns/fp'
 import { IDocObject } from 'firestore-simple'
 import getopts from 'getopts'
+import got from 'got'
 import { send, text } from 'micro'
 import { AugmentedRequestHandler, post } from 'microrouter'
 import qs from 'qs'
@@ -95,14 +95,16 @@ export const commandHandler = async (done: ResponseHandler, text: string) => {
             opts.parts = Part.parseMultiple(opts.parts)
         }
 
-        if (action === 'cycle') {
-            return await cyclicScheduleCommandHandler(done, args, opts)
-        }
-        if (action === 'rt') {
-            return await retweetCommandHandler(done, args)
-        }
+        switch (action) {
+            case 'cycle':
+                return await cyclicScheduleCommandHandler(done, args, opts)
 
-        return await scheduleCommandHandler(done, action, args, opts)
+            case 'rt':
+                return await retweetCommandHandler(done, args)
+
+            default:
+                return await scheduleCommandHandler(done, action, args, opts)
+        }
     } catch (e) {
         console.error(e)
         return done({ text: (e as Error).toString() })
@@ -131,9 +133,13 @@ const scheduleCommandHandler = async (
         'way',
     ])
 
-    const message = (emoji: string, text: string) => ({
-        text: `:${emoji}: ${text}`,
-    })
+    const doneWithDocs = (
+        emoji: string,
+        text: string,
+        docs: (ISchedule & IDocObject)[]
+    ) => {
+        return done({ text: `:${emoji}: ${text}` }, docs)
+    }
 
     switch (action) {
         case 'new': {
@@ -141,7 +147,7 @@ const scheduleCommandHandler = async (
             await schedule.validate()
             const doc = await scheduleFires.add(schedule)
 
-            return done(message('tada', 'Added a schedule'), [doc])
+            return doneWithDocs('tada', 'Added a schedule', [doc])
         }
 
         case 'update': {
@@ -155,7 +161,7 @@ const scheduleCommandHandler = async (
             await schedule.validate()
             const doc = await scheduleFires.set(schedule)
 
-            return done(message('pencil2', 'Updated a schedule'), [doc])
+            return doneWithDocs('pencil2', 'Updated a schedule', [doc])
         }
 
         case 'delete': {
@@ -163,9 +169,7 @@ const scheduleCommandHandler = async (
             const existing = await scheduleFires.fetchDocument(id)
             await scheduleFires.delete(id)
 
-            return done(message('wastebasket', 'Deleted a schedule'), [
-                existing,
-            ])
+            return doneWithDocs('wastebasket', 'Deleted a schedule', [existing])
         }
 
         case 'ls': {
@@ -185,7 +189,7 @@ const scheduleCommandHandler = async (
             if (title) docs = docs.filter(s => s.title.includes(title))
             if (nc) docs = docs.filter(s => s.label == null)
 
-            return done(message('calendar', 'Schedule list'), docs)
+            return doneWithDocs('calendar', 'Schedule list', docs)
         }
 
         default: {
@@ -208,19 +212,19 @@ const cyclicScheduleCommandHandler = async (
 
     if (!label) throw new Error('"label" is required')
 
-    const message = (
+    const doneWithDocs = (
         emoji: string,
         type: string,
         docs: (ISchedule & IDocObject)[]
     ) => {
-        return [
+        return done(
             {
                 text: `:${emoji}: ${type} ${
                     docs.length
                 } cyclic schedules (Showing first and last item)`,
             },
-            [docs[0], docs[docs.length - 1]],
-        ] as [{ text: string }, (ISchedule & IDocObject)[]]
+            [docs[0], docs[docs.length - 1]]
+        )
     }
 
     switch (type) {
@@ -254,7 +258,7 @@ const cyclicScheduleCommandHandler = async (
 
             const docs = await Promise.all(tasks)
 
-            return done(...message('tada', 'Added', docs))
+            return doneWithDocs('tada', 'Added', docs)
         }
 
         case 'shift': {
@@ -282,7 +286,7 @@ const cyclicScheduleCommandHandler = async (
             )
             await scheduleFires.bulkSet(schedulesToUpdate)
 
-            return done(...message('pencil2', 'Updated', schedulesToUpdate))
+            return doneWithDocs('pencil2', 'Updated', schedulesToUpdate)
         }
 
         case 'delete': {
@@ -296,7 +300,7 @@ const cyclicScheduleCommandHandler = async (
             const ids = existings.map(s => s.id)
             await scheduleFires.bulkDelete(ids)
 
-            return done(...message('wastebasket', 'Deleted', existings))
+            return doneWithDocs('wastebasket', 'Deleted', existings)
         }
 
         default: {
@@ -317,10 +321,13 @@ export const slackHandler = post(
             const attachments =
                 schedules && schedules.map(Schedule.toAttachment)
 
-            return axios.post(response_url, {
-                response_type: 'in_channel',
-                ...message,
-                attachments,
+            return got.post(response_url, {
+                headers: { 'content-type': 'application/json' },
+                body: JSON.stringify({
+                    response_type: 'in_channel',
+                    ...message,
+                    attachments,
+                }),
             })
         }, text)
     })

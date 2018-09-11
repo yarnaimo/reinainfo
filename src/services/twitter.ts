@@ -1,7 +1,7 @@
-import { Twitter } from '@yarnaimo/twimo'
+import { TwimoClient } from '@yarnaimo/twimo'
 import { config } from '../config'
 
-export const twitter = new Twitter(config.twitter)
+export const twitter = new TwimoClient(config.twitter)
 
 const isNotProduction = process.env.NODE_ENV !== 'production'
 

@@ -1,4 +1,4 @@
-import { ITweet } from '@yarnaimo/twimo/dist/Tweet'
+import { ITweet } from '@yarnaimo/twimo'
 import { readFileSync, writeFileSync } from 'fs'
 import { extractTweetId, tmpPath, tweetToVectorWithLabel, utf8 } from '.'
 
