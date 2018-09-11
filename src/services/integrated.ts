@@ -1,9 +1,9 @@
-import { Twitter } from '@yarnaimo/twimo'
+import { TwimoClient } from '@yarnaimo/twimo'
 import { tweetToUrl } from '../utils/twitter'
 import { postSlackMessage } from './slack'
 
 export const retweetWithNotification = async (
-    twitter: Twitter,
+    twitter: TwimoClient,
     ids: string[]
 ) => {
     const retweets = await twitter.retweet(ids)

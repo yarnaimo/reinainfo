@@ -1,5 +1,4 @@
-import { minusOne } from '@yarnaimo/twimo'
-import { ITweet } from '@yarnaimo/twimo/dist/Tweet'
+import { ITweet, minusOne } from '@yarnaimo/twimo'
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
 import lazy from 'lazy.js'
 import { extractTweetId, tmpPath } from '.'
