@@ -178,7 +178,6 @@ export class Schedule extends ClassValidator implements ISchedule {
             ...(s.parts ? { parts: s.parts.map(Part.getText).join('\n') } : {}),
         }
         const { category, active, title, date, ...otherFields } = obj
-        console.log(otherFields)
 
         return {
             color: active ? '#ef9a9a' : '#E0E0E0',
