@@ -8,7 +8,7 @@
     "build": "tsc",
     "config-env": "ts-node config-env",
     "dev": "ts-node src/server",
-    "start": "NODE_ENV=production node dist/server",
+    "start": "NODE_ENV=production node dist/src/server",
     "test": "NODE_ENV=test jest",
     "ts-node": "ts-node"
   },
