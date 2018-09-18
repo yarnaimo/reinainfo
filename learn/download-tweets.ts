@@ -1,6 +1,7 @@
-import { ITweet, minusOne } from '@yarnaimo/twimo'
+import { minusOne } from '@yarnaimo/twimo'
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
 import lazy from 'lazy.js'
+import { Status } from 'twitter-d'
 import { extractTweetId, tmpPath } from '.'
 import { twitter } from '../src/services/twitter'
 
@@ -13,10 +14,10 @@ const tweetIds = process.argv.slice(2).map(extractTweetId)
 const main = async () => {
     const q = '上田麗奈 exclude:retweets -#nowplaying'
 
-    const tweets = [] as ITweet[]
+    const tweets = [] as Status[]
 
     if (tweetIds.length) {
-        const statuses = await twitter.get<ITweet[]>('statuses/lookup', {
+        const statuses = await twitter.get<Status[]>('statuses/lookup', {
             id: tweetIds.join(','),
         })
         tweets.push(...statuses)
