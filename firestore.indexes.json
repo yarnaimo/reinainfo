@@ -1,14 +1,14 @@
 {
   "indexes": [
     {
-      "collectionId": "schedules",
+      "collectionId": "schedule",
       "fields": [
         { "fieldPath": "active", "mode": "DESCENDING" },
         { "fieldPath": "date", "mode": "ASCENDING" }
       ]
     },
     {
-      "collectionId": "schedules",
+      "collectionId": "schedule",
       "fields": [
         { "fieldPath": "label", "mode": "ASCENDING" },
         { "fieldPath": "date", "mode": "ASCENDING" }
