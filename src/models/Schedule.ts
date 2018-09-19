@@ -1,6 +1,5 @@
-import { Timestamp } from '@google-cloud/firestore'
 import { MessageAttachment } from '@slack/client'
-import { joinWith, multiline } from '@yarnaimo/arraymo'
+import { globalMatch, unite } from '@yarnaimo/arraymo'
 import {
     IsBoolean,
     IsIn,
@@ -10,14 +9,10 @@ import {
     IsUrl,
     MaxLength,
     MinLength,
-    validate,
 } from 'class-validator'
-import { format, parse } from 'date-fns/fp'
-import { IDocObject } from 'firestore-simple'
-import { getCollection } from '../services/firebase'
-import { getDateString, timeStr } from '../utils'
-
-export const scheduleFires = getCollection<ISchedule>('schedules')
+import { property } from 'pring'
+import { DocBase } from '../services/firebase'
+import { day, timeStr, toDateString } from '../utils/day'
 
 export const cTypes = {
     appearance: {
@@ -31,7 +26,7 @@ export const cTypes = {
     release: {
         music: '🎶',
         video: '📼',
-        game: '🎮 ',
+        game: '🎮',
         book: '📗',
     },
 }
@@ -41,185 +36,181 @@ type Category =
 
 type CategoryType = keyof typeof cTypes
 
-const categories = Object.entries(cTypes).reduce(
-    (obj, [type, categories]) => {
-        Object.entries(categories).forEach(([category, emoji]) => {
-            obj[category as Category] = {
-                type: type as CategoryType,
-                emoji,
-            }
-        })
-        return obj
-    },
-    {} as { [C in Category]: { type: CategoryType; emoji: string } }
-)
+const categories = (() => {
+    const obj = {} as { [C in Category]: { type: CategoryType; emoji: string } }
+
+    for (const [type, catsInType] of Object.entries(cTypes)) {
+        for (const [cat, emoji] of Object.entries(catsInType)) {
+            obj[cat as Category] = { type: type as CategoryType, emoji }
+        }
+    }
+    return obj
+})()
 
 export interface IPart {
-    name: string
-    gatherAt?: string
-    opensAt?: string
+    name: string | null
+    gatherAt: string | null
+    opensAt: string | null
     startsAt: string
 }
 
-export class Part {
-    name!: string
-    gatherAt?: string
-    opensAt?: string
-    startsAt!: string
+const partPattern = (() => {
+    const T = '(?:\\d{3,4})?'
+    const TD = `?:\\.(${T})`
+    const S = '(?:^|\\+)'
+    const E = '(?=$|\\+)'
+    return new RegExp(
+        `${S}([^.+]*)(${TD}(?!\\.${T}${E}))?(${TD})?(${TD})${E}`,
+        'g'
+    )
+})()
 
+export class Parts {
     static parse(str: string) {
-        const getTime = (str: string) => {
-            return format('H:mm', parse(new Date(), 'HHmm', str))
-        }
+        const matches = globalMatch(str, partPattern)
 
-        const [name, ...times] = str.split('.')
-        if (!times.length) throw new Error('Invalid part string')
-
-        while (times.length < 3) {
-            times.unshift(undefined as any)
-        }
-        const part: any = { name }
-        if (times[0]) part.gatherAt = getTime(times[0])
-        if (times[1]) part.opensAt = getTime(times[1])
-        if (times[2]) part.startsAt = getTime(times[2]) as string
-
-        return part as IPart
+        const parts = matches.map(([, name = null, ...times]) => {
+            const [gatherAt, opensAt, startsAt] = times.map(str => {
+                return str
+                    ? `${Number(str.slice(-4, -2))}:${str.slice(-2)}`
+                    : null
+            })
+            return {
+                name: name,
+                gatherAt,
+                opensAt,
+                startsAt: startsAt!,
+            } as IPart
+        })
+        return parts
     }
 
-    static parseMultiple(str: string) {
-        return str.split('+').map((str: string) => Part.parse(str))
-    }
+    static getText(parts?: IPart[]) {
+        if (!parts) return null
 
-    static getText(p: IPart) {
-        const withSuffix = (time: string | undefined, suffix: string) => {
-            return time ? time + suffix : undefined
+        const withSuffix = (time: string | null, suffix: string) => {
+            return time ? time + suffix : null
         }
-        const timesStr = [
-            withSuffix(p.gatherAt, '集合'),
-            withSuffix(p.opensAt, '開場'),
-            withSuffix(p.startsAt, '開演'),
-        ][joinWith](' ')
-        return `${p.name} » ${timesStr}`
-    }
-}
 
-export interface ISchedule {
-    id?: string
-    label?: string
-    active?: boolean
-    category: Category
-    title: string
-    url: string
-    date: Timestamp
-    parts?: IPart[]
-    venue?: string
-    way?: string
-}
+        return parts
+            .map((p, i) => {
+                const timesStr = unite(' ', [
+                    withSuffix(p.gatherAt, '集合'),
+                    withSuffix(p.opensAt, '開場'),
+                    withSuffix(p.startsAt, '開演'),
+                ])
 
-class ClassValidator {
-    async validate() {
-        const errors = await validate(this)
-        if (errors.length) {
-            const e = new Error(errors.toString())
-            e.name = 'Validation Error'
-            throw e
-        }
+                return `${p.name || i + 1} » ${timesStr}`
+            })
+            .join('\n')
     }
 }
 
-export class Schedule extends ClassValidator implements ISchedule {
-    id!: string
-
+export class Schedule extends DocBase<Schedule> {
+    @property
+    @IsString()
+    @IsOptional()
     label?: string
 
+    @property
     @IsBoolean()
     active: boolean = true
 
+    @property
     @IsIn(Object.keys(categories))
     category!: Category
 
-    get categoryType() {
-        return categories[this.category].type
+    get isAppearance() {
+        return categories[this.category].type === 'appearance'
     }
     get emoji() {
         return categories[this.category].emoji
     }
 
+    @property
     @IsString()
     @MinLength(4)
     @MaxLength(64)
     title!: string
 
+    @property
     @IsUrl()
     url!: string
 
-    @IsInstance(Timestamp)
-    date!: Timestamp
+    @property
+    @IsInstance(Date)
+    date!: Date
 
-    parts?: IPart[]
+    @property
+    parts: IPart[] = []
 
+    @property
     @IsString()
     @IsOptional()
     venue?: string
 
+    @property
     @IsString()
     @IsOptional()
     way?: string
 
-    constructor(s?: ISchedule) {
-        super()
-        s && Object.assign(this, s)
+    async save() {
+        await this.validate()
+        return await super.save()
     }
 
-    static toAttachment(s: ISchedule & IDocObject) {
-        const obj = {
-            ...s,
-            date: format('yyyy/MM/dd HH:mm', s.date.toDate()),
-            ...(s.parts ? { parts: s.parts.map(Part.getText).join('\n') } : {}),
+    async update() {
+        await this.validate()
+        return await super.update()
+    }
+
+    toAttachment() {
+        const toField = (key: keyof this, value?: any) => {
+            return { title: key, value: value || this[key] }
         }
-        const { category, active, title, date, ...otherFields } = obj
 
         return {
-            color: active ? '#ef9a9a' : '#E0E0E0',
-            author_name: category,
-            title,
-            text: date,
-            fields: Object.keys(otherFields)
-                .sort()
-                .map(key => ({
-                    title: key,
-                    value: otherFields[key as keyof typeof otherFields],
-                })),
+            color: this.active ? '#ef9a9a' : '#E0E0E0',
+            author_name: this.category,
+            title: this.title,
+            text: day(this.date).format('YYYY/MM/DD HH:mm'),
+            fields: [
+                toField('label'),
+                toField('parts', Parts.getText(this.parts)),
+                toField('url'),
+                toField('venue'),
+                toField('way'),
+            ],
         } as MessageAttachment
     }
 
     getTextWith(header: string, withDate: boolean) {
-        const date = this.date.toDate()
+        const date = this.date
 
-        const dateString = withDate ? getDateString(date) : null
+        const dateString = withDate ? toDateString(date) : null
 
-        let time = null
-        if (
-            this.categoryType === 'appearance' &&
-            format('HHmm', date) !== '0000'
-        ) {
-            if (this.parts) {
-                time = this.parts.map(p => Part.getText(p)).join('\n')
-            } else {
-                time =
-                    timeStr(this.date.toDate()) +
-                    (this.category === 'up' ? '' : '〜')
+        const time = (() => {
+            if (this.isAppearance && day(date).format('HHmm') !== '0000') {
+                if (this.parts.length) {
+                    return Parts.getText(this.parts)
+                } else {
+                    return (
+                        timeStr(this.date) +
+                        (this.category === 'up' ? '' : '〜')
+                    )
+                }
             }
-        }
+            return null
+        })()
 
         const venue = this.venue ? `@${this.venue}` : ''
 
-        return [
+        return unite([
             header,
             '',
-            [dateString, this.emoji, this.title, venue][joinWith](' '),
+            unite(' ', [dateString, this.emoji, this.title, venue]),
             time,
             this.url,
-        ][multiline]()!
+        ])!
     }
 }
