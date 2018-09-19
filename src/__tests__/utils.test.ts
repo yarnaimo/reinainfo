@@ -1,11 +1,5 @@
-import {
-    createCyclicDates,
-    durationStringToMinutes,
-    parseDate,
-    pick,
-    stringify,
-} from '../utils'
-import { tweetToUrl, urlToTweetId } from '../utils/twitter'
+import { parseDate } from 'tough-cookie'
+import { createCyclicDates, durationStringToMinutes } from '../utils/day'
 
 describe('Utils', () => {
     test('parse date', () => {
@@ -15,27 +9,6 @@ describe('Utils', () => {
     test('parse date with time', () => {
         expect(parseDate('0801.0117')).toEqual(
             new Date(new Date().getFullYear(), 7, 1, 1, 17)
-        )
-    })
-
-    test('pick object', () => {
-        expect(pick({ a: 0, b: 1, c: undefined }, ['a', 'c', 'd'])).toEqual({
-            a: 0,
-        })
-    })
-
-    test('stringify', () => {
-        expect(
-            stringify({ name: 'imo', id: 3 }, { id: (id: number) => id + '' })
-        ).toBe(
-            JSON.stringify(
-                {
-                    id: '3',
-                    name: 'imo',
-                },
-                undefined,
-                2
-            )
         )
     })
 
@@ -66,25 +39,6 @@ describe('Utils', () => {
     test('duration string to minutes', () => {
         expect(durationStringToMinutes('2d.1w.3h.4m')).toBe(
             2 * 24 * 60 + 1 * 7 * 24 * 60 + 3 * 60 + 4
-        )
-    })
-})
-
-describe('Utils - Twitter', () => {
-    test('tweet to url', () => {
-        expect(
-            tweetToUrl({
-                retweeted_status: {
-                    id_str: '1234',
-                    user: { screen_name: 'yarnaimo' },
-                },
-            } as any)
-        ).toEqual('https://twitter.com/yarnaimo/status/1234')
-    })
-
-    test('url to tweet id', () => {
-        expect(urlToTweetId('https://twitter.com/yarnaimo/status/1234')).toBe(
-            '1234'
         )
     })
 })
