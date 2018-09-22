@@ -1,8 +1,8 @@
 import * as tf from '@tensorflow/tfjs'
-import { ITweet } from '@yarnaimo/twimo'
 import { readFileSync } from 'fs'
 import lazy from 'lazy.js'
 import { join } from 'path'
+import { Status } from 'twitter-d'
 
 type R0 = tf.Tensor<tf.Rank.R0>
 type R1 = tf.Tensor<tf.Rank.R1>
@@ -58,7 +58,7 @@ export class TweetClassifier {
         this.b = tf.tensor1d([b])
     }
 
-    isOfficialTweet(tweet: ITweet) {
+    isOfficialTweet(tweet: Status) {
         const x = tf.tensor1d(tweetToVector(tweet)).as2D(1, -1)
         const y = getSigmoid(x, this.v, this.w, this.b)
 
@@ -68,7 +68,9 @@ export class TweetClassifier {
 
 export const extractTweetId = (str: string) => (str.match(/(\d+)$/) || [])[1]
 
-export const tweetToVector = ({ user, ...t }: ITweet) => {
+const length = (array?: any[] | null) => (array ? array.length : 0)
+
+export const tweetToVector = ({ user, ...t }: Status) => {
     return [
         user.friends_count,
         user.followers_count,
@@ -76,19 +78,19 @@ export const tweetToVector = ({ user, ...t }: ITweet) => {
         user.favourites_count,
         user.verified,
         user.description.length,
-        user.entities.description.urls.length,
+        length(user.entities.description.urls),
         user.url != null,
         t.retweet_count,
         t.favorite_count,
         t.full_text.length,
-        t.entities.hashtags.length,
-        t.entities.urls.length,
-        t.extended_entities ? t.extended_entities.media.length : 0,
+        length(t.entities.hashtags),
+        length(t.entities.urls),
+        t.extended_entities ? length(t.extended_entities.media) : 0,
     ].map(Number)
 }
 
 export const tweetToVectorWithLabel = (officialTweetIds?: string[]) => (
-    t: ITweet
+    t: Status
 ) => {
     return [
         officialTweetIds ? officialTweetIds.includes(t.id_str) : true,

@@ -1,5 +1,5 @@
-import { ITweet } from '@yarnaimo/twimo'
 import { readFileSync, writeFileSync } from 'fs'
+import { Status } from 'twitter-d'
 import { extractTweetId, tmpPath, tweetToVectorWithLabel, utf8 } from '.'
 
 const csvPath = tmpPath('tweets.csv')
@@ -13,7 +13,7 @@ const toVector = tweetToVectorWithLabel(
     officialTweetIds.length ? officialTweetIds : undefined
 )
 
-const data = (JSON.parse(jsonData) as ITweet[])
+const data = (JSON.parse(jsonData) as Status[])
     .map(toVector)
     .map(arr => arr.join(','))
     .join('\n')

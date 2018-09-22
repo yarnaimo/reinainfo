@@ -1,69 +1,71 @@
-import { CollectionReference, Query } from '@google-cloud/firestore'
+import { validate, ValidationError } from 'class-validator'
 import admin from 'firebase-admin'
-import { FirestoreSimple, IDocData, IDocObject } from 'firestore-simple'
+import { Base, initialize } from 'pring'
+import { Query } from 'pring/lib/query'
 import { firebaseConfig } from '../config'
+import { day, parseDate } from '../utils/day'
 
-admin.initializeApp({
+const app = admin.initializeApp({
     credential: admin.credential.cert(firebaseConfig),
 })
+export const firestore = app.firestore()
 
-export const firestore = admin.firestore()
-firestore.settings({ timestampsInSnapshots: true })
+initialize(firestore, admin.firestore.FieldValue.serverTimestamp())
 
-export const getCollection = <T>(path: string) => {
-    return new Fires<T>(firestore, path)
+class ValidationErrors {
+    constructor(public errors: ValidationError[]) {}
+
+    toString() {
+        return [
+            '🚫 Validation Error',
+            '',
+            ...this.errors.map(e => e.toString()),
+        ].join('\n')
+    }
 }
 
-export class Fires<T> extends FirestoreSimple {
-    _toDoc(object: T & IDocObject | T & IDocData) {
-        return super._toDoc(object) as T & IDocData
+export abstract class DocBase<T extends Base> extends Base {
+    constructor(id?: string, data?: Partial<T>) {
+        super(id, data)
     }
 
-    _toObject(docId: string, docData: T & IDocData) {
-        return super._toObject(docId, docData) as T & IDocObject
+    static async getByQuery<T extends typeof Base>(
+        this: T,
+        fn: (q: Query<InstanceType<T>>) => Query<InstanceType<T>>
+    ) {
+        const q = new Query<InstanceType<T>>(this.getReference())
+        const docs = await fn(q)
+            .dataSource(this as InstanceType<T>)
+            .get()
+
+        return docs
     }
 
-    fetchCollection(): Promise<(T & IDocObject)[]> {
-        return super.fetchCollection() as Promise<(T & IDocObject)[]>
+    setData(data: Partial<T>) {
+        super.setData(data)
     }
 
-    fetchByQuery(query: Query) {
-        return super.fetchByQuery(query) as Promise<(T & IDocObject)[]>
+    async validate() {
+        const errors = await validate(this)
+        if (errors.length) {
+            throw new ValidationErrors(errors)
+        }
     }
+}
 
-    fetchDocument(id: string): Promise<T & IDocObject> {
-        return super.fetchDocument(id) as Promise<T & IDocObject>
+export const dateRangeQuery = <T extends Base>(
+    q: Query<T>,
+    { since, until }: { since?: string; until?: string }
+) => {
+    q = q.where('date', '>=', since ? parseDate(since) : new Date())
+    if (until) {
+        q = q.where(
+            'date',
+            '<=',
+            day(parseDate(until))
+                .endOf('day')
+                .toDate()
+        )
     }
-
-    add(object: T): Promise<T & IDocObject> {
-        return super.add(object) as Promise<T & IDocObject>
-    }
-
-    set(object: T & IDocObject): Promise<T & IDocObject> {
-        return super.set(object) as Promise<T & IDocObject>
-    }
-
-    addOrSet(object: T & IDocObject | T & IDocData): Promise<T & IDocObject> {
-        return super.addOrSet(object) as Promise<T & IDocObject>
-    }
-
-    delete(docId: string): Promise<string> {
-        return super.delete(docId) as Promise<string>
-    }
-
-    bulkSet(objects: (T & IDocObject)[]) {
-        return super.bulkSet(objects) as Promise<
-            FirebaseFirestore.WriteResult[]
-        >
-    }
-
-    bulkDelete(docIds: string[]) {
-        return super.bulkDelete(docIds) as Promise<
-            FirebaseFirestore.WriteResult[]
-        >
-    }
-
-    withQuery(fn: (ref: CollectionReference) => Query) {
-        return this.fetchByQuery(fn(this.collectionRef))
-    }
+    return q.orderBy('date')
 }
