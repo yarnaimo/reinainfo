@@ -1,5 +1,9 @@
-import { parseDate } from 'tough-cookie'
-import { createCyclicDates, durationStringToMinutes } from '../utils/day'
+import {
+    createCyclicDates,
+    durationStringToMinutes,
+    parseDate,
+    toDateString,
+} from '../utils/day'
 
 describe('Utils', () => {
     test('parse date', () => {
@@ -10,6 +14,10 @@ describe('Utils', () => {
         expect(parseDate('0801.0117')).toEqual(
             new Date(new Date().getFullYear(), 7, 1, 1, 17)
         )
+    })
+
+    test('to date string', () => {
+        expect(toDateString(new Date(2018, 7, 1))).toBe('8/1(水)')
     })
 
     test('create cyclic dates with weekNumber', () => {

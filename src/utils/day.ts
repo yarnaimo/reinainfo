@@ -8,15 +8,17 @@ export const timeStr = (date: Date | Dayjs) => day(date).format('H:mm')
 export const parseDate = (str: string) => {
     const contextDateStr = day().format('YYMMDD')
     const [strDate, strTime] = [...str.split('.'), '']
+
     const paddedDate = contextDateStr.slice(0, -strDate.length) + strDate
     const paddedTime = strTime.padEnd(4, '0')
+
     return parse(new Date(), 'yyMMdd.HHmm', `${paddedDate}.${paddedTime}`)
 }
 
 export const toDateString = (date: Date | Dayjs) => {
     const _date = day(date)
     const dateString = _date.format(
-        day().month() === _date.month() ? 'd' : 'M/d'
+        day().month() === _date.month() ? 'D' : 'M/D'
     )
     return `${dateString}(${'日月火水木金土'[_date.day()]})`
 }
@@ -26,7 +28,7 @@ export const createCyclicDates = ({
     timeOfDay,
     weekNumbers,
     weekInterval = 1,
-    times,
+    times = 50,
     since,
     until,
 }: {
@@ -38,34 +40,39 @@ export const createCyclicDates = ({
     since?: string
     until?: string
 }) => {
-    if (!dayOfWeek && !until && !times) {
-        throw new Error('Invalid parameters')
-    }
+    if (!dayOfWeek) throw new Error('Invalid parameters')
+
     const sinceDate = day(since ? parseDate(since) : undefined)
     const untilDate = day(until ? parseDate(until) : new Date(2021, 0, 1))
-    times = times || 50
-    const dates = [] as Dayjs[]
 
-    let currentDate = day(
-        parse(
-            parse(sinceDate.toDate(), 'E', dayOfWeek),
-            'HHmm',
-            timeOfDay || '0000'
+    const mightAddOneWeek = (d: Dayjs) =>
+        d.isBefore(sinceDate) ? d.add(1, 'week') : d
+
+    const currentDate = mightAddOneWeek(
+        day(
+            parse(
+                parse(sinceDate.toDate(), 'E', dayOfWeek),
+                'HHmm',
+                timeOfDay || '0000'
+            )
         )
     )
 
-    if (currentDate.unix() < sinceDate.unix()) {
-        currentDate = currentDate.add(1, 'week')
-    }
+    const { dates } = [...Array(times).keys()].reduce(
+        ({ dates, currentDate }) => {
+            if (currentDate.isAfter(untilDate)) return { dates, currentDate }
 
-    while (dates.length < times && currentDate.unix() <= untilDate.unix()) {
-        const nthWeek = Math.ceil(day(currentDate).date() / 7)
-
-        if (!weekNumbers || weekNumbers.includes(nthWeek)) {
-            dates.push(currentDate)
-        }
-        currentDate = currentDate.add(weekInterval, 'week')
-    }
+            const nthWeek = Math.ceil(day(currentDate).date() / 7)
+            return {
+                dates:
+                    weekNumbers && !weekNumbers.includes(nthWeek)
+                        ? dates
+                        : [...dates, currentDate],
+                currentDate: currentDate.add(weekInterval, 'week'),
+            }
+        },
+        { dates: [] as Dayjs[], currentDate }
+    )
     return dates.map(d => d.toDate())
 }
 
