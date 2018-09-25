@@ -1,20 +1,20 @@
 import { plusOne } from '@yarnaimo/twimo'
 import { Dayjs } from 'dayjs'
 import { TweetClassifier } from '../../learn'
+import { SearchState } from '../models/SearchState'
 import { retweetWithNotification } from '../services/integrated'
 import { twitter } from '../services/twitter'
 import { day } from '../utils/day'
-import { SearchState } from './../models/SearchState'
+import { Batch } from './Batch'
 
-export class RetweetBatch {
+export class SearchBatch extends Batch {
     private tc: TweetClassifier
-    public now: Dayjs
     public q =
         '上田麗奈 OR #上田麗奈 exclude:retweets -#nowplaying min_retweets:3'
 
-    constructor() {
+    constructor(now?: Dayjs) {
+        super(now)
         this.tc = new TweetClassifier()
-        this.now = day()
     }
 
     async searchTweets(prevTweetId: string, until: Dayjs) {
@@ -33,7 +33,7 @@ export class RetweetBatch {
 
         const doc =
             (await SearchState.get('main')) ||
-            new SearchState('main', { prevTweetId: '0' })
+            new SearchState('main').setData({ prevTweetId: '0' })
 
         const tweetsToClassify = await this.searchTweets(doc.prevTweetId, until)
 
@@ -41,7 +41,7 @@ export class RetweetBatch {
             return this.tc.isOfficialTweet(t)
         })
 
-        const retweets = await retweetWithNotification(
+        const { retweets, docs } = await retweetWithNotification(
             twitter,
             officialTweets.map(t => t.id_str)
         )
@@ -51,6 +51,6 @@ export class RetweetBatch {
         }
         await doc.save()
 
-        return { retweets, tweetsToClassify }
+        return { retweets, docs, tweetsToClassify }
     }
 }

@@ -30,7 +30,7 @@ export const cTypes = {
         book: '📗',
     },
 }
-type Category =
+export type Category =
     | keyof typeof cTypes['appearance']
     | keyof typeof cTypes['release']
 
@@ -154,16 +154,6 @@ export class Schedule extends DocBase<Schedule> {
     @IsOptional()
     way?: string
 
-    async save() {
-        await this.validate()
-        return await super.save()
-    }
-
-    async update() {
-        await this.validate()
-        return await super.update()
-    }
-
     toAttachment() {
         const toField = (key: keyof this, value?: any) => {
             return { title: key, value: value || this[key] }
@@ -175,6 +165,7 @@ export class Schedule extends DocBase<Schedule> {
             title: this.title,
             text: day(this.date).format('YYYY/MM/DD HH:mm'),
             fields: [
+                toField('id'),
                 toField('label'),
                 toField('parts', Parts.getText(this.parts)),
                 toField('url'),

@@ -4,7 +4,7 @@ import { ProcessedOpts } from '.'
 import { retweetWithNotification } from '../../services/integrated'
 import { twitter } from '../../services/twitter'
 
-export const retweetCommandHandler = async ({ args: urls }: ProcessedOpts) => {
+export const rtCommandHandler = async ({ args: urls }: ProcessedOpts) => {
     const ids = urls.map(urlToTweetId).filter(notNull)
     await retweetWithNotification(twitter, ids)
     return ids
