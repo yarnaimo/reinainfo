@@ -13,6 +13,20 @@
         { "fieldPath": "label", "mode": "ASCENDING" },
         { "fieldPath": "date", "mode": "ASCENDING" }
       ]
+    },
+    {
+      "collectionId": "tweetlog",
+      "fields": [
+        { "fieldPath": "isDailyNotification", "mode": "ASCENDING" },
+        { "fieldPath": "createdAt", "mode": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionId": "tweetlog",
+      "fields": [
+        { "fieldPath": "isTopic", "mode": "ASCENDING" },
+        { "fieldPath": "createdAt", "mode": "ASCENDING" }
+      ]
     }
   ]
 }
