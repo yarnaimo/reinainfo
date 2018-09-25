@@ -1,7 +1,7 @@
-import { respondToSlack } from '.'
+import { ProcessedOpts, respondToSlack } from '.'
 import { Schedule } from '../../models/Schedule'
 import { dateRangeQuery } from '../../services/firebase'
-import { ProcessedOpts } from './index'
+import { twitter } from '../../services/twitter'
 
 const getByIdInArgs = async ([id]: string[]) => {
     const doc = await Schedule.get(id)
@@ -9,7 +9,7 @@ const getByIdInArgs = async ([id]: string[]) => {
     return doc
 }
 
-export const scheduleCommandHandler = async (
+export const sCommandHandler = async (
     { args: [type, ...args], opts }: ProcessedOpts,
     responseUrl: string
 ) => {
@@ -23,20 +23,23 @@ export const scheduleCommandHandler = async (
 
     switch (type) {
         case 'new': {
-            const s = new Schedule()
-
-            s.setData(opts)
+            const s = new Schedule().setData(opts)
             await s.save()
 
+            await twitter.createTweet(
+                s.getTextWith('🎉 スケジュールが追加されました', true)
+            )
             return await done([s], ':tada: Added a schedule')
         }
 
         case 'update': {
             const ssDoc = await getByIdInArgs(args)
-
             ssDoc.setData(opts)
             await ssDoc.save()
 
+            await twitter.createTweet(
+                ssDoc.getTextWith('✏️ スケジュールが更新されました', true)
+            )
             return await done([ssDoc], ':pencil2: Updated a schedule')
         }
 

@@ -1,8 +1,18 @@
+import { originalTweet } from '@yarnaimo/twimo'
 import { json, send } from 'micro'
 import { post } from 'microrouter'
+import { Status } from 'twitter-d'
 import { config } from '../config'
-import { RetweetBatch } from '../tasks/retweet-batch'
-import { ScheduleBatch } from '../tasks/schedule-batch'
+import { DailyRetweetBatch } from '../tasks/DailyRetweetBatch'
+import { ScheduleBatch } from '../tasks/ScheduleBatch'
+import { SearchBatch } from '../tasks/SearchBatch'
+
+const compactTweets = (tweets: Status[]) =>
+    tweets.map(originalTweet).map(t => ({
+        id: t.id_str,
+        screen_name: t.user.screen_name,
+        text: t.full_text,
+    }))
 
 export const hookRoutes = [
     post('/', async (req, res) => {
@@ -17,14 +27,21 @@ export const hookRoutes = [
                     Number(params.since),
                     Number(params.until)
                 )
-                return send(res, 200, thread)
+                return send(res, 200, compactTweets(thread))
             }
 
-            case 'retweet_batch': {
-                const batch = new RetweetBatch()
+            case 'search_batch': {
+                const batch = new SearchBatch()
                 const { retweets } = await batch.run()
 
-                return send(res, 200, retweets)
+                return send(res, 200, compactTweets(retweets))
+            }
+
+            case 'daily_retweet_batch': {
+                const batch = new DailyRetweetBatch()
+                const retweets = await batch.run()
+
+                return send(res, 200, compactTweets(retweets))
             }
         }
     }),

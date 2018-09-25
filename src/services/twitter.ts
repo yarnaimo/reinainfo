@@ -28,16 +28,24 @@ export const mightMockTwitterPost = (
     }
 }
 
+mightMockTwitterPost('statuses/update', ({ status }) => {
+    return {
+        id_str: '{{ id }}',
+        full_text: status,
+        user: { screen_name: '{{ screen_name }}' },
+    }
+})
+
 mightMockTwitterPost('statuses/retweet', ({ id }) => {
     return {
         id_str: `${id}_RT`,
-        full_text: 'RT @{{screen_name}}: {{text}}',
-        user: { screen_name: '{{screen_name_RT}}' },
+        full_text: 'RT @{{ screen_name }}: {{ text }}',
+        user: { screen_name: '{{ screen_name_RT }}' },
 
         retweeted_status: {
             id_str: id,
-            full_text: '{{text}}',
-            user: { screen_name: '{{screen_name}}' },
+            full_text: '{{ text }}',
+            user: { screen_name: '{{ screen_name }}' },
         },
     }
 })

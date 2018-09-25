@@ -1,15 +1,15 @@
 import { firstAndLast, waitAll } from '@yarnaimo/arraymo'
-import { Batch } from 'pring/lib/batch'
+import { PBatch } from '@yarnaimo/pring'
 import { ProcessedOpts, respondToSlack } from '.'
 import { Schedule } from '../../models/Schedule'
+import { dateRangeQuery } from '../../services/firebase'
 import {
     createCyclicDates,
     day,
     durationStringToMinutes,
 } from '../../utils/day'
-import { dateRangeQuery, firestore } from './../../services/firebase'
 
-export const cyclicScheduleCommandHandler = async (
+export const cycleCommandHandler = async (
     { args: [type, label, ...args], opts }: ProcessedOpts,
     responseUrl: string
 ) => {
@@ -33,7 +33,7 @@ export const cyclicScheduleCommandHandler = async (
 
     if (!label) throw new Error('"label" is required')
 
-    const batch = new Batch(firestore.batch())
+    const batch = new PBatch()
 
     switch (type) {
         case 'new': {
@@ -52,15 +52,14 @@ export const cyclicScheduleCommandHandler = async (
             })
 
             const schedules = await waitAll(dates, async date => {
-                const s = new Schedule(undefined, {
+                const s = new Schedule().setData({
                     category: 'up',
                     label,
                     date,
                     title,
                     url,
                 })
-                await s.validate()
-                batch.set(s.reference, s.value())
+                batch.setDoc(s)
 
                 return s
             })
@@ -74,19 +73,17 @@ export const cyclicScheduleCommandHandler = async (
             const min = durationStringToMinutes(duration)
 
             const ssDocs = await Schedule.getByQuery(q => {
-                return dateRangeQuery(q, { since, until }).where(
-                    'label',
-                    '==',
-                    label
-                )
+                return dateRangeQuery(q.where('label', '==', label), {
+                    since,
+                    until,
+                })
             })
 
             const schedules = await waitAll(ssDocs, async s => {
                 const date = day(s.date).add(min, 'minute')
                 s.setData({ date: date.toDate() })
-                await s.validate()
 
-                batch.set(s.reference, s.value())
+                batch.setDoc(s)
                 return s
             })
             await batch.commit()
@@ -96,11 +93,10 @@ export const cyclicScheduleCommandHandler = async (
 
         case 'delete': {
             const ssDocs = await Schedule.getByQuery(q => {
-                return dateRangeQuery(q, { since, until }).where(
-                    'label',
-                    '==',
-                    label
-                )
+                return dateRangeQuery(q.where('label', '==', label), {
+                    since,
+                    until,
+                })
             })
             ssDocs.forEach(s => batch.delete(s.reference))
 

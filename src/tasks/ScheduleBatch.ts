@@ -1,14 +1,16 @@
+import { PBatch } from '@yarnaimo/pring'
 import { Dayjs } from 'dayjs'
 import { Schedule } from '../models/Schedule'
+import { TweetLog } from '../models/TweetLog'
 import { twitter } from '../services/twitter'
-import { day, toDateString } from '../utils/day'
+import { toDateString } from '../utils/day'
+import { Batch } from './Batch'
 
-export class ScheduleBatch {
-    public now: Dayjs
+export class ScheduleBatch extends Batch {
     public today: Dayjs
 
     constructor(now?: Dayjs) {
-        this.now = day(now)
+        super(now)
         this.today = this.now.startOf('day')
     }
 
@@ -53,6 +55,19 @@ export class ScheduleBatch {
     async run(since: number, until: number) {
         const texts = await this.createTweetTexts(since, until)
         const thread = await twitter.postThread(texts)
+
+        if (since === 1 && until === 1) {
+            const batch = thread.reduce((batch, { id_str }) => {
+                const log = new TweetLog().setData({
+                    isDailyNotification: true,
+                    tweetId: id_str,
+                })
+
+                return batch.setDoc(log)
+            }, new PBatch())
+
+            await batch.commit()
+        }
         return thread
     }
 }

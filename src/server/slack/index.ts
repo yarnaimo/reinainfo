@@ -12,9 +12,9 @@ import { parseDate } from '../../utils/day'
 import { getopts } from '../../utils/getopts'
 import { IPart } from './../../models/Schedule'
 import { ParsedOptions } from './../../utils/getopts'
-import { cyclicScheduleCommandHandler } from './cyclic-schedule-command'
-import { retweetCommandHandler } from './retweet-command'
-import { scheduleCommandHandler } from './schedule-command'
+import { cycleCommandHandler } from './cycle'
+import { rtCommandHandler } from './rt'
+import { sCommandHandler } from './s'
 
 const getSignature = (data: string) => {
     return (
@@ -106,13 +106,13 @@ export const commandHandler = async ({
 
     switch (processed.action) {
         case 's':
-            return await scheduleCommandHandler(processed, response_url)
+            return await sCommandHandler(processed, response_url)
 
         case 'cycle':
-            return await cyclicScheduleCommandHandler(processed, response_url)
+            return await cycleCommandHandler(processed, response_url)
 
         case 'rt':
-            return await retweetCommandHandler(processed)
+            return await rtCommandHandler(processed)
     }
 }
 
@@ -123,6 +123,7 @@ export const slackRoutes = [
             send(res, 200, { response_type: 'in_channel' })
 
             await commandHandler(req).catch((e: Error) => {
+                console.error(e)
                 respondToSlack(req.params.response_url, { text: e.toString() })
             })
         })
