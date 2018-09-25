@@ -41,11 +41,9 @@
             "env": {
                 "NODE_ENV": "test"
             },
+            "outputCapture": "std"
             // "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
-            // "windows": {
-            //     "program": "${workspaceFolder}/node_modules/jest/bin/jest"
-            // }
+            // "internalConsoleOptions": "neverOpen"
         }
     ]
 }
