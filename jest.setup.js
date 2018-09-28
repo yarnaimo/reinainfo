@@ -1,6 +1,7 @@
-jest.setTimeout(10000)
-
+require('./src/init-firebase-admin')
 const nock = require('nock')
+
+jest.setTimeout(10000)
 
 nock('https://slack.com')
     .persist()
