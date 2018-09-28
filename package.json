@@ -1,6 +1,6 @@
 {
   "name": "reinainfo",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "repository": "git@github.com:yarnaimo/reinainfo.git",
   "license": "MIT",
@@ -11,14 +11,18 @@
     "dev": "ts-node src/server",
     "start": "NODE_ENV=production node dist/src/server",
     "test": "NODE_ENV=test jest",
-    "ts-node": "ts-node"
+    "ts-node": "ts-node",
+    "web": "parcel src/web/index.html -d public",
+    "web:build": "NODE_ENV=production parcel build src/web/index.html --experimental-scope-hoisting --no-source-maps -d public"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "@hyperapp/html": "^1.1.1",
     "@slack/client": "^4.3.1",
     "@tensorflow/tfjs": "^0.13.0",
     "@tensorflow/tfjs-node": "^0.1.17",
     "@yarnaimo/arraymo": "^1.2.1",
-    "@yarnaimo/pring": "^1.0.3",
+    "@yarnaimo/pring": "^1.0.4",
     "@yarnaimo/twimo": "^1.2.2",
     "class-validator": "^0.9.1",
     "date-fns": "^2.0.0-alpha.16",
@@ -26,6 +30,7 @@
     "dotenv": "^6.0.0",
     "firebase-admin": "^6.0.0",
     "getopts": "^2.1.2",
+    "hyperapp": "jorgebucaran/hyperapp#V2",
     "lazy.js": "^0.5.1",
     "micro": "^9.3.2",
     "microrouter": "^3.1.3",
@@ -33,6 +38,9 @@
     "shell-quote": "^1.6.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@types/babel__core": "^7.0.1",
     "@types/dotenv": "^4.0.3",
     "@types/getopts": "^2.0.0",
     "@types/jest": "^23.3.0",
@@ -45,6 +53,7 @@
     "@types/shell-quote": "^1.6.0",
     "jest": "^23.4.1",
     "nock": "^10.0.0",
+    "parcel-bundler": "1.10.0",
     "ts-jest": "^23.0.1",
     "ts-node": "^7.0.1",
     "typescript": "^3.0.3"

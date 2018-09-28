@@ -1,5 +1,6 @@
 import { MessageAttachment } from '@slack/client'
 import { globalMatch, unite } from '@yarnaimo/arraymo'
+import { DocBase } from '@yarnaimo/pring'
 import {
     IsBoolean,
     IsIn,
@@ -11,7 +12,6 @@ import {
     MinLength,
 } from 'class-validator'
 import { property } from 'pring'
-import { DocBase } from '../services/firebase'
 import { day, timeStr, toDateString } from '../utils/day'
 
 export const cTypes = {
@@ -97,7 +97,7 @@ export class Parts {
                 const timesStr = unite(' ', [
                     withSuffix(p.gatherAt, '集合'),
                     withSuffix(p.opensAt, '開場'),
-                    withSuffix(p.startsAt, '開演'),
+                    withSuffix(p.startsAt, '開始'),
                 ])
 
                 return `${p.name || i + 1} » ${timesStr}`
@@ -194,13 +194,18 @@ export class Schedule extends DocBase<Schedule> {
             return null
         })()
 
-        const venue = this.venue ? `@${this.venue}` : ''
-
         return unite([
             header,
             '',
-            unite(' ', [dateString, this.emoji, this.title, venue]),
+            unite(' ', [
+                dateString,
+                this.emoji,
+                this.title,
+                this.venue && `@${this.venue}`,
+            ]),
             time,
+            '',
+            this.way && `参加方法 » ${this.way}`,
             this.url,
         ])!
     }

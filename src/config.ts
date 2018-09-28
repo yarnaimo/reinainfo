@@ -1,8 +1,6 @@
 import { config as dotenv } from 'dotenv'
 dotenv()
 
-export const firebaseConfig = JSON.parse(process.env.CONFIG_FIREBASE as any)
-
 export interface Config {
     twitter: {
         consumerKey: string

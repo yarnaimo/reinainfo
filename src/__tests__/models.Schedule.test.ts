@@ -15,6 +15,7 @@ beforeEach(() => {
         parts: Parts.parse('Hiru.1230+.1500.1530+Yoru.1730..1830'),
         url: 'https://google.com',
         venue: 'Toyama',
+        way: '抽選',
     })
 })
 
@@ -32,7 +33,7 @@ test('to attachment', () => {
             ['parts', Parts.getText(s.parts)],
             ['url', s.url],
             ['venue', s.venue],
-            ['way', undefined],
+            ['way', s.way],
         ].map(([title, value]) => ({ title, value })),
     })
 })
@@ -64,9 +65,11 @@ test('get text', () => {
             明日の予定
             
             🎤 Release event @Toyama
-            Hiru » 12:30開演
-            2 » 15:00開場 15:30開演
-            Yoru » 17:30集合 18:30開演
+            Hiru » 12:30開始
+            2 » 15:00開場 15:30開始
+            Yoru » 17:30集合 18:30開始
+
+            参加方法 » 抽選
             https://google.com
         `)
     )
@@ -78,9 +81,11 @@ test('get text with date', () => {
             来週の予定
             
             1/17(水) 🎤 Release event @Toyama
-            Hiru » 12:30開演
-            2 » 15:00開場 15:30開演
-            Yoru » 17:30集合 18:30開演
+            Hiru » 12:30開始
+            2 » 15:00開場 15:30開始
+            Yoru » 17:30集合 18:30開始
+
+            参加方法 » 抽選
             https://google.com
         `)
     )

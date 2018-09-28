@@ -1,18 +1,6 @@
-import { initialize } from '@yarnaimo/pring'
-import admin from 'firebase-admin'
 import { Base } from 'pring'
 import { Query } from 'pring/lib/query'
-import { firebaseConfig } from '../config'
 import { day, parseDate } from '../utils/day'
-
-const { app, DocBase } = initialize({
-    admin,
-    options: {
-        credential: admin.credential.cert(firebaseConfig),
-    },
-})
-
-export { app, DocBase }
 
 export const dateRangeQuery = <T extends Base>(
     q: Query<T>,

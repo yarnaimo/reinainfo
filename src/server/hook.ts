@@ -44,5 +44,7 @@ export const hookRoutes = [
                 return send(res, 200, compactTweets(retweets))
             }
         }
+
+        return send(res, 404)
     }),
 ]
