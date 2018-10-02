@@ -9,7 +9,6 @@
       "es2018"
     ],
     "allowJs": true,
-    "declaration": true,
     "sourceMap": true,
     "outDir": "dist",
     "strict": true,
