@@ -1,6 +1,6 @@
 import { trimTemplateString } from '@yarnaimo/arraymo'
-import { Parts, Schedule } from '../models/Schedule'
-import { parseDate } from '../utils/day'
+import { Parts, Schedule } from '~/models/Schedule'
+import { parseDate } from '~/utils/day'
 
 let s: Schedule
 const date = new Date(2018, 0, 17, 12, 30)

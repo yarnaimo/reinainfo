@@ -1,6 +1,6 @@
 import { Base } from 'pring'
 import { Query } from 'pring/lib/query'
-import { day, parseDate } from '../utils/day'
+import { day, parseDate } from '~/utils/day'
 
 export const dateRangeQuery = <T extends Base>(
     q: Query<T>,

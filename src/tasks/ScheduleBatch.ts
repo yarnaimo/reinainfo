@@ -1,9 +1,9 @@
 import { PBatch } from '@yarnaimo/pring'
 import { Dayjs } from 'dayjs'
-import { Schedule } from '../models/Schedule'
-import { TweetLog } from '../models/TweetLog'
-import { twitter } from '../services/twitter'
-import { toDateString } from '../utils/day'
+import { Schedule } from '~/models/Schedule'
+import { TweetLog } from '~/models/TweetLog'
+import { twitter } from '~/services/twitter'
+import { toDateString } from '~/utils/day'
 import { Batch } from './Batch'
 
 export class ScheduleBatch extends Batch {

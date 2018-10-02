@@ -9,6 +9,7 @@
     "build": "tsc",
     "config-env": "ts-node config-env",
     "dev": "ts-node src/server",
+    "precommit": "lint-staged",
     "start": "NODE_ENV=production node dist/src/server",
     "test": "NODE_ENV=test jest",
     "ts-node": "ts-node",
@@ -17,7 +18,6 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
-    "@hyperapp/html": "^1.1.1",
     "@slack/client": "^4.3.1",
     "@tensorflow/tfjs": "^0.13.0",
     "@tensorflow/tfjs-node": "^0.1.17",
@@ -30,7 +30,6 @@
     "dotenv": "^6.0.0",
     "firebase-admin": "^6.0.0",
     "getopts": "^2.1.2",
-    "hyperapp": "jorgebucaran/hyperapp#V2",
     "lazy.js": "^0.5.1",
     "micro": "^9.3.2",
     "microrouter": "^3.1.3",
@@ -54,8 +53,19 @@
     "jest": "^23.4.1",
     "nock": "^10.0.0",
     "parcel-bundler": "1.10.0",
+    "sort-package-json": "^1.15.0",
     "ts-jest": "^23.0.1",
     "ts-node": "^7.0.1",
     "typescript": "^3.0.3"
+  },
+  "lint-staged": {
+    "./package.json": [
+      "sort-package-json",
+      "git add"
+    ],
+    "*.{js,ts,css,scss,vue,gql,md}": [
+      "prettier --write --ignore-path .gitignore",
+      "git add"
+    ]
   }
 }

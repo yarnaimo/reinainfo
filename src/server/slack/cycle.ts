@@ -1,13 +1,9 @@
 import { firstAndLast, waitAll } from '@yarnaimo/arraymo'
 import { PBatch } from '@yarnaimo/pring'
+import { Schedule } from '~/models/Schedule'
+import { dateRangeQuery } from '~/services/firebase'
+import { createCyclicDates, day, durationStringToMinutes } from '~/utils/day'
 import { ProcessedOpts, respondToSlack } from '.'
-import { Schedule } from '../../models/Schedule'
-import { dateRangeQuery } from '../../services/firebase'
-import {
-    createCyclicDates,
-    day,
-    durationStringToMinutes,
-} from '../../utils/day'
 
 export const cycleCommandHandler = async (
     { args: [type, label, ...args], opts }: ProcessedOpts,

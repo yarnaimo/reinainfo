@@ -2,8 +2,8 @@ import { minusOne } from '@yarnaimo/twimo'
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
 import lazy from 'lazy.js'
 import { Status } from 'twitter-d'
+import { twitter } from '~/services/twitter'
 import { extractTweetId, tmpPath } from '.'
-import { twitter } from '../src/services/twitter'
 
 if (!existsSync(tmpPath())) {
     mkdirSync(tmpPath())

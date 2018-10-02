@@ -3,7 +3,7 @@ import {
     durationStringToMinutes,
     parseDate,
     toDateString,
-} from '../utils/day'
+} from '~/utils/day'
 
 test('parse date', () => {
     expect(parseDate('180801')).toEqual(new Date(2018, 7, 1))
