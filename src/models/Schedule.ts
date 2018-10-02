@@ -12,7 +12,7 @@ import {
     MinLength,
 } from 'class-validator'
 import { property } from 'pring'
-import { day, timeStr, toDateString } from '../utils/day'
+import { day, timeStr, toDateString } from '~/utils/day'
 
 export const cTypes = {
     appearance: {

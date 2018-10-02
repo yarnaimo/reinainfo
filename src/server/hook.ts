@@ -2,10 +2,10 @@ import { originalTweet } from '@yarnaimo/twimo'
 import { json, send } from 'micro'
 import { post } from 'microrouter'
 import { Status } from 'twitter-d'
-import { config } from '../config'
-import { DailyRetweetBatch } from '../tasks/DailyRetweetBatch'
-import { ScheduleBatch } from '../tasks/ScheduleBatch'
-import { SearchBatch } from '../tasks/SearchBatch'
+import { config } from '~/config'
+import { DailyRetweetBatch } from '~/tasks/DailyRetweetBatch'
+import { ScheduleBatch } from '~/tasks/ScheduleBatch'
+import { SearchBatch } from '~/tasks/SearchBatch'
 
 const compactTweets = (tweets: Status[]) =>
     tweets.map(originalTweet).map(t => ({

@@ -1,6 +1,6 @@
 import { PBatch } from '@yarnaimo/pring'
 import { tweetToUrl, TwimoClient } from '@yarnaimo/twimo'
-import { TweetLog } from '../models/TweetLog'
+import { TweetLog } from '~/models/TweetLog'
 import { postSlackMessage } from './slack'
 
 export const retweetWithNotification = async (

@@ -1,5 +1,5 @@
+import { parseDate } from '~/utils/day'
 import { cmd } from '.'
-import { parseDate } from '../utils/day'
 
 // 0730 0813 0827
 const label = 'shigohaji' + new Date().getTime()

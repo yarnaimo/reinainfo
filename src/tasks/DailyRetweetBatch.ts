@@ -1,6 +1,6 @@
 import { Dayjs } from 'dayjs'
-import { TweetLog } from '../models/TweetLog'
-import { twitter } from '../services/twitter'
+import { TweetLog } from '~/models/TweetLog'
+import { twitter } from '~/services/twitter'
 import { Batch } from './Batch'
 
 export class DailyRetweetBatch extends Batch {

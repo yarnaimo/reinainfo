@@ -1,10 +1,10 @@
 import { plusOne } from '@yarnaimo/twimo'
 import { Dayjs } from 'dayjs'
-import { TweetClassifier } from '../../learn'
-import { SearchState } from '../models/SearchState'
-import { retweetWithNotification } from '../services/integrated'
-import { twitter } from '../services/twitter'
-import { day } from '../utils/day'
+import { TweetClassifier } from '~/../learn'
+import { SearchState } from '~/models/SearchState'
+import { retweetWithNotification } from '~/services/integrated'
+import { twitter } from '~/services/twitter'
+import { day } from '~/utils/day'
 import { Batch } from './Batch'
 
 export class SearchBatch extends Batch {

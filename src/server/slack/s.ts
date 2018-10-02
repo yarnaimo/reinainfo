@@ -1,7 +1,7 @@
+import { Schedule } from '~/models/Schedule'
+import { dateRangeQuery } from '~/services/firebase'
+import { twitter } from '~/services/twitter'
 import { ProcessedOpts, respondToSlack } from '.'
-import { Schedule } from '../../models/Schedule'
-import { dateRangeQuery } from '../../services/firebase'
-import { twitter } from '../../services/twitter'
 
 const getByIdInArgs = async ([id]: string[]) => {
     const doc = await Schedule.get(id)
