@@ -12,12 +12,13 @@ export class DailyRetweetBatch extends Batch {
     }
 
     async run() {
-        const logs = await TweetLog.getByQuery(q => {
-            return q
-                .where('isDailyNotification', '==', true)
-                .where('createdAt', '>=', this.oneDayAgo.toDate())
-                .orderBy('createdAt')
-        })
+        const logs = await TweetLog.query()
+            .where('isDailyNotification', '==', true)
+            .where('createdAt', '>=', this.oneDayAgo.toDate())
+            .orderBy('createdAt')
+            .dataSource()
+            .get()
+
         const ids = logs.map(l => l.tweetId)
 
         const retweets = await twitter.retweet(ids)

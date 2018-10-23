@@ -18,13 +18,13 @@ export class ScheduleBatch extends Batch {
         const since = this.today.add(daySince, 'day')
         const until = this.today.add(dayUntil, 'day').endOf('day')
 
-        const docs = await Schedule.getByQuery(q => {
-            return q
-                .where('active', '==', true)
-                .where('date', '>=', since.toDate())
-                .where('date', '<=', until.toDate())
-                .orderBy('date')
-        })
+        const docs = await Schedule.query()
+            .where('active', '==', true)
+            .where('date', '>=', since.toDate())
+            .where('date', '<=', until.toDate())
+            .orderBy('date')
+            .dataSource()
+            .get()
 
         const sorted = docs.sort(
             (a, b) => Number(b.isAppearance) - Number(a.isAppearance)
