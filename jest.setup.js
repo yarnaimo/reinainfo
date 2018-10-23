@@ -1,4 +1,6 @@
 require('./src/init-firebase-admin')
+const tsconfig = require('./tsconfig.json')
+const moduleNameMapper = require('tsconfig-paths-jest')(tsconfig)
 const nock = require('nock')
 
 jest.setTimeout(10000)
