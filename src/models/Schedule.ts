@@ -14,44 +14,46 @@ import {
 import { property } from 'pring'
 import { day, timeStr, toDateString } from '~/utils/day'
 
-export const cTypes = {
-    appearance: {
-        live: '🎫',
-        event: '🎤',
-        streaming: '🔴',
-        tv: '📺',
-        radio: '📻',
-        up: '🆙',
-    },
-    release: {
-        music: '🎶',
-        video: '📼',
-        game: '🎮',
-        book: '📗',
-    },
+type CategoryType = 'appearance' | 'release'
+
+const c = (
+    isAppearance: boolean,
+    emoji: string,
+    name: string,
+    icon: string
+) => ({
+    type: (isAppearance ? 'appearance' : 'release') as CategoryType,
+    emoji,
+    name,
+    icon,
+})
+
+export const categories = {
+    live: c(true, '🎫', 'ライブ', 'ticket'),
+    event: c(true, '🎤', 'イベント', 'microphone-variant'),
+    streaming: c(true, '🔴', '配信', 'record'),
+    tv: c(true, '📺', 'テレビ', 'television-classic'),
+    radio: c(true, '📻', 'ラジオ', 'radio'),
+    up: c(true, '🆙', '更新', 'update'),
+
+    music: c(false, '🎶', 'CD/音楽配信', 'library-music'),
+    video: c(false, '📼', 'BD/DVD', 'video'),
+    game: c(false, '🎮', 'ゲーム', 'gamepad-variant'),
+    book: c(false, '📗', '書籍/雑誌', 'book-open-variant'),
 }
-export type Category =
-    | keyof typeof cTypes['appearance']
-    | keyof typeof cTypes['release']
 
-type CategoryType = keyof typeof cTypes
-
-const categories = (() => {
-    const obj = {} as { [C in Category]: { type: CategoryType; emoji: string } }
-
-    for (const [type, catsInType] of Object.entries(cTypes)) {
-        for (const [cat, emoji] of Object.entries(catsInType)) {
-            obj[cat as Category] = { type: type as CategoryType, emoji }
-        }
-    }
-    return obj
-})()
+export type Category = keyof typeof categories
 
 export interface IPart {
     name: string | null
     gatherAt: string | null
     opensAt: string | null
     startsAt: string
+}
+
+export interface FormattedParts {
+    text: string
+    array: ({ name: string; time: string })[]
 }
 
 const partPattern = (() => {
@@ -85,24 +87,29 @@ export class Parts {
         return parts
     }
 
-    static getText(parts?: IPart[]) {
-        if (!parts) return null
-
+    static toArray(parts: IPart[]): FormattedParts['array'] {
         const withSuffix = (time: string | null, suffix: string) => {
             return time ? time + suffix : null
         }
 
-        return parts
-            .map((p, i) => {
-                const timesStr = unite(' ', [
-                    withSuffix(p.gatherAt, '集合'),
-                    withSuffix(p.opensAt, '開場'),
-                    withSuffix(p.startsAt, '開始'),
-                ])
+        return parts.map((p, i) => {
+            const timesStr = unite(' ', [
+                withSuffix(p.gatherAt, '集合'),
+                withSuffix(p.opensAt, '開場'),
+                withSuffix(p.startsAt, '開始'),
+            ])
 
-                return `${p.name || i + 1} » ${timesStr}`
-            })
-            .join('\n')
+            return { name: p.name || String(i + 1), time: timesStr! }
+        })
+    }
+
+    static format(parts: IPart[]): FormattedParts {
+        const array = this.toArray(parts)
+
+        return {
+            array,
+            text: array.map(({ name, time }) => `${name} » ${time}`).join('\n'),
+        }
     }
 }
 
@@ -120,11 +127,12 @@ export class Schedule extends DocBase<Schedule> {
     @IsIn(Object.keys(categories))
     category!: Category
 
-    get isAppearance() {
-        return categories[this.category].type === 'appearance'
+    get categoryObj() {
+        return categories[this.category]
     }
-    get emoji() {
-        return categories[this.category].emoji
+
+    get isAppearance() {
+        return this.categoryObj.type === 'appearance'
     }
 
     @property
@@ -167,7 +175,7 @@ export class Schedule extends DocBase<Schedule> {
             fields: [
                 toField('id'),
                 toField('label'),
-                toField('parts', Parts.getText(this.parts)),
+                toField('parts', Parts.format(this.parts).text),
                 toField('url'),
                 toField('venue'),
                 toField('way'),
@@ -175,35 +183,41 @@ export class Schedule extends DocBase<Schedule> {
         } as MessageAttachment
     }
 
-    getTextWith(header: string, withDate: boolean) {
-        const date = this.date
+    get dateString() {
+        return toDateString(this.date)
+    }
 
-        const dateString = withDate ? toDateString(date) : null
-
-        const time = (() => {
-            if (this.isAppearance && day(date).format('HHmm') !== '0000') {
-                if (this.parts.length) {
-                    return Parts.getText(this.parts)
-                } else {
-                    return (
-                        timeStr(this.date) +
-                        (this.category === 'up' ? '' : '〜')
-                    )
+    get fDate(): { date: string; parts?: FormattedParts } {
+        if (this.isAppearance && day(this.date).format('HHmm') !== '0000') {
+            if (this.parts.length) {
+                return {
+                    date: this.dateString,
+                    parts: Parts.format(this.parts),
+                }
+            } else {
+                const time =
+                    timeStr(this.date) + (this.category === 'up' ? '' : '〜')
+                return {
+                    date: `${this.dateString} ${time}`,
                 }
             }
-            return null
-        })()
+        }
+        return { date: this.dateString }
+    }
+
+    getTextWith(header: string, withDate: boolean) {
+        const { date, parts } = this.fDate
 
         return unite([
             header,
             '',
+            withDate ? date : null,
             unite(' ', [
-                dateString,
-                this.emoji,
+                this.categoryObj.emoji,
                 this.title,
                 this.venue && `@${this.venue}`,
             ]),
-            time,
+            parts && parts.text,
             '',
             this.way && `参加方法 » ${this.way}`,
             this.url,

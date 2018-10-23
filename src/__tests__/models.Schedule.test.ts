@@ -1,22 +1,12 @@
 import { trimTemplateString } from '@yarnaimo/arraymo'
 import { Parts, Schedule } from '~/models/Schedule'
-import { parseDate } from '~/utils/day'
+import { scheduleFixture } from '../__fixtures__/models.Schedule'
 
 let s: Schedule
 const date = new Date(2018, 0, 17, 12, 30)
-const date2 = new Date(2018, 0, 17, 17, 30)
-const date3 = new Date(2018, 0, 17, 18, 30)
 
 beforeEach(() => {
-    s = new Schedule().setData({
-        category: 'event',
-        title: 'Release event',
-        date: parseDate('180117.1230'),
-        parts: Parts.parse('Hiru.1230+.1500.1530+Yoru.1730..1830'),
-        url: 'https://google.com',
-        venue: 'Toyama',
-        way: '抽選',
-    })
+    s = scheduleFixture()
 })
 
 test('to attachment', () => {
@@ -30,7 +20,7 @@ test('to attachment', () => {
         fields: [
             ['id', s.id],
             ['label', undefined],
-            ['parts', Parts.getText(s.parts)],
+            ['parts', Parts.format(s.parts).text],
             ['url', s.url],
             ['venue', s.venue],
             ['way', s.way],
@@ -64,13 +54,13 @@ test('get text', () => {
         trimTemplateString(`
             明日の予定
             
-            🎤 Release event @Toyama
-            Hiru » 12:30開始
+            🎤 「Caligula-カリギュラ-」スペシャルイベント第65536弾 Girl’s Party @サイエンスホール
+            昼の部 » 12:30開始
             2 » 15:00開場 15:30開始
-            Yoru » 17:30集合 18:30開始
+            夜の部 » 17:30集合 18:30開始
 
             参加方法 » 抽選
-            https://google.com
+            https://t.co
         `)
     )
 })
@@ -80,13 +70,44 @@ test('get text with date', () => {
         trimTemplateString(`
             来週の予定
             
-            1/17(水) 🎤 Release event @Toyama
-            Hiru » 12:30開始
+            1/17(水)
+            🎤 「Caligula-カリギュラ-」スペシャルイベント第65536弾 Girl’s Party @サイエンスホール
+            昼の部 » 12:30開始
             2 » 15:00開場 15:30開始
-            Yoru » 17:30集合 18:30開始
+            夜の部 » 17:30集合 18:30開始
 
             参加方法 » 抽選
-            https://google.com
+            https://t.co
+        `)
+    )
+})
+
+test('get text with date (-parts)', () => {
+    s = scheduleFixture({ hasParts: false })
+
+    expect(s.getTextWith('来週の予定', true)).toBe(
+        trimTemplateString(`
+            来週の予定
+            
+            1/17(水) 18:00
+            🆙 FFFFFF
+
+            https://t.co
+        `)
+    )
+})
+
+test('get text with date (-appearance)', () => {
+    s = scheduleFixture({ isAppearance: false })
+
+    expect(s.getTextWith('来週の予定', true)).toBe(
+        trimTemplateString(`
+            来週の予定
+            
+            1/17(水)
+            📗 Voice Actress
+
+            https://t.co
         `)
     )
 })
