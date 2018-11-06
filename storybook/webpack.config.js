@@ -1,5 +1,5 @@
 const NuxtTypeScript = require('nuxt-typescript')
-const { createExtendFn } = require('../webpack-extend')
+const { extend } = require('../webpack-extend')
 
 module.exports = (baseConfig, env, config) => {
     const _this = {
@@ -8,10 +8,7 @@ module.exports = (baseConfig, env, config) => {
         extendBuild: fn => fn(config),
     }
     NuxtTypeScript.call(_this)
+    extend(config)
 
-    createExtendFn()(config)
-    // config.plugins.push(new webpack.HotModuleReplacementPlugin())
-
-    console.log(config.module.rules[0].use)
     return config
 }
