@@ -54,7 +54,7 @@ test('get text', () => {
         trimTemplateString(`
             明日の予定
             
-            🎤 「Caligula-カリギュラ-」スペシャルイベント第65536弾 Girl’s Party @サイエンスホール
+            🎤 「Caligula-カリギュラ-」スペシャルイベント第65536弾 Girl’s Party @ サイエンスホール
             昼の部 » 12:30開始
             2 » 15:00開場 15:30開始
             夜の部 » 17:30集合 18:30開始
@@ -71,7 +71,7 @@ test('get text with date', () => {
             来週の予定
             
             1/17(水)
-            🎤 「Caligula-カリギュラ-」スペシャルイベント第65536弾 Girl’s Party @サイエンスホール
+            🎤 「Caligula-カリギュラ-」スペシャルイベント第65536弾 Girl’s Party @ サイエンスホール
             昼の部 » 12:30開始
             2 » 15:00開場 15:30開始
             夜の部 » 17:30集合 18:30開始
@@ -83,7 +83,7 @@ test('get text with date', () => {
 })
 
 test('get text with date (-parts)', () => {
-    s = scheduleFixture({ hasParts: false })
+    s = scheduleFixture('up')
 
     expect(s.getTextWith('来週の予定', true)).toBe(
         trimTemplateString(`
@@ -98,7 +98,7 @@ test('get text with date (-parts)', () => {
 })
 
 test('get text with date (-appearance)', () => {
-    s = scheduleFixture({ isAppearance: false })
+    s = scheduleFixture('release')
 
     expect(s.getTextWith('来週の予定', true)).toBe(
         trimTemplateString(`
