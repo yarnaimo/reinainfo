@@ -121,7 +121,7 @@ export class Schedule extends DocBase<Schedule> {
 
     @property
     @IsBoolean()
-    active: boolean = true
+    active!: boolean
 
     @property
     @IsIn(Object.keys(categories))
@@ -150,7 +150,7 @@ export class Schedule extends DocBase<Schedule> {
     date!: Date
 
     @property
-    parts: IPart[] = []
+    parts!: IPart[]
 
     @property
     @IsString()
@@ -161,6 +161,14 @@ export class Schedule extends DocBase<Schedule> {
     @IsString()
     @IsOptional()
     way?: string
+
+    constructor(id?: string, data?: Partial<Schedule>) {
+        super(id, data)
+        if (data) {
+            this.active == null && (this.active = true)
+            this.parts == null && (this.parts = [])
+        }
+    }
 
     toAttachment() {
         const toField = (key: keyof this, value?: any) => {
@@ -215,7 +223,7 @@ export class Schedule extends DocBase<Schedule> {
             unite(' ', [
                 this.categoryObj.emoji,
                 this.title,
-                this.venue && `@${this.venue}`,
+                this.venue && `@ ${this.venue}`,
             ]),
             parts && parts.text,
             '',
