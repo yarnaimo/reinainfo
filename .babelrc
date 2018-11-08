@@ -4,7 +4,8 @@
       "@babel/preset-env",
       {
         "targets": {
-          "chrome": 70
+          "chrome": 58,
+          "edge": 40
         },
         "modules": false,
         "useBuiltIns": false
