@@ -20,7 +20,10 @@ export const only = {
     }),
 }
 
-export const clickable = css({ cursor: 'pointer' })
+export const clickable = css({
+    cursor: 'pointer',
+    '-webkit-user-select': 'none',
+})
 
 const _mdi = (isClickable = false, smaller = false) => (
     name: string,
@@ -47,7 +50,7 @@ export const mdih = {
 
 export const flex = (() => {
     type FlexAlignment = 'start' | 'end' | 'center'
-    type Space = 'space-between' | 'space-around'
+    type Space = 'space-between' | 'space-around' | 'space-evenly'
 
     const withDirectionSuffix = (value: string, reverse: boolean) =>
         `${value}${reverse ? '-reverse' : ''}` as FlexDirectionProperty
@@ -103,6 +106,6 @@ export const pageTitle = [container, flex({}, 'start', 'center')]
 
 export const pageContent = css({
     backgroundColor: palette.white,
-    ...shadow.two.box,
+    ...shadow.three.box,
     flexGrow: 1,
 })

@@ -16,6 +16,7 @@ export class CTweet extends VueT<Props> implements Props {
     render() {
         return (
             <Tweet
+                ref="tweet"
                 class={[css(margin(0, -2))]}
                 id={this.id}
                 options={{ lang: 'ja', width: '600' }}

@@ -13,22 +13,22 @@ interface Props {
 @Component
 export class Link extends VueT<Props> implements Props {
     @Prop()
-    external!: boolean
+    external?: boolean
 
     @Prop()
     to!: string
 
     @Prop()
-    icon!: string
+    icon?: string
 
     get _icon() {
-        return this.external ? this.icon || 'open-in-new' : this.icon
+        if (!this.external) return this.icon
+        return this.icon === undefined ? 'open-in-new' : undefined
     }
 
     get iconElement() {
         return (
             this._icon && [
-                ' ',
                 <i
                     class={[
                         mdi(this._icon),
@@ -46,7 +46,12 @@ export class Link extends VueT<Props> implements Props {
 
     render() {
         return this.external ? (
-            <a class={link} target="_blank" href={this.to}>
+            <a
+                class={link}
+                target="_blank"
+                rel="noopener noreferrer"
+                href={this.to}
+            >
                 {this.$slots.default}
                 {this.iconElement}
             </a>

@@ -42,9 +42,10 @@ export default class ExpandableCard extends VueT<Props> implements Props {
                         overflow: 'hidden',
                         ...margin(12, -2),
                         ...shadow.one.box,
+                        borderRadius: 6,
                         backgroundColor: palette.white,
                         color: palette.black,
-                        ...media.narrow(margin(8, -2)),
+                        ...media.narrow(margin(10, -2)),
                     })
                 )}
             >

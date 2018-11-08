@@ -24,6 +24,7 @@ export class DropdownChevron extends VueT<Props, Events> implements Props {
         return (
             <button
                 onClick={this.toggle}
+                aria-label="Expand"
                 class={[
                     cmdi('chevron-down'),
                     css(

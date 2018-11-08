@@ -18,7 +18,7 @@ export const palette = {
     get link() {
         return this.bluegrey
     },
-    pink: '#E4AF99',
+    pink: '#E1B29C',
     hamEar: '#CCA17F',
     violet: '#D3B8CD',
     yellow: '#E4C17E',
@@ -40,7 +40,7 @@ export const palette = {
 export const shadow = (() => {
     const f = (...strs: string[]) => ({
         drop: strs.map(s => `drop-shadow(${s})`).join(' '),
-        box: { boxShadow: strs.join(', '), borderRadius: 2 },
+        box: { boxShadow: strs.join(', ') },
     })
 
     return {
@@ -125,6 +125,7 @@ export const shape = {
 }
 
 export const position = {
+    fixed: { position: 'fixed' } as CSSObject,
     relative: { position: 'relative' } as CSSObject,
     absolute: { position: 'absolute' } as CSSObject,
     absoluteFit: {

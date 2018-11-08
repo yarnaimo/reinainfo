@@ -13,69 +13,83 @@ import { clickable } from '../../variables/directives'
 import { Link } from './Link'
 
 interface Props {
+    label: string
     icon: string
     external?: boolean
     to: string
     size?: number
     color?: string
-    borderlessOnPortrait?: boolean
+    borderless?: boolean
 }
 
 @Component
 export class RoundedLink extends VueT<Props> implements Props {
     @Prop()
+    label!: string
+
+    @Prop()
     icon!: string
 
     @Prop()
-    external!: boolean
+    external?: boolean
 
     @Prop()
     to!: string
 
     @Prop()
-    size!: number
+    size?: number
 
     @Prop()
-    color!: string
+    color?: string
 
     @Prop()
-    borderlessOnPortrait!: boolean
+    borderless?: boolean
 
     render() {
         return (
             <Link
+                aria-label={this.label}
                 class={roundedLink(this)}
                 external={this.external}
                 to={this.to}
+                icon={''}
             >
-                <svg class={css({ ...position.absoluteFit, zIndex: 2 })}>
-                    {/* <circle
-                        class={cx(
-                            this.borderlessOnPortrait && only.landscape,
-                            circle
-                        )}
-                    /> */}
-                    <circle
-                        class={cx(
-                            circle,
-                            css({
-                                strokeDashoffset: circumference,
-                                stroke: palette.base,
-                                '.nuxt-link-active &': {
-                                    transform: 'scaleX(1) rotate(-90deg)',
-                                    strokeDashoffset: 0,
-                                },
-                            })
-                        )}
-                    />
-                </svg>
+                {this.borderless || (
+                    <svg
+                        class={css({
+                            ...position.absolute,
+                            top: 1,
+                            left: 1,
+                            ...shape.size('calc(100% - 2px)'),
+                            overflow: 'visible!important',
+                            zIndex: 2,
+                        })}
+                    >
+                        <circle
+                            class={cx(
+                                circle,
+                                css({
+                                    strokeDashoffset: circumference,
+                                    stroke: palette.base,
+                                    '.nuxt-link-active &': {
+                                        transform: 'scaleX(1) rotate(-90deg)',
+                                        strokeDashoffset: 0,
+                                    },
+                                })
+                            )}
+                            cx="50%"
+                            cy="50%"
+                            r="50%"
+                        />
+                    </svg>
+                )}
                 <i class={`mdi mdi-${this.icon}`} />
             </Link>
         )
     }
 }
 
-const circumference = `calc((100% - 2px) * ${Math.PI})`
+const circumference = `${Math.PI * 100}%`
 
 const circle = css({
     ...position.absoluteFit,
@@ -84,18 +98,36 @@ const circle = css({
     fill: palette.transparent,
     transform: 'scaleX(-1) rotate(-90deg)',
     transformOrigin: 'center',
-    cx: '50%',
-    cy: '50%',
-    r: 'calc(50% - 1px)',
     strokeDasharray: circumference,
     strokeDashoffset: 0,
     ...motion('std', ['strokeDashoffset'], [0.5]),
 })
 
-const roundedLink = ({ size = 40, color = palette.yellow }: RoundedLink) => {
+const low = 0.9
+const high = 1.1
+
+const _margin = 12
+const withMargin = (size: number) => size + _margin * 2
+
+export const withNavbar = (size = 40) => [
+    css(
+        media.portrait({
+            paddingBottom: withMargin(size),
+            ...media.low({ paddingBottom: withMargin(size * low) }),
+            ...media.high({ paddingBottom: withMargin(size * high) }),
+        }),
+        media.landscape({
+            paddingLeft: withMargin(size),
+            ...media.low({ paddingLeft: withMargin(size * low) }),
+            ...media.high({ paddingLeft: withMargin(size * high) }),
+        })
+    ),
+]
+
+const roundedLink = ({ size = 40, color }: RoundedLink) => {
     return [
         clickable,
-        css(margin(12), {
+        css(margin(_margin), {
             ...media.landscape(margin(16, 12)),
 
             display: 'flex',
@@ -108,23 +140,20 @@ const roundedLink = ({ size = 40, color = palette.yellow }: RoundedLink) => {
             fontSize: size / 2,
 
             ...media.low({
-                ...shape.size(size * 0.9),
-                fontSize: (size * 0.9) / 2,
+                ...shape.size(size * low),
+                fontSize: (size * low) / 2,
             }),
 
             ...media.high({
-                ...shape.size(size * 1.1),
-                fontSize: (size * 1.1) / 2,
+                ...shape.size(size * high),
+                fontSize: (size * high) / 2,
             }),
 
-            // backgroundColor: color,
             alignItems: 'center',
             justifyContent: 'center',
             color: `${palette.whiteGrey}!important`,
 
-            // ...media.portrait({
-            backgroundColor: 'transparent',
-            // }),
+            backgroundColor: color || 'transparent',
 
             '::after': {
                 ...position.absoluteFit,

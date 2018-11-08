@@ -1,20 +1,18 @@
-import '@mdi/font/css/materialdesignicons.min.css'
 import { injectGlobal } from 'emotion'
-import 'ress'
 import { defaultFont, fontSize, margin, palette } from '../variables/css'
 
-injectGlobal`
-    @import url('https://fonts.googleapis.com/css?family=Ubuntu:400,700|Julius+Sans+One');
-`
-
 injectGlobal({
-    html: { overflow: 'hidden' },
+    'html, body, #__nuxt, #__layout': { height: '100%' },
     body: {
         fontFamily: defaultFont,
         ...fontSize.base,
         color: palette.black,
         backgroundColor: palette.base,
     },
+
+    'twitter-widget': { position: 'static!important' } as any,
+
+    '*': { '-webkit-tap-highlight-color': palette.transparent },
 
     a: { cursor: 'pointer' },
 

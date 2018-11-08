@@ -40,6 +40,7 @@ export class CSwitch extends VueT<Props> implements Props {
             >
                 <input
                     type="checkbox"
+                    aria-label={this.label}
                     onChange={this.change}
                     checked={this.checked}
                     class={[
