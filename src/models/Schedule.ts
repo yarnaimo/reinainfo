@@ -114,6 +114,10 @@ export class Parts {
 }
 
 export class Schedule extends DocBase<Schedule> {
+    public static getModelName() {
+        return 'schedule'
+    }
+
     @property
     @IsString()
     @IsOptional()

@@ -3,6 +3,10 @@ import { IsBoolean, IsNumberString } from 'class-validator'
 import { property } from 'pring'
 
 export class TweetLog extends DocBase<TweetLog> {
+    public static getModelName() {
+        return 'tweetlog'
+    }
+
     @property
     @IsNumberString()
     tweetId!: string
