@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "chrome": 58,
+          "edge": 40
+        },
+        "modules": false,
+        "useBuiltIns": false
+      }
+    ]
+  ],
+  "plugins": [
+    "@babel/plugin-syntax-dynamic-import",
+    "transform-vue-jsx"
+  ]
+}

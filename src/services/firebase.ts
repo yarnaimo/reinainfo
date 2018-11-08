@@ -2,7 +2,7 @@ import { Base } from 'pring'
 import { Query } from 'pring/lib/query'
 import { day, parseDate } from '~/utils/day'
 
-export const dateRangeQuery = <T extends Base>(
+export const dateRangeQuery = <T extends typeof Base>(
     q: Query<T>,
     {
         since,
@@ -22,5 +22,8 @@ export const dateRangeQuery = <T extends Base>(
                 .toDate()
         )
     }
-    return q.orderBy('date')
+    return q
+        .orderBy('date')
+        .dataSource()
+        .get()
 }

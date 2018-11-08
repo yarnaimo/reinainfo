@@ -68,12 +68,13 @@ export const cycleCommandHandler = async (
             const [duration] = args
             const min = durationStringToMinutes(duration)
 
-            const ssDocs = await Schedule.getByQuery(q => {
-                return dateRangeQuery(q.where('label', '==', label), {
+            const ssDocs = await dateRangeQuery(
+                Schedule.query().where('label', '==', label),
+                {
                     since,
                     until,
-                })
-            })
+                }
+            )
 
             const schedules = await waitAll(ssDocs, async s => {
                 const date = day(s.date).add(min, 'minute')
@@ -88,12 +89,14 @@ export const cycleCommandHandler = async (
         }
 
         case 'delete': {
-            const ssDocs = await Schedule.getByQuery(q => {
-                return dateRangeQuery(q.where('label', '==', label), {
+            const ssDocs = await dateRangeQuery(
+                Schedule.query().where('label', '==', label),
+                {
                     since,
                     until,
-                })
-            })
+                }
+            )
+
             ssDocs.forEach(s => batch.delete(s.reference))
 
             await batch.commit()

@@ -58,11 +58,9 @@ export const sCommandHandler = async (
         case 'ls': {
             const { since, until, title, nc } = opts
 
-            const ssDocs = await Schedule.getByQuery(q => {
-                return dateRangeQuery(q, {
-                    since,
-                    until,
-                })
+            const ssDocs = await dateRangeQuery(Schedule.query(), {
+                since,
+                until,
             })
 
             const filtered = ssDocs

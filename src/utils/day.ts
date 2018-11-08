@@ -1,6 +1,8 @@
 import { parse } from 'date-fns/fp'
 import dayjs, { Dayjs } from 'dayjs'
+import 'dayjs/locale/ja'
 
+dayjs.locale('ja')
 export const day = dayjs
 
 export const timeStr = (date: Date | Dayjs) => day(date).format('H:mm')
@@ -20,7 +22,7 @@ export const toDateString = (date: Date | Dayjs) => {
     const dateString = _date.format(
         day().month() === _date.month() ? 'D' : 'M/D'
     )
-    return `${dateString}(${'日月火水木金土'[_date.day()]})`
+    return `${dateString}(${_date.format('ddd').slice(0, 1)})`
 }
 
 export const createCyclicDates = ({
