@@ -22,8 +22,8 @@ export class Link extends VueT<Props> implements Props {
     icon?: string
 
     get _icon() {
-        if (!this.external) return this.icon
-        return this.icon === undefined ? 'open-in-new' : undefined
+        if (this.external && this.icon === undefined) return 'open-in-new'
+        return this.icon
     }
 
     get iconElement() {
