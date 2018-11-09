@@ -4,6 +4,7 @@ import { defaultFont, fontSize, margin, palette } from '../variables/css'
 injectGlobal({
     'html, body, #__nuxt, #__layout': { height: '100%' },
     body: {
+        lineHeight: 1.5,
         fontFamily: defaultFont,
         ...fontSize.base,
         color: palette.black,
@@ -18,11 +19,11 @@ injectGlobal({
 
     button: { outline: 0 },
 
-    'h1, h2': {
-        ...margin('0.8em', 0),
-        letterSpacing: 1,
-    },
-    'h3, h4, h5, h6': {
+    // 'h1, h2': {
+    //     ...margin('0.8em', 0),
+    //     letterSpacing: 1,
+    // },
+    'h1, h2, h3, h4, h5, h6': {
         ...margin('0.625em', 0),
         letterSpacing: 1,
     },

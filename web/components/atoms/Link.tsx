@@ -29,6 +29,7 @@ export class Link extends VueT<Props> implements Props {
     get iconElement() {
         return (
             this._icon && [
+                ' ',
                 <i
                     class={[
                         mdi(this._icon),

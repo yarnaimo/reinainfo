@@ -67,7 +67,7 @@ export default class ExpandableCard extends VueT<Props> implements Props {
                                     css({
                                         ...position.absolute,
                                         fontSize: '2.75em',
-                                        top: 0,
+                                        top: 2,
                                         right: 4,
                                         opacity: 0.25,
                                         color: palette.black,

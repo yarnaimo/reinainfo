@@ -34,7 +34,12 @@ const _mdi = (isClickable = false, smaller = false) => (
     'mdi',
     `mdi-${name}`,
     css(
-        { marginLeft, marginRight, '&[disabled]': { opacity: 0.6 } },
+        {
+            lineHeight: 'normal',
+            marginLeft,
+            marginRight,
+            '&[disabled]': { opacity: 0.6 },
+        },
         smaller && { '::before': { fontSize: '90%' } }
     ),
 ]
