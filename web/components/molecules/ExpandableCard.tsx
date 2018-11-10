@@ -52,7 +52,7 @@ export default class ExpandableCard extends VueT<Props> implements Props {
                 {this.header && (
                     <div
                         class={[
-                            cardContent,
+                            contentWrapper,
                             css({
                                 ...position.relative,
                                 backgroundColor: this.header.color,
@@ -60,63 +60,67 @@ export default class ExpandableCard extends VueT<Props> implements Props {
                             }),
                         ]}
                     >
-                        {this.header.icon && (
-                            <i
-                                class={[
-                                    mdi(this.header.icon),
-                                    css({
-                                        ...position.absolute,
-                                        fontSize: '2.75em',
-                                        top: 2,
-                                        right: 4,
-                                        opacity: 0.25,
-                                        color: palette.black,
-                                    }),
-                                ]}
-                            />
-                        )}
-                        <DropdownChevron
-                            expanded={this.expanded}
-                            onToggle={this.toggle}
-                            class={css({
-                                bottom: 6,
-                                right: 6,
-                            })}
-                        />
-                        {this.$slots.headerTop && (
-                            <p
+                        <div class={[content]}>
+                            {this.header.icon && (
+                                <i
+                                    class={[
+                                        mdi(this.header.icon),
+                                        css({
+                                            ...position.absolute,
+                                            fontSize: '2.75em',
+                                            top: 2,
+                                            right: 4,
+                                            opacity: 0.25,
+                                            color: palette.black,
+                                        }),
+                                    ]}
+                                />
+                            )}
+                            <DropdownChevron
+                                expanded={this.expanded}
+                                onToggle={this.toggle}
                                 class={css({
-                                    display: 'flex',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                    filter: shadow.zero.drop,
+                                    bottom: 6,
+                                    right: 6,
                                 })}
-                            >
-                                {this.$slots.headerTop}
-                            </p>
-                        )}
-                        {this.header.title && (
-                            <h3
-                                onClick={this.toggle}
-                                class={[
-                                    clickable,
-                                    css({ filter: shadow.zero.drop }),
-                                ]}
-                            >
-                                {this.header.title}
-                            </h3>
-                        )}
+                            />
+                            {this.$slots.headerTop && (
+                                <p
+                                    class={css({
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        filter: shadow.zero.drop,
+                                    })}
+                                >
+                                    {this.$slots.headerTop}
+                                </p>
+                            )}
+                            {this.header.title && (
+                                <h3
+                                    onClick={this.toggle}
+                                    class={[
+                                        clickable,
+                                        css({ filter: shadow.zero.drop }),
+                                    ]}
+                                >
+                                    {this.header.title}
+                                </h3>
+                            )}
+                        </div>
                     </div>
                 )}
-                <div v-show={this.expanded} class={[cardContent]}>
-                    {this.$slots.content}
+                <div v-show={this.expanded} class={[contentWrapper]}>
+                    <div class={[content]}> {this.$slots.content}</div>
                 </div>
             </li>
         )
     }
 }
 
-const cardContent = css({
-    ...padding(4, 32),
-    ...media.narrow(padding(2, 20)),
+const content = css(margin(10, 0))
+
+const contentWrapper = css({
+    ...padding(2, 32),
+    ...media.narrow(padding(0.1, 20)),
 })
