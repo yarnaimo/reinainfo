@@ -65,7 +65,7 @@ export default class extends Vue {
         return query
             .where('createdAt', '>=', this.since.toDate())
             .where('createdAt', '<', this.until.toDate())
-            .orderBy('createdAt')
+            .orderBy('createdAt', 'desc')
             .dataSource()
             .get()
     }

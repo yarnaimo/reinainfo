@@ -47,8 +47,8 @@ export const shadow = (() => {
         zero: f('0 1px 2px rgba(0, 0, 0, 0.16)'),
         zeroPale: f('0 1px 4px rgba(161, 140, 126, 0.24)'),
         one: f(
-            '0 1px 3px rgba(0, 0, 0, 0.12)',
-            '0 1px 2px rgba(0, 0, 0, 0.24)'
+            '0 1px 4px rgba(0, 0, 0, 0.12)',
+            '0 1px 3px rgba(0, 0, 0, 0.24)'
         ),
         two: f(
             '0 2px 6px rgba(0, 0, 0, 0.16)',

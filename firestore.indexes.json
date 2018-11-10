@@ -27,6 +27,13 @@
         { "fieldPath": "isTopic", "mode": "ASCENDING" },
         { "fieldPath": "createdAt", "mode": "ASCENDING" }
       ]
+    },
+    {
+      "collectionId": "tweetlog",
+      "fields": [
+        { "fieldPath": "isTopic", "mode": "ASCENDING" },
+        { "fieldPath": "createdAt", "mode": "DESCENDING" }
+      ]
     }
   ]
 }
