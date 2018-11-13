@@ -38,7 +38,7 @@ export const sCommandHandler = async (
             await ssDoc.save()
 
             await twitter.createTweet(
-                ssDoc.getTextWith('✏️ スケジュールが更新されました', true)
+                ssDoc.getTextWith('✏️ スケジュールが編集されました', true)
             )
             return await done([ssDoc], ':pencil2: Updated a schedule')
         }
