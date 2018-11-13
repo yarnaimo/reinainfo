@@ -107,7 +107,7 @@ export const wideContainer = css({
     ...media.wider({ width: '70%' }),
 })
 
-export const pageTitle = [container, flex({}, 'start', 'center')]
+export const pageTitle = [container, flex({}, 'start', 'baseline')]
 
 export const pageContent = css({
     backgroundColor: palette.white,
