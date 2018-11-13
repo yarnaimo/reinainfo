@@ -25,7 +25,7 @@ export default class extends Vue {
 
     get filteredSchedules() {
         return this.onlyOneshot
-            ? this.schedules.filter(s => s.category !== 'up')
+            ? this.schedules.filter(s => s.label == null)
             : this.schedules
     }
 
