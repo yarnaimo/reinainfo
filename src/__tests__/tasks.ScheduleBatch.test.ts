@@ -37,8 +37,9 @@ test('tomorrow', async () => {
         trimTemplateString(`
             ${toDateString(day1)} の予定 (1/1)
             
-            🎤 EVENT1
             ${timeStr(day1)}〜
+            🎤 EVENT1
+
             https://t.co
         `),
     ])
@@ -52,15 +53,17 @@ test('next week', async () => {
         trimTemplateString(`
             ${toDateString(day1)} 〜 ${toDateString(day7)} の予定 (1/2)
             
-            ${toDateString(day1)} 🎤 EVENT1
-            ${timeStr(day1)}〜
+            ${toDateString(day1)} ${timeStr(day1)}〜
+            🎤 EVENT1
+            
             https://t.co
         `),
         trimTemplateString(`
             ${toDateString(day1)} 〜 ${toDateString(day7)} の予定 (2/2)
             
-            ${toDateString(day2)} 🎤 EVENT2
-            ${timeStr(day2)}〜
+            ${toDateString(day2)} ${timeStr(day2)}〜
+            🎤 EVENT2
+            
             https://t.co
         `),
     ])

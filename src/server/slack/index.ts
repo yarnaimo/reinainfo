@@ -76,6 +76,7 @@ export const processOpts = (text: string): ProcessedOpts => {
         v: 'venue',
         w: 'way',
     }
+    const string = ['date', 'since', 'until', 'parts']
     const argv = stringToArgv(text)
 
     const {
@@ -83,11 +84,11 @@ export const processOpts = (text: string): ProcessedOpts => {
         date,
         parts,
         ...rawOpts
-    } = getopts(argv, { alias })
+    } = getopts(argv, { alias, string } as any)
 
     const opts = {
-        date: typeof date === 'string' ? parseDate(date) : undefined,
-        parts: typeof parts === 'string' ? Parts.parse(parts) : undefined,
+        date: date !== '' ? parseDate(date) : undefined,
+        parts: parts !== '' ? Parts.parse(parts) : undefined,
         ...rawOpts,
     } as ProcessedOpts['opts']
 

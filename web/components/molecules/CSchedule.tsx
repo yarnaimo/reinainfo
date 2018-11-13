@@ -1,3 +1,4 @@
+import { unite } from '@yarnaimo/arraymo'
 import { css } from 'emotion'
 import { Component, Prop } from 'vue-property-decorator'
 import { Schedule } from '../../../src/models/Schedule'
@@ -21,7 +22,7 @@ export default class CSchedule extends VueT<Props> implements Props {
     }
 
     get date() {
-        return this.s.fDate.date
+        return unite(' ', [this.s.fDate.date, this.s.fDate.time])
     }
 
     get parts() {

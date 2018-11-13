@@ -3,8 +3,8 @@ import { globalMatch, unite } from '@yarnaimo/arraymo'
 import { DocBase } from '@yarnaimo/pring'
 import {
     IsBoolean,
+    IsDate,
     IsIn,
-    IsInstance,
     IsOptional,
     IsString,
     IsUrl,
@@ -150,7 +150,7 @@ export class Schedule extends DocBase<Schedule> {
     url!: string
 
     @property
-    @IsInstance(Date)
+    @IsDate()
     date!: Date
 
     @property
@@ -168,10 +168,8 @@ export class Schedule extends DocBase<Schedule> {
 
     constructor(id?: string, data?: Partial<Schedule>) {
         super(id, data)
-        if (data) {
-            this.active == null && (this.active = true)
-            this.parts == null && (this.parts = [])
-        }
+        this.active == null && (this.active = true)
+        this.parts == null && (this.parts = [])
     }
 
     toAttachment() {
@@ -199,7 +197,7 @@ export class Schedule extends DocBase<Schedule> {
         return toDateString(this.date)
     }
 
-    get fDate(): { date: string; parts?: FormattedParts } {
+    get fDate(): { date: string; time?: string; parts?: FormattedParts } {
         if (this.isAppearance && day(this.date).format('HHmm') !== '0000') {
             if (this.parts.length) {
                 return {
@@ -210,7 +208,8 @@ export class Schedule extends DocBase<Schedule> {
                 const time =
                     timeStr(this.date) + (this.category === 'up' ? '' : '〜')
                 return {
-                    date: `${this.dateString} ${time}`,
+                    date: this.dateString,
+                    time,
                 }
             }
         }
@@ -218,12 +217,12 @@ export class Schedule extends DocBase<Schedule> {
     }
 
     getTextWith(header: string, withDate: boolean) {
-        const { date, parts } = this.fDate
+        const { date, time, parts } = this.fDate
 
         return unite([
             header,
             '',
-            withDate ? date : null,
+            unite(' ', [withDate && date, time]),
             unite(' ', [
                 this.categoryObj.emoji,
                 this.title,
