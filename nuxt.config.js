@@ -77,6 +77,7 @@ module.exports = {
 
     css: ['ress', '@mdi/font/css/materialdesignicons.min.css'],
     modules: [
+        ['@nuxtjs/google-analytics', { id: 'UA-129712263-1' }],
         ['nuxt-rfg-icon', { masterPicture: iconSrc }],
         // '@nuxtjs/manifest',
         '@nuxtjs/pwa',
