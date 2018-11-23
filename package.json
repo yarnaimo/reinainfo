@@ -8,15 +8,19 @@
   "scripts": {
     "build": "tsc",
     "build:storybook": "vue-cli-service build:storybook -c storybook",
-    "precommit": "lint-staged",
-    "config-env": "yarn run ts-node config-env",
-    "dev": "yarn run ts-node src/server",
+    "config-env": "yarn ts-node config-env",
+    "dev": "yarn ts-node src/server",
     "nuxt": "nuxt",
     "nuxt:generate": "nuxt generate",
     "serve:storybook": "vue-cli-service serve:storybook -p 6006 -c storybook",
-    "start": "NODE_ENV=production yarn run ts-node src/server -T",
+    "start": "NODE_ENV=production node -r tsconfig-paths/register dist/src/server",
     "test": "NODE_ENV=test jest -w1",
     "ts-node": "ts-node -r tsconfig-paths/register"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "dependencies": {
     "@emotion/core": "^10.0.0-beta.1",
@@ -45,6 +49,7 @@
     "qs": "^6.5.2",
     "ress": "^1.2.2",
     "shell-quote": "^1.6.1",
+    "tyrestore": "^0.0.1",
     "vue": "^2.5.17",
     "vue-tsx-support": "^2.2.0",
     "vue-tweet-embed": "^2.1.2"
@@ -101,7 +106,7 @@
       "sort-package-json",
       "git add"
     ],
-    "*.{js,ts,css,scss,vue,gql,md}": [
+    "*.{js,jsx,ts,tsx,css,scss,vue,gql,md}": [
       "prettier --write --ignore-path .gitignore",
       "git add"
     ]
