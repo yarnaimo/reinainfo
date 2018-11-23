@@ -13,7 +13,7 @@
     "nuxt": "nuxt",
     "nuxt:generate": "nuxt generate",
     "serve:storybook": "vue-cli-service serve:storybook -p 6006 -c storybook",
-    "start": "NODE_ENV=production node -r tsconfig-paths/register dist/src/server",
+    "start": "NODE_ENV=production yarn ts-node src/server -T",
     "test": "NODE_ENV=test jest -w1",
     "ts-node": "ts-node -r tsconfig-paths/register"
   },
