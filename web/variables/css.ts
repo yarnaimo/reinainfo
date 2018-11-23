@@ -23,7 +23,7 @@ export const palette = {
     violet: '#D3B8CD',
     yellow: '#E4C17E',
     lime: '#DEE090',
-    cyan: '#B2CDCD',
+    cyan: '#AEC7C4',
     blue: '#73BAD5',
     teal: '#80C0B4',
     white: '#FFFFFF',
