@@ -33,6 +33,7 @@
   },
   "include": [
     "src/**/*",
+    "web/**/*",
     "learn/**/*"
   ],
   "exclude": [

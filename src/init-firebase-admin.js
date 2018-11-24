@@ -1,11 +1,9 @@
 require('dotenv').load()
-const { initialize } = require('@yarnaimo/pring')
+const { initializeAdmin } = require('tyrestore/dist/admin')
 const admin = require('firebase-admin')
 const firebaseConfig = JSON.parse(process.env.CONFIG_FIREBASE)
 
-initialize({
-    admin,
-    options: {
-        credential: admin.credential.cert(firebaseConfig),
-    },
+const app = admin.initializeApp({
+    credential: admin.credential.cert(firebaseConfig),
 })
+initializeAdmin(app.firestore())

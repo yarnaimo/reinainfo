@@ -6,7 +6,7 @@ import { send, text } from 'micro'
 import { AugmentedRequestHandler, post, ServerRequest } from 'microrouter'
 import qs from 'qs'
 import { parse as stringToArgv } from 'shell-quote'
-import { IPart, Parts } from '~/models/Schedule'
+import { Parts } from '~/models/Parts'
 import { slackConfig } from '~/services/slack'
 import { parseDate } from '~/utils/day'
 import { getopts, ParsedOptions } from '~/utils/getopts'
@@ -62,7 +62,7 @@ const withAuth = (
 export type ProcessedOpts = {
     action: string
     args: string[]
-    opts: ParsedOptions & { date?: Date; parts?: IPart[] }
+    opts: ParsedOptions & { date?: Date; parts?: Parts }
 }
 
 export const processOpts = (text: string): ProcessedOpts => {

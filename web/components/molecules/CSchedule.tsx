@@ -1,7 +1,7 @@
 import { unite } from '@yarnaimo/arraymo'
 import { css } from 'emotion'
 import { Component, Prop } from 'vue-property-decorator'
-import { Schedule } from '../../../src/models/Schedule'
+import { MSchedule } from '../../../src/models/Schedule'
 import { VueT } from '../../utils/vue-tsx'
 import { palette } from '../../variables/css'
 import { flex, mdi } from '../../variables/directives'
@@ -9,13 +9,13 @@ import { Link } from '../atoms/Link'
 import ExpandableCard from './ExpandableCard'
 
 interface Props {
-    schedule: Schedule
+    schedule: MSchedule
 }
 
 @Component
 export default class CSchedule extends VueT<Props> implements Props {
     @Prop()
-    schedule!: Schedule
+    schedule!: MSchedule
 
     get s() {
         return this.schedule

@@ -1,6 +1,6 @@
 import { css } from 'emotion'
 import { Component, Vue } from 'vue-property-decorator'
-import { Schedule } from '../../src/models/Schedule'
+import { MSchedule, Schedule } from '../../src/models/Schedule'
 import { day } from '../../src/utils/day'
 import { CSwitch } from '../components/atoms/CSwitch'
 import CSchedule from '../components/molecules/CSchedule'
@@ -15,11 +15,11 @@ import {
 
 @Component(head('Schedule'))
 export default class extends Vue {
-    created() {
-        this.fetchSchedules()
-    }
-
-    schedules: Schedule[] = []
+    schedules: MSchedule[] = Schedule.query
+        .where('date', '>', day().toDate())
+        .orderBy('date')
+        .listen(error => console.error('Failed to fetch schedules: ', error))
+        .docs
 
     onlyOneshot = false
 
@@ -27,19 +27,6 @@ export default class extends Vue {
         return this.onlyOneshot
             ? this.schedules.filter(s => s.label == null)
             : this.schedules
-    }
-
-    async fetchSchedules() {
-        try {
-            const schedules = await Schedule.query()
-                .where('date', '>', day().toDate())
-                .orderBy('date')
-                .dataSource()
-                .get()
-            this.schedules = schedules
-        } catch (error) {
-            console.error('Failed to fetch schedules: ', error)
-        }
     }
 
     render() {

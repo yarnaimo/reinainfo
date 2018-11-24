@@ -1,9 +1,10 @@
 import { firstAndLast, waitAll } from '@yarnaimo/arraymo'
-import { PBatch } from '@yarnaimo/pring'
-import { Schedule } from '~/models/Schedule'
+import { BatchAdmin } from 'tyrestore/dist/admin'
+import { ScheduleAdmin } from '~/models/admin'
 import { dateRangeQuery } from '~/services/firebase'
 import { createCyclicDates, day, durationStringToMinutes } from '~/utils/day'
 import { ProcessedOpts, respondToSlack } from '.'
+import { MSchedule } from '../../models/Schedule'
 
 export const cycleCommandHandler = async (
     { args: [type, label, ...args], opts }: ProcessedOpts,
@@ -13,7 +14,7 @@ export const cycleCommandHandler = async (
     // 'new fri.0605 num.2+4 --until 180824.0605'
     // 'shift shigohaji 1w.-2d.30m --since 180811'
 
-    const done = async (docs: Schedule[], text: string) => {
+    const done = async (docs: MSchedule[], text: string) => {
         const _docs = firstAndLast(docs)
 
         await respondToSlack(responseUrl, {
@@ -29,7 +30,7 @@ export const cycleCommandHandler = async (
 
     if (!label) throw new Error('"label" is required')
 
-    const batch = new PBatch()
+    const batch = new BatchAdmin()
 
     switch (type) {
         case 'new': {
@@ -48,16 +49,17 @@ export const cycleCommandHandler = async (
             })
 
             const schedules = await waitAll(dates, async date => {
-                const s = new Schedule().setData({
+                const doc = ScheduleAdmin.create()
+                doc.set({
                     category: 'up',
                     label,
                     date,
                     title,
                     url,
                 })
-                batch.setDoc(s)
+                await doc.save(batch)
 
-                return s
+                return doc
             })
             await batch.commit()
 
@@ -68,20 +70,20 @@ export const cycleCommandHandler = async (
             const [duration] = args
             const min = durationStringToMinutes(duration)
 
-            const ssDocs = await dateRangeQuery(
-                Schedule.query().where('label', '==', label),
+            const docs = await dateRangeQuery(
+                ScheduleAdmin.query.where('label', '==', label),
                 {
                     since,
                     until,
                 }
             )
 
-            const schedules = await waitAll(ssDocs, async s => {
-                const date = day(s.date).add(min, 'minute')
-                s.setData({ date: date.toDate() })
+            const schedules = await waitAll(docs, async doc => {
+                const date = day(doc.date).add(min, 'minute')
+                doc.set({ date: date.toDate() })
 
-                batch.setDoc(s)
-                return s
+                await doc.save(batch)
+                return doc
             })
             await batch.commit()
 
@@ -89,19 +91,17 @@ export const cycleCommandHandler = async (
         }
 
         case 'delete': {
-            const ssDocs = await dateRangeQuery(
-                Schedule.query().where('label', '==', label),
+            const docs = await dateRangeQuery(
+                ScheduleAdmin.query.where('label', '==', label),
                 {
                     since,
                     until,
                 }
             )
-
-            ssDocs.forEach(s => batch.delete(s.reference))
-
+            await waitAll(docs, doc => doc.delete())
             await batch.commit()
 
-            return await done(ssDocs, ':wastebasket: Deleted')
+            return await done(docs, ':wastebasket: Deleted')
         }
 
         default: {

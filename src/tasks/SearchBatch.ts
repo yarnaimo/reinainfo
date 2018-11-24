@@ -1,7 +1,7 @@
 import { plusOne } from '@yarnaimo/twimo'
 import { Dayjs } from 'dayjs'
 import { TweetClassifier } from '~/../learn'
-import { SearchState } from '~/models/SearchState'
+import { SearchStateAdmin } from '~/models/admin'
 import { retweetWithNotification } from '~/services/integrated'
 import { twitter } from '~/services/twitter'
 import { day } from '~/utils/day'
@@ -31,9 +31,7 @@ export class SearchBatch extends Batch {
     async run() {
         const until = this.now.subtract(10, 'minute')
 
-        const doc =
-            (await SearchState.get('main')) ||
-            new SearchState('main').setData({ prevTweetId: '0' })
+        const doc = await SearchStateAdmin.doc('main')
 
         const tweetsToClassify = await this.searchTweets(doc.prevTweetId, until)
 

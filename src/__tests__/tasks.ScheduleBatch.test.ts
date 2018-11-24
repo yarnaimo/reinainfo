@@ -1,14 +1,15 @@
 import { onlyResolved, trimTemplateString, waitAll } from '@yarnaimo/arraymo'
-import { Category, Schedule } from '~/models/Schedule'
+import { Category } from '~/models/Schedule'
 import { ScheduleBatch } from '~/tasks/ScheduleBatch'
 import { day, parseDate, timeStr, toDateString } from '~/utils/day'
+import { ScheduleAdmin } from '../models/admin'
 
 const now = day(parseDate('000801.2200'))
 const day1 = now.add(1, 'day')
 const day2 = now.add(2, 'day')
 const day7 = now.add(7, 'day')
 
-const refs = [
+const docs = [
     {
         active: true,
         category: 'event' as Category,
@@ -23,10 +24,14 @@ const refs = [
         date: day2.toDate(),
         url: 'https://t.co',
     },
-].map(data => new Schedule().setData(data))
+].map(data => {
+    const s = ScheduleAdmin.create()
+    s.set(data)
+    return s
+})
 
 beforeAll(async () => {
-    await waitAll(refs, s => s.save())
+    await waitAll(docs, s => s.save())
 })
 
 test('tomorrow', async () => {
@@ -70,7 +75,7 @@ test('next week', async () => {
 })
 
 afterAll(async () => {
-    await onlyResolved(refs, async s => {
+    await onlyResolved(docs, async s => {
         await s.delete()
     })
 })
