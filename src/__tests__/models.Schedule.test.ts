@@ -1,8 +1,9 @@
 import { trimTemplateString } from '@yarnaimo/arraymo'
-import { Parts, Schedule } from '~/models/Schedule'
+import { ModelType } from 'tyrestore/dist/utils'
+import { ScheduleAdmin } from '~/models/admin'
 import { scheduleFixture } from '../__fixtures__/models.Schedule'
 
-let s: Schedule
+let s: ModelType<typeof ScheduleAdmin>
 const date = new Date(2018, 0, 17, 12, 30)
 
 beforeEach(() => {
@@ -20,7 +21,7 @@ test('to attachment', () => {
         fields: [
             ['id', s.id],
             ['label', undefined],
-            ['parts', Parts.format(s.parts).text],
+            ['parts', s.parts.format().text],
             ['url', s.url],
             ['venue', s.venue],
             ['way', s.way],
@@ -37,16 +38,14 @@ test('date', () => {
 })
 
 test('pass validation', async () => {
-    expect.assertions(1)
-    expect(await s.validate()).toBeInstanceOf(Schedule)
+    await expect(s.validate()).resolves.toBeTruthy()
 })
 
 test('fail validation', async () => {
-    expect.assertions(1)
     s.title = 's'
     s.url = 'invalid url'
 
-    await s.validate().catch(e => expect(e.errors).toHaveLength(2))
+    await expect(s.validate()).rejects.toHaveProperty('errors.length', 2)
 })
 
 test('get text', () => {

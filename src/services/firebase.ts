@@ -1,9 +1,9 @@
-import { Base } from 'pring'
-import { Query } from 'pring/lib/query'
+import { Query } from 'tyrestore'
 import { day, parseDate } from '~/utils/day'
+import { MSchedule } from '../models/Schedule'
 
-export const dateRangeQuery = <T extends typeof Base>(
-    q: Query<T>,
+export const dateRangeQuery = (
+    q: Query<typeof MSchedule>,
     {
         since,
         until,
@@ -22,8 +22,5 @@ export const dateRangeQuery = <T extends typeof Base>(
                 .toDate()
         )
     }
-    return q
-        .orderBy('date')
-        .dataSource()
-        .get()
+    return q.orderBy('date').once()
 }

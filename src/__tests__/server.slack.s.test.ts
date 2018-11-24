@@ -1,4 +1,4 @@
-import { Parts } from '~/models/Schedule'
+import { Parts } from '~/models/Parts'
 import { cmd } from '.'
 
 let docId: string

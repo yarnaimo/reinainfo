@@ -1,13 +1,14 @@
-import { DocBase } from '@yarnaimo/pring'
-import { IsString } from 'class-validator'
-import { property } from 'pring'
+import { IsNumberString } from 'class-validator'
+import { Field, TyreCollection, TyreModel } from 'tyrestore'
 
-export class SearchState extends DocBase<SearchState> {
-    public static getModelName() {
-        return 'searchstate'
-    }
-
-    @property
-    @IsString()
-    prevTweetId!: string
+interface ISearchState {
+    prevTweetId: string
 }
+
+export class MSearchState extends TyreModel<ISearchState> {
+    @Field
+    @IsNumberString()
+    prevTweetId: string = '0'
+}
+
+export const SearchState = new TyreCollection('searchstate', MSearchState)

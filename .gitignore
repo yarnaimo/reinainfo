@@ -29,5 +29,3 @@ dist/**/*
 node_modules
 public
 sw.*
-
-firebase-config.ts

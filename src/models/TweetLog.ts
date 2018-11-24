@@ -1,27 +1,24 @@
-import { DocBase } from '@yarnaimo/pring'
 import { IsBoolean, IsNumberString } from 'class-validator'
-import { property } from 'pring'
+import { Field, TyreCollection, TyreModel } from 'tyrestore'
 
-export class TweetLog extends DocBase<TweetLog> {
-    public static getModelName() {
-        return 'tweetlog'
-    }
+interface ITweetLog {
+    tweetId: string
+    isTopic: boolean
+    isDailyNotification: boolean
+}
 
-    @property
+export class MTweetLog extends TyreModel<ITweetLog> {
+    @Field
     @IsNumberString()
     tweetId!: string
 
-    @property
+    @Field
     @IsBoolean()
-    isTopic!: boolean
+    isTopic: boolean = false
 
-    @property
+    @Field
     @IsBoolean()
-    isDailyNotification!: boolean
-
-    constructor(id?: string, data?: Partial<TweetLog>) {
-        super(id, data)
-        this.isTopic == null && (this.isTopic = false)
-        this.isDailyNotification == null && (this.isDailyNotification = false)
-    }
+    isDailyNotification: boolean = false
 }
+
+export const TweetLog = new TyreCollection('tweetlog', MTweetLog)

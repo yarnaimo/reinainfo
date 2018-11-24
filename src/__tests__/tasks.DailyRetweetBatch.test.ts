@@ -1,5 +1,5 @@
 import { waitAll } from '@yarnaimo/arraymo'
-import { TweetLog } from '~/models/TweetLog'
+import { TweetLogAdmin } from '~/models/admin'
 import { DailyRetweetBatch } from '~/tasks/DailyRetweetBatch'
 import { day } from '~/utils/day'
 
@@ -21,7 +21,11 @@ const logs = [
         isDailyNotification: true,
         tweetId: '1080',
     },
-].map(data => new TweetLog().setData(data))
+].map(data => {
+    const doc = TweetLogAdmin.create()
+    doc.set(data)
+    return doc
+})
 
 describe('Name of the group', () => {
     beforeAll(async () => {

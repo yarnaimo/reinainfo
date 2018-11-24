@@ -1,5 +1,5 @@
 import { Dayjs } from 'dayjs'
-import { TweetLog } from '~/models/TweetLog'
+import { TweetLogAdmin } from '~/models/admin'
 import { twitter } from '~/services/twitter'
 import { Batch } from './Batch'
 
@@ -12,13 +12,11 @@ export class DailyRetweetBatch extends Batch {
     }
 
     async run() {
-        const logs = await TweetLog.query()
+        const logs = await TweetLogAdmin.query
             .where('isDailyNotification', '==', true)
             .where('createdAt', '>=', this.oneDayAgo.toDate())
             .orderBy('createdAt')
-            .dataSource()
-            .get()
-
+            .once()
         const ids = logs.map(l => l.tweetId)
 
         const retweets = await twitter.retweet(ids)

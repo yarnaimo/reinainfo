@@ -1,9 +1,7 @@
-import { initialize } from '@yarnaimo/pring'
-import firebase from 'firebase/app'
+import { initializeApp } from 'firebase/app'
 import 'firebase/firestore'
+import { initializeWeb } from 'tyrestore'
 import { config } from '../firebase-config'
 
-export const app = initialize({
-    web: firebase,
-    options: config,
-})
+const app = initializeApp(config)
+initializeWeb(app.firestore())

@@ -1,6 +1,7 @@
-import { PBatch } from '@yarnaimo/pring'
+import { waitAll } from '@yarnaimo/arraymo'
 import { tweetToUrl, TwimoClient } from '@yarnaimo/twimo'
-import { TweetLog } from '~/models/TweetLog'
+import { BatchAdmin } from 'tyrestore/dist/admin'
+import { TweetLogAdmin } from '~/models/admin'
 import { postSlackMessage } from './slack'
 
 export const retweetWithNotification = async (
@@ -10,14 +11,16 @@ export const retweetWithNotification = async (
     const retweets = await twitter.retweet(ids)
     if (!retweets.length) return { retweets, docs: [] }
 
-    const batch = retweets.reduce((batch, { retweeted_status }) => {
-        const log = new TweetLog().setData({
+    const docs = retweets.map(({ retweeted_status }) => {
+        const log = TweetLogAdmin.create()
+        log.set({
             isTopic: true,
             tweetId: retweeted_status!.id_str,
         })
-
-        return batch.setDoc(log)
-    }, new PBatch())
+        return log
+    })
+    const batch = new BatchAdmin()
+    await waitAll(docs, doc => doc.save(batch))
 
     await batch.commit()
 
@@ -27,5 +30,5 @@ export const retweetWithNotification = async (
             ...retweets.map(tweetToUrl),
         ].join('\n'),
     })
-    return { retweets, docs: batch.docs }
+    return { retweets, docs }
 }

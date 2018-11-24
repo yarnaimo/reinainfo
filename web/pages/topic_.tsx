@@ -1,9 +1,7 @@
 import { css } from 'emotion'
-import { Base } from 'pring'
-import { Query } from 'pring/lib/query'
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { Schedule } from '~/models/Schedule'
-import { TweetLog } from '~/models/TweetLog'
+import { MSchedule, Schedule } from '~/models/Schedule'
+import { MTweetLog, TweetLog } from '~/models/TweetLog'
 import { day, toDateString } from '~/utils/day'
 import CSchedule from '../components/molecules/CSchedule'
 import { CTweet } from '../components/molecules/CTweet'
@@ -20,7 +18,7 @@ import {
 
 @Component(head('Topic'))
 export default class extends Vue {
-    created() {
+    mounted() {
         this.weekOffset = 0
     }
 
@@ -57,25 +55,25 @@ export default class extends Vue {
         )}`
     }
 
-    tweetLogs: TweetLog[] = []
+    tweetLogs: MTweetLog[] = []
 
-    schedules: Schedule[] = []
-
-    queryWeek<T extends typeof Base>(query: Query<T>) {
-        return query
-            .where('createdAt', '>=', this.since.toDate())
-            .where('createdAt', '<', this.until.toDate())
-            .orderBy('createdAt', 'desc')
-            .dataSource()
-            .get()
-    }
+    schedules: MSchedule[] = []
 
     @Watch('weekOffset')
     async fetchTopics() {
         try {
             const [tweetLogs, schedules] = await Promise.all([
-                this.queryWeek(TweetLog.query().where('isTopic', '==', true)),
-                this.queryWeek(Schedule.query()),
+                TweetLog.query
+                    .where('isTopic', '==', true)
+                    .where('createdAt', '>=', this.since.toDate())
+                    .where('createdAt', '<', this.until.toDate())
+                    .orderBy('createdAt', 'desc')
+                    .once(),
+                Schedule.query
+                    .where('createdAt', '>=', this.since.toDate())
+                    .where('createdAt', '<', this.until.toDate())
+                    .orderBy('createdAt', 'desc')
+                    .once(),
             ])
             this.tweetLogs = tweetLogs
             this.schedules = schedules
