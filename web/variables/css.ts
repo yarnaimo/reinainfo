@@ -20,12 +20,12 @@ export const palette = {
     },
     pink: '#E1B29C',
     hamEar: '#CCA17F',
-    violet: '#D3B8CD',
+    violet: '#CEB7BD',
     yellow: '#E4C17E',
     lime: '#DEE090',
     cyan: '#AEC7C4',
     blue: '#73BAD5',
-    teal: '#80C0B4',
+    teal: '#ADC9BF',
     white: '#FFFFFF',
     black: '#606060',
     whiteGrey: '#FAF8F5',
@@ -33,7 +33,7 @@ export const palette = {
     grey: '#B0AFAC',
     greyLight: '#BDBCB9',
 
-    brown: '#A18C7E',
+    brown: '#A69281',
     transparent: 'transparent',
 }
 

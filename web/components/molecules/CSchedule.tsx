@@ -32,7 +32,7 @@ export default class CSchedule extends VueT<Props> implements Props {
     get cardColor() {
         if (this.s.category === 'up') return palette.brown
         if (this.s.isAppearance) return palette.pink
-        return palette.cyan
+        return palette.violet
     }
 
     get headerProps() {
