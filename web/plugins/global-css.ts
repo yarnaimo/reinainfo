@@ -1,5 +1,11 @@
 import { injectGlobal } from 'emotion'
-import { defaultFont, fontSize, margin, palette } from '../variables/css'
+import {
+    defaultFont,
+    fontSize,
+    margin,
+    motion,
+    palette,
+} from '../variables/css'
 
 injectGlobal({
     'html, body, #__nuxt, #__layout': { height: '100%' },
@@ -9,6 +15,15 @@ injectGlobal({
         ...fontSize.base,
         color: palette.black,
         backgroundColor: palette.base,
+    },
+
+    '.page-enter-active, .page-leave-active': motion(
+        'std',
+        ['opacity'],
+        [0.15]
+    ),
+    '.page-enter, .page-leave-to': {
+        opacity: 0,
     },
 
     'twitter-widget': { position: 'static!important' } as any,

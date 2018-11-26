@@ -149,34 +149,76 @@ export const curve = {
     dec: 'cubic-bezier(0.0, 0.0, 0.2, 1)',
 }
 
-export const motion = (() => {
-    const hyphenateRegex = /[A-Z]|^ms/g
+export class Motion {
+    hyphenateRegex = /[A-Z]|^ms/g
 
-    const processSeconds = (seconds: number[]) =>
-        seconds.map(time => `${time}s`).join(', ')
+    join(array: any[]) {
+        return array.join(', ')
+    }
 
-    const f = (
+    processSeconds(seconds: number[]) {
+        return this.join(seconds.map(time => `${time}s`))
+    }
+
+    repeat<T>(length: number, array: T[]) {
+        return Array(length)
+            .fill(null)
+            .map((_, i) => array[i % array.length])
+    }
+
+    easingType: string[] = []
+    properties: string[] = []
+    durations: number[] = []
+    delays: number[] = []
+
+    add(
         easingType: keyof typeof curve,
         properties: (keyof Properties)[],
-        durations: number[],
+        durations: number[] = [0.3],
         delays: number[] = [0]
-    ) => {
-        const propertyString = properties
-            .map((styleName: string) =>
-                styleName.replace(hyphenateRegex, '-$&').toLowerCase()
-            )
-            .join(', ')
+    ) {
+        const { length } = properties
+        const clone = new Motion()
+        clone.easingType = [
+            ...this.easingType,
+            ...clone.repeat(length, [curve[easingType]]),
+        ]
+        clone.properties = [
+            ...this.properties,
+            ...properties.map((styleName: string) =>
+                styleName.replace(clone.hyphenateRegex, '-$&').toLowerCase()
+            ),
+        ]
+        clone.durations = [
+            ...this.durations,
+            ...clone.repeat(length, durations),
+        ]
+        clone.delays = [...this.delays, ...clone.repeat(length, delays)]
 
-        return {
-            transitionTimingFunction: curve[easingType],
-            transitionProperty: propertyString,
-            transitionDuration: processSeconds(durations),
-            transitionDelay: processSeconds(delays),
-            willChange: propertyString,
-        } as CSSObject
+        return clone
     }
-    return f
-})()
+
+    toCss(): CSSObject {
+        const propertyString = this.join(this.properties)
+        return {
+            transitionTimingFunction: this.join(this.easingType),
+            transitionProperty: propertyString,
+            transitionDuration: this.processSeconds(this.durations),
+            transitionDelay: this.processSeconds(this.delays),
+            willChange: propertyString,
+        }
+    }
+}
+
+export const motion = (
+    easingType: keyof typeof curve,
+    properties: (keyof Properties)[],
+    durations?: number[],
+    delays: number[] = [0]
+) => {
+    const _motion = new Motion()
+    return _motion.add(easingType, properties, durations, delays).toCss()
+}
 
 export const transitionProps = ({
     enter,

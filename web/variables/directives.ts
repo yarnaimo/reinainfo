@@ -1,6 +1,6 @@
 import { FlexDirectionProperty } from 'csstype'
 import { css } from 'emotion'
-import { media, palette, shadow } from '../variables/css'
+import { media, Motion, palette, shadow } from '../variables/css'
 
 export const block = css({ display: 'block' })
 export const inlineBlock = css({ display: 'inline-block' })
@@ -25,6 +25,10 @@ export const clickable = css({
     '-webkit-user-select': 'none',
 })
 
+export const _fadeMotion = new Motion().add('std', ['opacity'])
+
+export const fadeMotion = _fadeMotion.toCss()
+
 const _mdi = (isClickable = false, smaller = false) => (
     name: string,
     marginLeft: number | string = 0,
@@ -34,11 +38,12 @@ const _mdi = (isClickable = false, smaller = false) => (
     'mdi',
     `mdi-${name}`,
     css(
+        _fadeMotion.add('std', ['color']).toCss(),
         {
             lineHeight: 'normal',
             marginLeft,
             marginRight,
-            '&[disabled]': { opacity: 0.6 },
+            '&[disabled]': { opacity: 0.5 },
         },
         smaller && { '::before': { fontSize: '90%' } }
     ),

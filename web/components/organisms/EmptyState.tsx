@@ -1,13 +1,22 @@
 import { css } from 'emotion'
-import { Component } from 'vue-property-decorator'
+import { Component, Prop } from 'vue-property-decorator'
 import { VueT } from '../../utils/vue-tsx'
 import { juliusFont, palette } from '../../variables/css'
 import { flex, mdi } from '../../variables/directives'
 
-interface Props {}
+interface Props {
+    icon: string
+    text: string
+}
 
 @Component
-export class ComingSoon extends VueT<Props> implements Props {
+export class EmptyState extends VueT<Props> implements Props {
+    @Prop()
+    icon!: string
+
+    @Prop()
+    text!: string
+
     render() {
         return (
             <div
@@ -21,8 +30,8 @@ export class ComingSoon extends VueT<Props> implements Props {
                     }),
                 ]}
             >
-                <i class={[mdi('shovel'), css({ fontSize: '2.5em' })]} />
-                <p class={[juliusFont]}>Coming Soon</p>
+                <i class={[mdi(this.icon), css({ fontSize: '2.5em' })]} />
+                <p class={[juliusFont]}>{this.text}</p>
             </div>
         )
     }

@@ -66,11 +66,7 @@ export class CSwitch extends VueT<Props> implements Props {
                                 backgroundColor: palette.base,
                                 filter: shadow.zeroPale.drop,
 
-                                ...motion(
-                                    'std',
-                                    ['backgroundColor', 'filter'],
-                                    [0.25]
-                                ),
+                                ...motion('std', ['backgroundColor', 'filter']),
                                 'input:checked + div > &': {
                                     // backgroundColor: palette.white,
                                 },
@@ -90,16 +86,12 @@ export class CSwitch extends VueT<Props> implements Props {
                                 borderWidth: 1,
                                 color: palette.white,
                                 fontSize: 18,
-                                ...motion(
-                                    'std',
-                                    [
-                                        'filter',
-                                        'transform',
-                                        'backgroundColor',
-                                        'borderColor',
-                                    ],
-                                    [0.25]
-                                ),
+                                ...motion('std', [
+                                    'filter',
+                                    'transform',
+                                    'backgroundColor',
+                                    'borderColor',
+                                ]),
                                 filter: shadow.one.drop,
                                 backgroundColor: palette.white,
                                 borderColor: palette.transparent,

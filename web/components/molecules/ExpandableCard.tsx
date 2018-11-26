@@ -9,7 +9,13 @@ import {
     position,
     shadow,
 } from '../../variables/css'
-import { block, clickable, mdi } from '../../variables/directives'
+import {
+    block,
+    clickable,
+    fadeMotion,
+    mdi,
+    noDisplay,
+} from '../../variables/directives'
 import { DropdownChevron } from '../atoms/DropdownChevron'
 
 interface HeaderProps {
@@ -110,7 +116,15 @@ export default class ExpandableCard extends VueT<Props> implements Props {
                         </div>
                     </div>
                 )}
-                <div v-show={this.expanded} class={[contentWrapper]}>
+                <div
+                    class={[
+                        !this.expanded && noDisplay,
+                        contentWrapper,
+                        css(fadeMotion, {
+                            opacity: this.expanded ? 1 : 0,
+                        }),
+                    ]}
+                >
                     <div class={[content]}> {this.$slots.content}</div>
                 </div>
             </li>

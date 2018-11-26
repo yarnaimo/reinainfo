@@ -1,5 +1,5 @@
 import { Component, Vue } from 'vue-property-decorator'
-import { ComingSoon } from '../components/organisms/ComingSoon'
+import { EmptyState } from '../components/organisms/EmptyState'
 import { head } from '../utils/vue-tsx'
 
 @Component(head('Links'))
@@ -7,7 +7,7 @@ export default class extends Vue {
     render() {
         return (
             <main>
-                <ComingSoon />
+                <EmptyState icon="shovel" text="Coming Soon" />
             </main>
         )
     }
