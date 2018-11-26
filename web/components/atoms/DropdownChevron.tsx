@@ -1,8 +1,8 @@
 import { css } from 'emotion'
 import { Component, Emit, Prop } from 'vue-property-decorator'
 import { VueT } from '../../utils/vue-tsx'
-import { motion, position } from '../../variables/css'
-import { cmdi } from '../../variables/directives'
+import { position } from '../../variables/css'
+import { block, cmdi } from '../../variables/directives'
 
 interface Props {
     expanded: boolean
@@ -26,21 +26,27 @@ export class DropdownChevron extends VueT<Props, Events> implements Props {
                 onClick={this.toggle}
                 aria-label="Expand"
                 class={[
-                    cmdi('chevron-down'),
-                    css(
-                        {
-                            ...position.absolute,
-                            fontSize: '1.5em',
-                            ...motion('dec', ['transform'], [0.3]),
-                            transformOrigin: '50% 45.625%',
-                            '::before': { display: 'block' },
-                        },
-                        this.expanded && {
-                            transform: 'rotate(180deg)',
-                        }
-                    ),
+                    block,
+                    css(position.absolute, {
+                        fontSize: '1.5em',
+                    }),
                 ]}
-            />
+            >
+                <div
+                    class={[cmdi('chevron-down'), chevronClass(!this.expanded)]}
+                />
+                <div
+                    class={[cmdi('chevron-up'), chevronClass(this.expanded)]}
+                />
+            </button>
         )
     }
 }
+
+const chevronClass = (visible: boolean) =>
+    css(position.absolute, {
+        opacity: visible ? 1 : 0,
+        right: 0,
+        bottom: 0,
+        '::before': { display: 'block' },
+    })

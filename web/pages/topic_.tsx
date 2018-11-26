@@ -5,6 +5,7 @@ import { MTweetLog, TweetLog } from '~/models/TweetLog'
 import { day, toDateString } from '~/utils/day'
 import CSchedule from '../components/molecules/CSchedule'
 import { CTweet } from '../components/molecules/CTweet'
+import { EmptyState } from '../components/organisms/EmptyState'
 import { head } from '../utils/vue-tsx'
 import { fontSize, juliusFont, palette } from '../variables/css'
 import {
@@ -59,6 +60,10 @@ export default class extends Vue {
 
     schedules: MSchedule[] = []
 
+    get topicExists() {
+        return this.schedules.length || this.tweetLogs.length
+    }
+
     @Watch('weekOffset')
     async fetchTopics() {
         try {
@@ -91,9 +96,11 @@ export default class extends Vue {
                             <i class={mdih.one('newspaper')} />
                             Topic
                         </h1>
-
                         <span
-                            class={css({ marginLeft: 8, color: palette.grey })}
+                            class={css({
+                                marginLeft: 8,
+                                color: palette.grey,
+                            })}
                         >
                             {this.durationString}
                         </span>
@@ -103,7 +110,7 @@ export default class extends Vue {
 
                     <button
                         onClick={this.prevWeek}
-                        class={[css(fontSize.h1), csmdi('chevron-left')]}
+                        class={[chevron, csmdi('chevron-left')]}
                     />
 
                     <span class={css({ flexBasis: 10 })} />
@@ -111,44 +118,60 @@ export default class extends Vue {
                     <button
                         disabled={this.weekOffset === 0}
                         onClick={this.nextWeek}
-                        class={[css(fontSize.h1), csmdi('chevron-right')]}
+                        class={[chevron, csmdi('chevron-right')]}
                     />
                 </div>
 
-                <div class={pageContent}>
-                    {this.schedules.length > 0 && (
-                        <section class={[container]}>
-                            <h2 class={juliusFont}>
-                                <i class={mdih.two('calendar-plus')} />
-                                New Schedules
-                            </h2>
-                            <ul>
-                                {this.schedules.map(s => (
-                                    <CSchedule schedule={s} key={s.id} />
-                                ))}
-                            </ul>
-                        </section>
-                    )}
-                    {this.tweetLogs.length > 0 && (
-                        <section
-                            class={[
-                                container,
-                                // this.tweetLogs.length || noDisplay,
-                            ]}
-                        >
-                            <h2 class={juliusFont}>
-                                <i class={mdih.two('twitter')} />
-                                Tweets
-                            </h2>
-                            <ul>
-                                {this.tweetLogs.map(t => (
-                                    <CTweet id={t.tweetId} key={t.tweetId} />
-                                ))}
-                            </ul>
-                        </section>
-                    )}
-                </div>
+                {this.topicExists ? (
+                    <div class={pageContent}>
+                        {this.schedules.length > 0 && (
+                            <section class={[container]}>
+                                <h2 class={juliusFont}>
+                                    <i class={mdih.two('calendar-plus')} />
+                                    New Schedules
+                                </h2>
+                                <ul>
+                                    {this.schedules.map(s => (
+                                        <CSchedule schedule={s} key={s.id} />
+                                    ))}
+                                </ul>
+                            </section>
+                        )}
+                        {this.tweetLogs.length > 0 && (
+                            <section
+                                class={[
+                                    container,
+                                    // this.tweetLogs.length || noDisplay,
+                                ]}
+                            >
+                                <h2 class={juliusFont}>
+                                    <i class={mdih.two('twitter')} />
+                                    Tweets
+                                </h2>
+                                <ul>
+                                    {this.tweetLogs.map(t => (
+                                        <CTweet
+                                            id={t.tweetId}
+                                            key={t.tweetId}
+                                        />
+                                    ))}
+                                </ul>
+                            </section>
+                        )}
+                    </div>
+                ) : (
+                    <EmptyState
+                        icon="thought-bubble-outline"
+                        text="この期間のトピックはありません"
+                    />
+                )}
             </main>
         )
     }
 }
+
+const chevron = css(fontSize.h1, {
+    ':active': {
+        color: palette.brown,
+    },
+})

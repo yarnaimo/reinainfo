@@ -9,7 +9,7 @@ import {
     position,
     shape,
 } from '../../variables/css'
-import { clickable } from '../../variables/directives'
+import { clickable, fadeMotion } from '../../variables/directives'
 import { Link } from './Link'
 
 interface Props {
@@ -160,7 +160,7 @@ const roundedLink = ({ size = 40, color }: RoundedLink) => {
                 content: '""',
                 backgroundColor: palette.white,
                 opacity: 0,
-                ...motion('std', ['opacity'], [0.2]),
+                ...fadeMotion,
             },
             ':hover::after': { opacity: 0.2 },
         }),
