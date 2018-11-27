@@ -24,13 +24,13 @@ export class EmptyState extends VueT<Props> implements Props {
                     flex({ vertical: true }, 'center', 'center'),
                     css({
                         flexGrow: 1,
-                        fontSize: '1.5em',
+                        fontSize: '1.25em',
                         color: palette.brown,
                         // filter: shadow.zeroPale.drop,
                     }),
                 ]}
             >
-                <i class={[mdi(this.icon), css({ fontSize: '2.5em' })]} />
+                <i class={[mdi(this.icon), css({ fontSize: '2.75em' })]} />
                 <p class={[juliusFont]}>{this.text}</p>
             </div>
         )

@@ -60,8 +60,10 @@ export default class extends Vue {
 
     schedules: MSchedule[] = []
 
+    loaded = false
+
     get topicExists() {
-        return this.schedules.length || this.tweetLogs.length
+        return !this.loaded || (this.schedules.length || this.tweetLogs.length)
     }
 
     @Watch('weekOffset')
@@ -82,6 +84,7 @@ export default class extends Vue {
             ])
             this.tweetLogs = tweetLogs
             this.schedules = schedules
+            this.loaded = true
         } catch (error) {
             console.error('Failed to fetch topics: ', error)
         }
