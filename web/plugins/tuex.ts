@@ -1,4 +1,4 @@
-import Tuex from 'tuex'
+const Tuex = require('tuex')
 import Vue from 'vue'
 
 Vue.use(Tuex)
