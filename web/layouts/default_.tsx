@@ -3,11 +3,16 @@ import { Component, Vue } from 'vue-property-decorator'
 import { Logo } from '../components/atoms/Logo'
 import { withNavbar } from '../components/atoms/RoundedLink'
 import { Navbar } from '../components/organisms/Navbar'
+import { tuex } from '../tuex'
 import { margin, media, palette, shadow } from '../variables/css'
 import { flex, wideContainer } from '../variables/directives'
 
 @Component
 export default class DefaultLayout extends Vue {
+    created() {
+        tuex.store.initialize()
+    }
+
     private logoLine = css({
         height: 1,
         flexGrow: 1,
@@ -16,13 +21,7 @@ export default class DefaultLayout extends Vue {
 
     render() {
         return (
-            <div
-                class={[
-                    flex({ vertical: true }),
-                    css({ minHeight: '100vh' }),
-                    withNavbar(),
-                ]}
-            >
+            <div class={[flex({ vertical: true }), css({ minHeight: '100vh' }), withNavbar()]}>
                 <Navbar />
 
                 <header

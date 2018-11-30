@@ -1,32 +1,30 @@
 import { css } from 'emotion'
 import { Component, Vue } from 'vue-property-decorator'
-import { MSchedule, Schedule } from '../../src/models/Schedule'
-import { day } from '../../src/utils/day'
 import { CSwitch } from '../components/atoms/CSwitch'
 import CSchedule from '../components/molecules/CSchedule'
+import { tuex } from '../tuex'
 import { head } from '../utils/vue-tsx'
 import { juliusFont } from '../variables/css'
-import {
-    container,
-    mdih,
-    pageContent,
-    pageTitle,
-} from '../variables/directives'
+import { container, mdih, pageContent, pageTitle } from '../variables/directives'
 
 @Component(head('Schedule'))
 export default class extends Vue {
-    schedules: MSchedule[] = Schedule.query
-        .where('date', '>', day().toDate())
-        .orderBy('date')
-        .listen(error => console.error('Failed to fetch schedules: ', error))
-        .docs
+    // schedules: MSchedule[] = Schedule.query
+    //     .where('date', '>', day().toDate())
+    //     .orderBy('date')
+    //     .listen(error => console.error('Failed to fetch schedules: ', error))
+    //     .docs
+    // schedules: MSchedule[] = tuex.schedules
+
+    get schedules() {
+        const now = new Date()
+        return tuex.store.schedules.filter(s => s.date > now)
+    }
 
     onlyOneshot = false
 
     get filteredSchedules() {
-        return this.onlyOneshot
-            ? this.schedules.filter(s => s.label == null)
-            : this.schedules
+        return this.onlyOneshot ? this.schedules.filter(s => s.label == null) : this.schedules
     }
 
     render() {
