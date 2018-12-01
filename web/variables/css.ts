@@ -1,6 +1,6 @@
 import { CSSObject } from 'create-emotion'
 import { Properties } from 'csstype'
-import { css } from 'emotion'
+import { css, keyframes } from 'emotion'
 
 export const palette = {
     get primary() {
@@ -46,18 +46,9 @@ export const shadow = (() => {
     return {
         zero: f('0 1px 2px rgba(0, 0, 0, 0.16)'),
         zeroPale: f('0 1px 4px rgba(161, 140, 126, 0.24)'),
-        one: f(
-            '0 1px 4px rgba(0, 0, 0, 0.12)',
-            '0 1px 3px rgba(0, 0, 0, 0.24)'
-        ),
-        two: f(
-            '0 2px 6px rgba(0, 0, 0, 0.16)',
-            '0 2px 6px rgba(0, 0, 0, 0.22)'
-        ),
-        three: f(
-            '0 6px 20px rgba(0, 0, 0, 0.18)',
-            '0 4px 6px rgba(0, 0, 0, 0.22)'
-        ),
+        one: f('0 1px 4px rgba(0, 0, 0, 0.12)', '0 1px 3px rgba(0, 0, 0, 0.24)'),
+        two: f('0 2px 6px rgba(0, 0, 0, 0.16)', '0 2px 6px rgba(0, 0, 0, 0.22)'),
+        three: f('0 6px 20px rgba(0, 0, 0, 0.18)', '0 4px 6px rgba(0, 0, 0, 0.22)'),
     }
 })()
 
@@ -74,9 +65,7 @@ export const juliusFont = css({
     fontFamily: `'Julius Sans One', ${defaultFont}`,
 })
 
-const spacing = (prop: string) => (
-    ...values: (string | number)[]
-): CSSObject => {
+const spacing = (prop: string) => (...values: (string | number)[]): CSSObject => {
     const toObject = (...indexes: number[]) => ({
         [`${prop}Top`]: values[indexes[0]],
         [`${prop}Bottom`]: values[indexes[1]],
@@ -179,20 +168,14 @@ export class Motion {
     ) {
         const { length } = properties
         const clone = new Motion()
-        clone.easingType = [
-            ...this.easingType,
-            ...clone.repeat(length, [curve[easingType]]),
-        ]
+        clone.easingType = [...this.easingType, ...clone.repeat(length, [curve[easingType]])]
         clone.properties = [
             ...this.properties,
             ...properties.map((styleName: string) =>
                 styleName.replace(clone.hyphenateRegex, '-$&').toLowerCase()
             ),
         ]
-        clone.durations = [
-            ...this.durations,
-            ...clone.repeat(length, durations),
-        ]
+        clone.durations = [...this.durations, ...clone.repeat(length, durations)]
         clone.delays = [...this.delays, ...clone.repeat(length, delays)]
 
         return clone
@@ -240,3 +223,13 @@ export const transitionProps = ({
         },
     }
 }
+
+export const show = keyframes({
+    from: {
+        transform: 'translateY(-1px)',
+        opacity: 0.25,
+    },
+    to: {
+        opacity: 1,
+    },
+})

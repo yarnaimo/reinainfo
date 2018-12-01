@@ -29,6 +29,8 @@ export const _fadeMotion = new Motion().add('std', ['opacity'])
 
 export const fadeMotion = _fadeMotion.toCss()
 
+export const gpuRendering = css({ backfaceVisibility: 'hidden' })
+
 const _mdi = (isClickable = false, smaller = false) => (
     name: string,
     marginLeft: number | string = 0,
@@ -69,22 +71,14 @@ export const flex = (() => {
         value === 'start' || value === 'end' ? `flex-${value}` : value
 
     return (
-        {
-            inline = false,
-            vertical = false,
-            reverse = false,
-            wrap = false,
-        } = {},
+        { inline = false, vertical = false, reverse = false, wrap = false } = {},
         justifyContent: FlexAlignment | Space = 'start',
         alignItems: FlexAlignment | 'baseline' | 'stretch' = 'stretch',
         alignContent: FlexAlignment | Space | 'stretch' = 'start'
     ) =>
         css({
             display: inline ? 'flex-inline' : 'flex',
-            flexDirection: withDirectionSuffix(
-                vertical ? 'column' : 'row',
-                reverse
-            ),
+            flexDirection: withDirectionSuffix(vertical ? 'column' : 'row', reverse),
             flexWrap: wrap ? 'wrap' : 'nowrap',
             justifyContent: withAlignmentPrefix(justifyContent),
             alignItems: withAlignmentPrefix(alignItems),
