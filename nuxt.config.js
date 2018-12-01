@@ -9,8 +9,7 @@ const meta = (name, content, options = {}) => ({
 
 const title = 'ReinaInfo'
 const shortDescription = '上田麗奈さん非公式Info'
-const description =
-    '声優・上田麗奈さんに関する情報を共有する非公式Webサイトです。'
+const description = '声優・上田麗奈さんに関する情報を共有する非公式Webサイトです。'
 const screenName = '@Unoffishama'
 
 const iconSrc = path.resolve('web/static/icon.svg')
@@ -55,8 +54,7 @@ module.exports = {
             // ...icons,
             {
                 rel: 'stylesheet',
-                href:
-                    'https://fonts.googleapis.com/css?family=Ubuntu:400,700|Julius+Sans+One',
+                href: 'https://fonts.googleapis.com/css?family=Ubuntu:400,700|Julius+Sans+One',
             },
         ],
         // script: [{ src: 'https://cdn.polyfill.io/v2/polyfill.min.js' }],
@@ -85,10 +83,7 @@ module.exports = {
         'nuxt-babel',
     ],
     typescript: { tsconfig: './tsconfig.web.json' },
-    plugins: [
-        '~/plugins/global-css',
-        { ssr: false, src: '~/plugins/firebase' },
-    ],
+    plugins: ['~/plugins/firebase', '~/plugins/global-css'],
     build: {
         extend,
     },
