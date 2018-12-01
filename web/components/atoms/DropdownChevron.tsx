@@ -14,8 +14,7 @@ interface Events {
 
 @Component
 export class DropdownChevron extends VueT<Props, Events> implements Props {
-    @Prop()
-    expanded!: boolean
+    @Prop() expanded!: boolean
 
     @Emit()
     toggle() {}
@@ -32,12 +31,8 @@ export class DropdownChevron extends VueT<Props, Events> implements Props {
                     }),
                 ]}
             >
-                <div
-                    class={[cmdi('chevron-down'), chevronClass(!this.expanded)]}
-                />
-                <div
-                    class={[cmdi('chevron-up'), chevronClass(this.expanded)]}
-                />
+                <div class={[cmdi('chevron-down'), chevronClass(!this.expanded)]} />
+                <div class={[cmdi('chevron-up'), chevronClass(this.expanded)]} />
             </button>
         )
     }

@@ -11,11 +11,9 @@ interface Props {
 
 @Component
 export class EmptyState extends VueT<Props> implements Props {
-    @Prop()
-    icon!: string
+    @Prop() icon!: string
 
-    @Prop()
-    text!: string
+    @Prop() text!: string
 
     render() {
         return (

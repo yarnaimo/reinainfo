@@ -1,14 +1,7 @@
 import { css, cx } from 'emotion'
 import { Component, Prop } from 'vue-property-decorator'
 import { VueT } from '../../utils/vue-tsx'
-import {
-    margin,
-    media,
-    motion,
-    palette,
-    position,
-    shape,
-} from '../../variables/css'
+import { margin, media, motion, palette, position, shape } from '../../variables/css'
 import { clickable, fadeMotion } from '../../variables/directives'
 import { Link } from './Link'
 
@@ -24,26 +17,19 @@ interface Props {
 
 @Component
 export class RoundedLink extends VueT<Props> implements Props {
-    @Prop()
-    label!: string
+    @Prop() label!: string
 
-    @Prop()
-    icon!: string
+    @Prop() icon!: string
 
-    @Prop()
-    external?: boolean
+    @Prop() external?: boolean
 
-    @Prop()
-    to!: string
+    @Prop() to!: string
 
-    @Prop()
-    size?: number
+    @Prop() size?: number
 
-    @Prop()
-    color?: string
+    @Prop() color?: string
 
-    @Prop()
-    borderless?: boolean
+    @Prop() borderless?: boolean
 
     render() {
         return (

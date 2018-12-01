@@ -14,8 +14,7 @@ interface Props {
 
 @Component
 export default class CSchedule extends VueT<Props> implements Props {
-    @Prop()
-    schedule!: MSchedule
+    @Prop() schedule!: MSchedule
 
     get s() {
         return this.schedule
@@ -53,13 +52,9 @@ export default class CSchedule extends VueT<Props> implements Props {
         return (
             <ExpandableCard header={this.headerProps}>
                 <template slot="headerTop">
-                    <time datetime={this.s.date.toISOString()}>
-                        {this.date}
-                    </time>
+                    <time datetime={this.s.date.toISOString()}>{this.date}</time>
 
-                    <span class={css({ fontSize: '0.8em' })}>
-                        {this.s.categoryObj.name}
-                    </span>
+                    <span class={css({ fontSize: '0.8em' })}>{this.s.categoryObj.name}</span>
                 </template>
 
                 <template slot="content">
@@ -74,13 +69,7 @@ export default class CSchedule extends VueT<Props> implements Props {
                         <p>
                             {this.parts.map(p => (
                                 <dl class={withIcon}>
-                                    <i
-                                        class={mdi(
-                                            'chevron-right-circle-outline',
-                                            -1,
-                                            10
-                                        )}
-                                    />
+                                    <i class={mdi('chevron-right-circle-outline', -1, 10)} />
                                     <dt
                                         class={css({
                                             minWidth: 56,

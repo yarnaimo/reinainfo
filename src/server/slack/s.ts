@@ -28,9 +28,7 @@ export const sCommandHandler = async (
             doc.set(opts)
             await doc.save()
 
-            await twitter.createTweet(
-                doc.getTextWith('🎉 スケジュールが追加されました', true)
-            )
+            await twitter.createTweet(doc.getTextWith('🎉 スケジュールが追加されました', true))
             return await done([doc], ':tada: Added a schedule')
         }
 
@@ -39,9 +37,7 @@ export const sCommandHandler = async (
             doc.set(opts)
             await doc.save()
 
-            await twitter.createTweet(
-                doc.getTextWith('✏️ スケジュールが編集されました', true)
-            )
+            await twitter.createTweet(doc.getTextWith('✏️ スケジュールが編集されました', true))
             return await done([doc], ':pencil2: Updated a schedule')
         }
 

@@ -23,10 +23,7 @@ export const hookRoutes = [
         switch (type) {
             case 'schedule_batch': {
                 const batch = new ScheduleBatch()
-                const thread = await batch.run(
-                    Number(params.since),
-                    Number(params.until)
-                )
+                const thread = await batch.run(Number(params.since), Number(params.until))
                 return send(res, 200, compactTweets(thread))
             }
 

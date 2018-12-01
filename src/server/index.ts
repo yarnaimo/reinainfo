@@ -5,9 +5,6 @@ import { slackRoutes } from './slack'
 require('../init-firebase-admin')
 
 const server = micro(
-    router(
-        withNamespace('/slack')(...slackRoutes),
-        withNamespace('/hook')(...hookRoutes)
-    )
+    router(withNamespace('/slack')(...slackRoutes), withNamespace('/hook')(...hookRoutes))
 )
 server.listen(3017)

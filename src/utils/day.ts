@@ -19,9 +19,7 @@ export const parseDate = (str: string) => {
 
 export const toDateString = (date: Date | Dayjs) => {
     const _date = day(date)
-    const dateString = _date.format(
-        day().month() === _date.month() ? 'D' : 'M/D'
-    )
+    const dateString = _date.format(day().month() === _date.month() ? 'D' : 'M/D')
     return `${dateString}(${_date.format('ddd').slice(0, 1)})`
 }
 
@@ -47,17 +45,10 @@ export const createCyclicDates = ({
     const sinceDate = day(since ? parseDate(since) : undefined)
     const untilDate = day(until ? parseDate(until) : new Date(2021, 0, 1))
 
-    const mightAddOneWeek = (d: Dayjs) =>
-        d.isBefore(sinceDate) ? d.add(1, 'week') : d
+    const mightAddOneWeek = (d: Dayjs) => (d.isBefore(sinceDate) ? d.add(1, 'week') : d)
 
     const currentDate = mightAddOneWeek(
-        day(
-            parse(
-                parse(sinceDate.toDate(), 'E', dayOfWeek),
-                'HHmm',
-                timeOfDay || '0000'
-            )
-        )
+        day(parse(parse(sinceDate.toDate(), 'E', dayOfWeek), 'HHmm', timeOfDay || '0000'))
     )
 
     const { dates } = [...Array(times).keys()].reduce(
@@ -67,9 +58,7 @@ export const createCyclicDates = ({
             const nthWeek = Math.ceil(day(currentDate).date() / 7)
             return {
                 dates:
-                    weekNumbers && !weekNumbers.includes(nthWeek)
-                        ? dates
-                        : [...dates, currentDate],
+                    weekNumbers && !weekNumbers.includes(nthWeek) ? dates : [...dates, currentDate],
                 currentDate: currentDate.add(weekInterval, 'week'),
             }
         },

@@ -2,7 +2,7 @@ import { css } from 'emotion'
 import { Component, Emit, Prop } from 'vue-property-decorator'
 import { VueT } from '../../utils/vue-tsx'
 import { motion, palette, position, shadow, shape } from '../../variables/css'
-import { clickable, flex, mdi } from '../../variables/directives'
+import { clickable, flex, gpuRendering, mdi } from '../../variables/directives'
 
 interface Props {
     checked: boolean
@@ -13,17 +13,13 @@ interface Props {
 
 @Component
 export class CSwitch extends VueT<Props> implements Props {
-    @Prop()
-    checked!: boolean
+    @Prop() checked!: boolean
 
-    @Prop()
-    label!: string
+    @Prop() label!: string
 
-    @Prop()
-    color?: string
+    @Prop() color?: string
 
-    @Prop()
-    right?: boolean
+    @Prop() right?: boolean
 
     @Emit()
     change() {
@@ -32,12 +28,7 @@ export class CSwitch extends VueT<Props> implements Props {
 
     render() {
         return (
-            <div
-                class={[
-                    flex({ reverse: this.right }, 'start', 'center'),
-                    css(position.relative),
-                ]}
-            >
+            <div class={[flex({ reverse: this.right }, 'start', 'center'), css(position.relative)]}>
                 <input
                     type="checkbox"
                     aria-label={this.label}
@@ -75,6 +66,7 @@ export class CSwitch extends VueT<Props> implements Props {
                     />
                     <div
                         class={[
+                            gpuRendering,
                             mdi('check'),
                             flex({}, 'center', 'center'),
                             css(position.absolute, {
@@ -95,15 +87,13 @@ export class CSwitch extends VueT<Props> implements Props {
                                 filter: shadow.one.drop,
                                 backgroundColor: palette.white,
                                 borderColor: palette.transparent,
-                                transform:
-                                    'translate(-50%, -50%) translateX(-9px)',
+                                transform: 'translate(-50%, -50%) translateX(-9px)',
 
                                 'input:checked + div > &': {
                                     filter: shadow.zero.drop,
                                     backgroundColor: this.color || palette.pink,
                                     borderColor: palette.hamEar,
-                                    transform:
-                                        'translate(-50%, -50%) translateX(9px)',
+                                    transform: 'translate(-50%, -50%) translateX(9px)',
                                 },
                             }),
                         ]}

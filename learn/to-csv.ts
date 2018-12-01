@@ -9,9 +9,7 @@ const jsonData = readFileSync(jsonPath, utf8)
 
 const officialTweetIds = process.argv.slice(2).map(extractTweetId)
 
-const toVector = tweetToVectorWithLabel(
-    officialTweetIds.length ? officialTweetIds : undefined
-)
+const toVector = tweetToVectorWithLabel(officialTweetIds.length ? officialTweetIds : undefined)
 
 const data = (JSON.parse(jsonData) as Status[])
     .map(toVector)

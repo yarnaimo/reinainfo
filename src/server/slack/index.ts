@@ -37,9 +37,7 @@ export const respondToSlack = (
     })
 }
 
-const withAuth = (
-    handler: AugmentedRequestHandler
-): AugmentedRequestHandler => {
+const withAuth = (handler: AugmentedRequestHandler): AugmentedRequestHandler => {
     return async (req, res) => {
         const body = await text(req)
         req.params = qs.parse(body)
@@ -95,9 +93,7 @@ export const processOpts = (text: string): ProcessedOpts => {
     return { action, args, opts }
 }
 
-export const commandHandler = async ({
-    params,
-}: Pick<ServerRequest, 'params'>) => {
+export const commandHandler = async ({ params }: Pick<ServerRequest, 'params'>) => {
     const { command, text, response_url } = params
     if (command !== '/rin' && command !== '/rind') return
 

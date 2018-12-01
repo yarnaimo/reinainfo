@@ -1,18 +1,11 @@
-import {
-    createCyclicDates,
-    durationStringToMinutes,
-    parseDate,
-    toDateString,
-} from '~/utils/day'
+import { createCyclicDates, durationStringToMinutes, parseDate, toDateString } from '~/utils/day'
 
 test('parse date', () => {
     expect(parseDate('180801')).toEqual(new Date(2018, 7, 1))
 })
 
 test('parse date with time', () => {
-    expect(parseDate('0801.0117')).toEqual(
-        new Date(new Date().getFullYear(), 7, 1, 1, 17)
-    )
+    expect(parseDate('0801.0117')).toEqual(new Date(new Date().getFullYear(), 7, 1, 1, 17))
 })
 
 test('to date string', () => {
@@ -44,7 +37,5 @@ test('create cyclic dates with weekInterval', () => {
 })
 
 test('duration string to minutes', () => {
-    expect(durationStringToMinutes('2d.1w.3h.4m')).toBe(
-        2 * 24 * 60 + 1 * 7 * 24 * 60 + 3 * 60 + 4
-    )
+    expect(durationStringToMinutes('2d.1w.3h.4m')).toBe(2 * 24 * 60 + 1 * 7 * 24 * 60 + 3 * 60 + 4)
 })

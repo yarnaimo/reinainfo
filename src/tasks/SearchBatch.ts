@@ -9,8 +9,7 @@ import { Batch } from './Batch'
 
 export class SearchBatch extends Batch {
     private tc: TweetClassifier
-    public q =
-        '上田麗奈 OR #上田麗奈 exclude:retweets -#nowplaying min_retweets:3'
+    public q = '上田麗奈 OR #上田麗奈 exclude:retweets -#nowplaying min_retweets:3'
 
     constructor(now?: Dayjs) {
         super(now)

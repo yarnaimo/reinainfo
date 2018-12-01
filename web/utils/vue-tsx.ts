@@ -3,11 +3,7 @@ import { Component } from 'vue-tsx-support'
 
 type Optional<T> = { [P in keyof T]+?: T[P] }
 
-export class VueT<
-    Props = {},
-    EventsWithOn = {},
-    ScopedSlotArgs = {}
-> extends Component<
+export class VueT<Props = {}, EventsWithOn = {}, ScopedSlotArgs = {}> extends Component<
     Props & Optional<JSX.IntrinsicElements>,
     EventsWithOn,
     ScopedSlotArgs

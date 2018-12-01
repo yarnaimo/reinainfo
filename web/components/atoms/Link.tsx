@@ -12,14 +12,11 @@ interface Props {
 
 @Component
 export class Link extends VueT<Props> implements Props {
-    @Prop()
-    external?: boolean
+    @Prop() external?: boolean
 
-    @Prop()
-    to!: string
+    @Prop() to!: string
 
-    @Prop()
-    icon?: string
+    @Prop() icon?: string
 
     get _icon() {
         if (this.external && this.icon === undefined) return 'open-in-new'
@@ -47,12 +44,7 @@ export class Link extends VueT<Props> implements Props {
 
     render() {
         return this.external ? (
-            <a
-                class={link}
-                target="_blank"
-                rel="noopener noreferrer"
-                href={this.to}
-            >
+            <a class={link} target="_blank" rel="noopener noreferrer" href={this.to}>
                 {this.$slots.default}
                 {this.iconElement}
             </a>

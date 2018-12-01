@@ -11,10 +11,7 @@ if (isNotProduction) {
     }
 }
 
-export const mightMockTwitterPost = (
-    targetPath: string,
-    responseFn: (requestData: any) => any
-) => {
+export const mightMockTwitterPost = (targetPath: string, responseFn: (requestData: any) => any) => {
     if (isNotProduction) {
         const _post = twitter.post
 

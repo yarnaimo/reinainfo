@@ -19,9 +19,7 @@ export const cycleCommandHandler = async (
 
         await respondToSlack(responseUrl, {
             attachments: _docs.map(d => d.toAttachment()),
-            text: `${text} ${
-                docs.length
-            } cyclic schedules (Showing first and last item)`,
+            text: `${text} ${docs.length} cyclic schedules (Showing first and last item)`,
         })
         return _docs
     }
@@ -38,10 +36,7 @@ export const cycleCommandHandler = async (
             const dates = createCyclicDates({
                 dayOfWeek: timing[0],
                 timeOfDay: timing[1],
-                weekNumbers:
-                    cycle[0] === 'num'
-                        ? cycle[1].split('+').map(Number)
-                        : undefined,
+                weekNumbers: cycle[0] === 'num' ? cycle[1].split('+').map(Number) : undefined,
                 weekInterval: cycle[0] === 'itv' ? Number(cycle[1]) : undefined,
                 since,
                 until,
@@ -70,13 +65,10 @@ export const cycleCommandHandler = async (
             const [duration] = args
             const min = durationStringToMinutes(duration)
 
-            const docs = await dateRangeQuery(
-                ScheduleAdmin.query.where('label', '==', label),
-                {
-                    since,
-                    until,
-                }
-            )
+            const docs = await dateRangeQuery(ScheduleAdmin.query.where('label', '==', label), {
+                since,
+                until,
+            })
 
             const schedules = await waitAll(docs, async doc => {
                 const date = day(doc.date).add(min, 'minute')
@@ -91,13 +83,10 @@ export const cycleCommandHandler = async (
         }
 
         case 'delete': {
-            const docs = await dateRangeQuery(
-                ScheduleAdmin.query.where('label', '==', label),
-                {
-                    since,
-                    until,
-                }
-            )
+            const docs = await dateRangeQuery(ScheduleAdmin.query.where('label', '==', label), {
+                since,
+                until,
+            })
             await waitAll(docs, doc => doc.delete())
             await batch.commit()
 

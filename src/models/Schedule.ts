@@ -16,12 +16,7 @@ import { FormattedParts, Parts } from './Parts'
 
 type CategoryType = 'appearance' | 'release'
 
-const c = (
-    isAppearance: boolean,
-    emoji: string,
-    name: string,
-    icon: string
-) => ({
+const c = (isAppearance: boolean, emoji: string, name: string, icon: string) => ({
     type: (isAppearance ? 'appearance' : 'release') as CategoryType,
     emoji,
     name,
@@ -138,8 +133,7 @@ export class MSchedule extends TyreModel<ISchedule> implements ISchedule {
     @IsDate()
     date!: Date
 
-    @Field(Parts)
-    parts: Parts = new Parts()
+    @Field(Parts) parts: Parts = new Parts()
 
     @Field
     @IsString()
@@ -184,8 +178,7 @@ export class MSchedule extends TyreModel<ISchedule> implements ISchedule {
                     parts: this.parts.format(),
                 }
             } else {
-                const time =
-                    timeStr(this.date) + (this.category === 'up' ? '' : '〜')
+                const time = timeStr(this.date) + (this.category === 'up' ? '' : '〜')
                 return {
                     date: this.dateString,
                     time,
@@ -202,11 +195,7 @@ export class MSchedule extends TyreModel<ISchedule> implements ISchedule {
             header,
             '',
             unite(' ', [withDate && date, time]),
-            unite(' ', [
-                this.categoryObj.emoji,
-                this.title,
-                this.venue && `@ ${this.venue}`,
-            ]),
+            unite(' ', [this.categoryObj.emoji, this.title, this.venue && `@ ${this.venue}`]),
             parts && parts.text,
             '',
             this.way && `参加方法 » ${this.way}`,

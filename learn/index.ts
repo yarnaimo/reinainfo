@@ -89,11 +89,8 @@ export const tweetToVector = ({ user, ...t }: Status) => {
     ].map(Number)
 }
 
-export const tweetToVectorWithLabel = (officialTweetIds?: string[]) => (
-    t: Status
-) => {
-    return [
-        officialTweetIds ? officialTweetIds.includes(t.id_str) : true,
-        ...tweetToVector(t),
-    ].map(Number)
+export const tweetToVectorWithLabel = (officialTweetIds?: string[]) => (t: Status) => {
+    return [officialTweetIds ? officialTweetIds.includes(t.id_str) : true, ...tweetToVector(t)].map(
+        Number
+    )
 }

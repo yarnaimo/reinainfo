@@ -26,13 +26,9 @@ test('update schedule', async () => {
 })
 
 test('list schedules', async () => {
-    const [doc2] = await cmd(
-        's new -c live -t __test_2__ -d 000801 -u https://google.com'
-    )
+    const [doc2] = await cmd('s new -c live -t __test_2__ -d 000801 -u https://google.com')
 
-    const schedules = await cmd(
-        `s ls --since 000801 --until 000801 -t __test_1_m`
-    )
+    const schedules = await cmd(`s ls --since 000801 --until 000801 -t __test_1_m`)
 
     await cmd(`s delete ${doc2.id}`)
 

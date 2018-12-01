@@ -26,15 +26,7 @@ storiesOf('Organisms', module)
                     }
                     render() {
                         return (
-                            <div
-                                class={[
-                                    flex(
-                                        { vertical: true },
-                                        'center',
-                                        'center'
-                                    ),
-                                ]}
-                            >
+                            <div class={[flex({ vertical: true }, 'center', 'center')]}>
                                 <CSwitch
                                     label="Label"
                                     checked={this.checked}

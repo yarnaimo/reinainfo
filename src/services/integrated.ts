@@ -4,10 +4,7 @@ import { BatchAdmin } from 'tyrestore/dist/admin'
 import { TweetLogAdmin } from '~/models/admin'
 import { postSlackMessage } from './slack'
 
-export const retweetWithNotification = async (
-    twitter: TwimoClient,
-    ids: string[]
-) => {
+export const retweetWithNotification = async (twitter: TwimoClient, ids: string[]) => {
     const retweets = await twitter.retweet(ids)
     if (!retweets.length) return { retweets, docs: [] }
 

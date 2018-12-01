@@ -21,10 +21,7 @@ export const partPattern = (() => {
     const TD = `?:\\.(${T})`
     const S = '(?:^|\\+)'
     const E = '(?=$|\\+)'
-    return new RegExp(
-        `${S}([^.+]*)(${TD}(?!\\.${T}${E}))?(${TD})?(${TD})${E}`,
-        'g'
-    )
+    return new RegExp(`${S}([^.+]*)(${TD}(?!\\.${T}${E}))?(${TD})?(${TD})${E}`, 'g')
 })()
 
 export class Parts extends FieldArray<IPart> {
@@ -32,9 +29,7 @@ export class Parts extends FieldArray<IPart> {
         const matches = globalMatch(str, partPattern)
         const parts = matches.map(([, name = null, ...times]) => {
             const [gatherAt, opensAt, startsAt] = times.map(str => {
-                return str
-                    ? `${Number(str.slice(-4, -2))}:${str.slice(-2)}`
-                    : null
+                return str ? `${Number(str.slice(-4, -2))}:${str.slice(-2)}` : null
             })
             return {
                 name: name,

@@ -13,16 +13,8 @@ export class Navbar extends VueT<Props> implements Props {
     render() {
         return (
             <div>
-                <nav
-                    class={[
-                        only.landscape,
-                        nav,
-                        css({ left: 0, height: '100%' }),
-                    ]}
-                >
-                    <Routes
-                        class={[flex({ vertical: true }, 'center', 'center')]}
-                    />
+                <nav class={[only.landscape, nav, css({ left: 0, height: '100%' })]}>
+                    <Routes class={[flex({ vertical: true }, 'center', 'center')]} />
                     <div
                         class={[
                             css({
@@ -45,13 +37,7 @@ export class Navbar extends VueT<Props> implements Props {
                     </div>
                 </nav>
 
-                <nav
-                    class={[
-                        only.portrait,
-                        nav,
-                        css({ bottom: 0, width: '100%' }),
-                    ]}
-                >
+                <nav class={[only.portrait, nav, css({ bottom: 0, width: '100%' })]}>
                     <Routes class={[flex({}, 'space-evenly')]} />
                     <div
                         class={[

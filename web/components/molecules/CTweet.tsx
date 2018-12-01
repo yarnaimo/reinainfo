@@ -10,8 +10,7 @@ interface Props {
 
 @Component
 export class CTweet extends VueT<Props> implements Props {
-    @Prop()
-    id!: string
+    @Prop() id!: string
 
     render() {
         return (

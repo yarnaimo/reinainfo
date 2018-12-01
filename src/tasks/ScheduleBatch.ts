@@ -26,9 +26,7 @@ export class ScheduleBatch extends Batch {
             .orderBy('date')
             .once()
 
-        const sorted = docs.sort(
-            (a, b) => Number(b.isAppearance) - Number(a.isAppearance)
-        )
+        const sorted = docs.sort((a, b) => Number(b.isAppearance) - Number(a.isAppearance))
 
         let dateString = toDateString(since)
         if (daySince !== dayUntil) {
@@ -39,10 +37,7 @@ export class ScheduleBatch extends Batch {
     }
 
     async createTweetTexts(daySince: number, dayUntil: number) {
-        const { schedules, dateString } = await this.schedulesBetween(
-            daySince,
-            dayUntil
-        )
+        const { schedules, dateString } = await this.schedulesBetween(daySince, dayUntil)
 
         return schedules.map((s, i) => {
             return s.getTextWith(

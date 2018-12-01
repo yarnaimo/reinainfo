@@ -9,8 +9,7 @@ interface Props {
 
 @Component
 export class Logo extends VueT<Props> implements Props {
-    @Prop()
-    color!: string
+    @Prop() color!: string
 
     render() {
         return (
