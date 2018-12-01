@@ -1,21 +1,8 @@
 import { css, cx } from 'emotion'
 import { Component, Prop } from 'vue-property-decorator'
 import { VueT } from '../../utils/vue-tsx'
-import {
-    margin,
-    media,
-    padding,
-    palette,
-    position,
-    shadow,
-} from '../../variables/css'
-import {
-    block,
-    clickable,
-    fadeMotion,
-    mdi,
-    noDisplay,
-} from '../../variables/directives'
+import { curve, margin, media, padding, palette, position, shadow, show } from '../../variables/css'
+import { block, clickable, gpuRendering, mdi, noDisplay } from '../../variables/directives'
 import { DropdownChevron } from '../atoms/DropdownChevron'
 
 interface HeaderProps {
@@ -30,8 +17,7 @@ interface Props {
 
 @Component
 export default class ExpandableCard extends VueT<Props> implements Props {
-    @Prop()
-    header!: HeaderProps
+    @Prop() header!: HeaderProps
 
     expanded: boolean = false
 
@@ -92,12 +78,15 @@ export default class ExpandableCard extends VueT<Props> implements Props {
                             />
                             {this.$slots.headerTop && (
                                 <p
-                                    class={css({
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        filter: shadow.zero.drop,
-                                    })}
+                                    class={[
+                                        gpuRendering,
+                                        css({
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'center',
+                                            filter: shadow.zero.drop,
+                                        }),
+                                    ]}
                                 >
                                     {this.$slots.headerTop}
                                 </p>
@@ -106,6 +95,7 @@ export default class ExpandableCard extends VueT<Props> implements Props {
                                 <h3
                                     onClick={this.toggle}
                                     class={[
+                                        gpuRendering,
                                         clickable,
                                         css({ filter: shadow.zero.drop }),
                                     ]}
@@ -118,11 +108,10 @@ export default class ExpandableCard extends VueT<Props> implements Props {
                 )}
                 <div
                     class={[
-                        !this.expanded && noDisplay,
+                        this.expanded
+                            ? css({ animation: `${show} 0.3s ${curve.dec} 0s` })
+                            : noDisplay,
                         contentWrapper,
-                        css(fadeMotion, {
-                            opacity: this.expanded ? 1 : 0,
-                        }),
                     ]}
                 >
                     <div class={[content]}> {this.$slots.content}</div>

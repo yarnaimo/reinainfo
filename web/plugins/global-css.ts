@@ -1,11 +1,5 @@
 import { injectGlobal } from 'emotion'
-import {
-    defaultFont,
-    fontSize,
-    margin,
-    motion,
-    palette,
-} from '../variables/css'
+import { defaultFont, fontSize, margin, motion, palette } from '../variables/css'
 
 injectGlobal({
     'html, body, #__nuxt, #__layout': { height: '100%' },
@@ -17,11 +11,8 @@ injectGlobal({
         backgroundColor: palette.base,
     },
 
-    '.page-enter-active, .page-leave-active': motion(
-        'std',
-        ['opacity'],
-        [0.15]
-    ),
+    '.page-enter-active': motion('dec', ['opacity'], [0.225]),
+    '.page-leave-active': motion('acc', ['opacity'], [0.225]),
     '.page-enter, .page-leave-to': {
         opacity: 0,
     },
