@@ -4,3 +4,5 @@ import { config } from '../firebase-config'
 
 const app = initializeApp(config)
 initializeWeb(app.firestore())
+
+console.info('Firebase initialized')

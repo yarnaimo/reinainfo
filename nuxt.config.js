@@ -83,7 +83,7 @@ module.exports = {
         'nuxt-babel',
     ],
     typescript: { tsconfig: './tsconfig.web.json' },
-    plugins: ['~/plugins/firebase', '~/plugins/tuex', '~/plugins/global-css'],
+    plugins: ['~/plugins/firebase', '~/plugins/global-css'],
     build: {
         extend,
     },

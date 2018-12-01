@@ -1,9 +1,10 @@
-import { Component, Vue } from 'vue-property-decorator'
+import { Component } from 'vue-property-decorator'
 import { EmptyState } from '../components/organisms/EmptyState'
 import { head } from '../utils/vue-tsx'
+import { VStoreComponent } from '../utils/vuex-simple'
 
 @Component(head('Links'))
-export default class extends Vue {
+export default class extends VStoreComponent {
     render() {
         return (
             <main>

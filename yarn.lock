@@ -11951,11 +11951,6 @@ redux@^4.0.0:
     loose-envify "^1.4.0"
     symbol-observable "^1.2.0"
 
-reflect-metadata@^0.1.12:
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.12.tgz#311bf0c6b63cd782f228a81abe146a2bfa9c56f2"
-  integrity sha512-n+IyV+nGz3+0q3/Yf1ra12KpCyi001bi4XFxSjbiWWjfqb52iTTtpGXmCCAOWWIAn9KEuFZKGqBERHmrtScZ3A==
-
 regenerate-unicode-properties@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/regenerate-unicode-properties/-/regenerate-unicode-properties-7.0.0.tgz#107405afcc4a190ec5ed450ecaa00ed0cafa7a4c"
@@ -13674,16 +13669,15 @@ typescript@^3.1.6:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.2.1.tgz#0b7a04b8cf3868188de914d9568bd030f0c56192"
   integrity sha512-jw7P2z/h6aPT4AENXDGjcfHTu5CSqzsbZc6YlUIebTyBAq8XaKp78x7VcSh30xwSCcsu5irZkYZUSFP1MrAMbg==
 
-tyrestore@^0.0.7:
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/tyrestore/-/tyrestore-0.0.7.tgz#572780a8f7870f70a2ab2a3cd4fc6dab38b4095f"
-  integrity sha512-0KxSQpZRbBZCslvuK7xAgTdzrKYBiplKN/jgjAowCNmy3d2sePl/dZeQHkhjhkT8pu+BGXfUmufhCBKxSvy+6Q==
+tyrestore@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/tyrestore/-/tyrestore-0.1.0.tgz#356df10c0fb0532b83738ae7e69ccd7bc9bd868f"
+  integrity sha512-/Kxd5fMmzk81V7a7vLfQHH8w3N2MD6EnOMyXfX1ni9TLmlOSEkCo1R2lrOw7eAxcoRcz+dFyD0v3//TmALpQDg==
   dependencies:
     "@yarnaimo/arraymo" "^1.2.2"
     class-validator "^0.9.1"
     firebase "^5.5.8"
     firebase-admin "^6.1.0"
-    reflect-metadata "^0.1.12"
     uuid "^3.3.2"
 
 ua-parser-js@^0.7.18:
@@ -14122,6 +14116,11 @@ vue@^2.0.0, vue@^2.5.17:
   version "2.5.17"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.17.tgz#0f8789ad718be68ca1872629832ed533589c6ada"
   integrity sha512-mFbcWoDIJi0w0Za4emyLiW72Jae0yjANHbCVquMKijcavBGypqlF7zHRgMa5k4sesdv7hv2rB4JPdZfR+TPfhQ==
+
+vuex-simple@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/vuex-simple/-/vuex-simple-2.0.2.tgz#790460b15265184ae0b80cecad19f21ca17824d7"
+  integrity sha512-PUea+29w+/pJ3EO6pqogbvUMV+Ysf7xoC0N+Hb1VBQQEwhK8XB4i2Ano5UYdOLj7fLpdDILZiNA/6GbLRV8Fxw==
 
 vuex@^3.0.1:
   version "3.0.1"

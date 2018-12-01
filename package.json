@@ -47,11 +47,11 @@
     "qs": "^6.5.2",
     "ress": "^1.2.2",
     "shell-quote": "^1.6.1",
-    "tuex": "^0.3.22",
-    "tyrestore": "^0.0.7",
+    "tyrestore": "^0.1.0",
     "vue": "^2.5.17",
     "vue-tsx-support": "^2.2.0",
-    "vue-tweet-embed": "^2.1.2"
+    "vue-tweet-embed": "^2.1.2",
+    "vuex-simple": "^2.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.1.0",

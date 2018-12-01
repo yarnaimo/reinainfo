@@ -1,16 +1,16 @@
 import { css } from 'emotion'
-import { Component, Vue } from 'vue-property-decorator'
+import { Component } from 'vue-property-decorator'
 import { Logo } from '../components/atoms/Logo'
 import { withNavbar } from '../components/atoms/RoundedLink'
 import { Navbar } from '../components/organisms/Navbar'
-import { tuex } from '../tuex'
+import { VStoreComponent } from '../utils/vuex-simple'
 import { margin, media, palette, shadow } from '../variables/css'
 import { flex, wideContainer } from '../variables/directives'
 
 @Component
-export default class DefaultLayout extends Vue {
+export default class DefaultLayout extends VStoreComponent {
     created() {
-        tuex.store.initialize()
+        this.store.firestore.initialize()
     }
 
     private logoLine = css({
@@ -29,7 +29,7 @@ export default class DefaultLayout extends Vue {
                         wideContainer,
                         flex({}, 'space-around', 'center'),
                         css({
-                            paddingTop: 12,
+                            paddingTop: 14,
                             paddingBottom: 6,
                             filter: shadow.zeroPale.drop,
                         }),

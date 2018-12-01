@@ -1,17 +1,17 @@
 import { css } from 'emotion'
-import { Component, Vue } from 'vue-property-decorator'
+import { Component } from 'vue-property-decorator'
 import { day, toDateString } from '~/utils/day'
 import CSchedule from '../components/molecules/CSchedule'
 import { CTweet } from '../components/molecules/CTweet'
 import { EmptyState } from '../components/organisms/EmptyState'
-import { tuex } from '../tuex'
 import { head } from '../utils/vue-tsx'
+import { VStoreComponent } from '../utils/vuex-simple'
 import { fontSize, juliusFont, palette } from '../variables/css'
 import { container, csmdi, flex, mdih, pageContent, pageTitle } from '../variables/directives'
 
 @Component(head('Topic'))
-export default class extends Vue {
-    mounted() {
+export default class extends VStoreComponent {
+    created() {
         this.weekOffset = 0
     }
 
@@ -46,8 +46,25 @@ export default class extends Vue {
         return `${toDateString(this.since.add(1, 'day'))} ～ ${toDateString(this.until)}`
     }
 
+    // filteredTweetLogs: MTweetLog[] = []
+
+    // @Watch('weekOffset')
+    // async fetchTweetLogs() {
+    //     this.filteredTweetLogs = []
+    //     try {
+    //         this.filteredTweetLogs = await TweetLog.query
+    //             .where('isTopic', '==', true)
+    //             .where('createdAt', '>=', this.since.toDate())
+    //             .where('createdAt', '<', this.until.toDate())
+    //             .orderBy('createdAt', 'desc')
+    //             .once()
+    //     } catch (error) {
+    //         console.error('Failed to fetch tweetLogs: ', error)
+    //     }
+    // }
+
     get filteredTweetLogs() {
-        return tuex.store.tweetLogs.filter(s => {
+        return this.firestore.tweetLogs.filter(s => {
             return (
                 s.createdAt &&
                 s.createdAt.valueOf() >= this.since.valueOf() &&
@@ -57,12 +74,9 @@ export default class extends Vue {
     }
 
     get filteredSchedules() {
-        const now = new Date()
-
-        return tuex.store.schedules
+        return this.firestore.schedules
             .filter(s => {
                 return (
-                    s.date > now &&
                     s.createdAt &&
                     s.createdAt.valueOf() >= this.since.valueOf() &&
                     s.createdAt.valueOf() < this.until.valueOf()
