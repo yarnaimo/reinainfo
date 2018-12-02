@@ -10,7 +10,7 @@ import { Parts } from '~/models/Parts'
 import { slackConfig } from '~/services/slack'
 import { parseDate } from '~/utils/day'
 import { getopts, ParsedOptions } from '~/utils/getopts'
-import { cycleCommandHandler } from './cycle'
+import { refrainCommandHandler } from './refrain'
 import { rtCommandHandler } from './rt'
 import { sCommandHandler } from './s'
 
@@ -103,8 +103,8 @@ export const commandHandler = async ({ params }: Pick<ServerRequest, 'params'>) 
         case 's':
             return await sCommandHandler(processed, response_url)
 
-        case 'cycle':
-            return await cycleCommandHandler(processed, response_url)
+        case 'refrain':
+            return await refrainCommandHandler(processed, response_url)
 
         case 'rt':
             return await rtCommandHandler(processed)
