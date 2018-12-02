@@ -7,7 +7,7 @@ let id: string
 
 test('add', async () => {
     const schedules = await cmd(
-        `cycle new ${label} mon.1300 itv.2 -t "SHIGOHAJI" -u http://google.com --times 3 --since 180729`
+        `refrain new ${label} mon.1300 itv.2 -t "SHIGOHAJI" -u http://google.com --times 3 --since 180729`
     )
     id = schedules[0].id
     expect(schedules[0].label).toBe(label)
@@ -16,11 +16,11 @@ test('add', async () => {
 })
 
 test('shift', async () => {
-    const updated = await cmd(`cycle shift ${label} .1w.-2d.30m --since 180811`)
+    const updated = await cmd(`refrain shift ${label} .1w.-2d.30m --since 180811`)
     expect(updated[0].date).toEqual(parseDate('180818.1330'))
 })
 
 test('delete', async () => {
-    const deleted = await cmd(`cycle delete ${label} --since 180730`)
+    const deleted = await cmd(`refrain delete ${label} --since 180730`)
     expect(deleted[0].id).toBe(id)
 })

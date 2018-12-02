@@ -6,12 +6,12 @@ import { createCyclicDates, day, durationStringToMinutes } from '~/utils/day'
 import { ProcessedOpts, respondToSlack } from '.'
 import { MSchedule } from '../../models/Schedule'
 
-export const cycleCommandHandler = async (
-    { args: [type, label, ...args], opts }: ProcessedOpts,
+export const refrainCommandHandler = async (
+    { args: [action, label, ...args], opts }: ProcessedOpts,
     responseUrl: string
 ) => {
     // 'new shigohaji mon.1300 itv.2 --times 2 --since 180811'
-    // 'new fri.0605 num.2+4 --until 180824.0605'
+    // 'new [label] fri.0605 num.2+4 --until 180824.0605'
     // 'shift shigohaji 1w.-2d.30m --since 180811'
 
     const done = async (docs: MSchedule[], text: string) => {
@@ -19,7 +19,7 @@ export const cycleCommandHandler = async (
 
         await respondToSlack(responseUrl, {
             attachments: _docs.map(d => d.toAttachment()),
-            text: `${text} ${docs.length} cyclic schedules (Showing first and last item)`,
+            text: `${text} ${docs.length} refrain schedules (Showing first and last item)`,
         })
         return _docs
     }
@@ -30,7 +30,7 @@ export const cycleCommandHandler = async (
 
     const batch = new BatchAdmin()
 
-    switch (type) {
+    switch (action) {
         case 'new': {
             const [timing, cycle] = args.map(a => a.split('.'))
             const dates = createCyclicDates({
@@ -94,7 +94,7 @@ export const cycleCommandHandler = async (
         }
 
         default: {
-            return await done([], 'Action for cyclic schedule not found')
+            return await done([], 'Action for refrain schedule not found')
         }
     }
 }
