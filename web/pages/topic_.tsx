@@ -77,6 +77,7 @@ export default class extends VStoreComponent {
         return this.firestore.schedules
             .filter(s => {
                 return (
+                    !s.label &&
                     s.createdAt &&
                     s.createdAt.valueOf() >= this.since.valueOf() &&
                     s.createdAt.valueOf() < this.until.valueOf()
