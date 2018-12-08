@@ -15,9 +15,9 @@
     "nuxt:generate": "nuxt generate",
     "prepare": "yarn build",
     "serve:storybook": "vue-cli-service serve:storybook -p 6006 -c storybook",
-    "start": "NODE_ENV=production node -r tsconfig-paths/register dist/src/server",
+    "start": "NODE_ENV=production node dist/src/server",
     "test": "NODE_ENV=test jest -w1",
-    "ts-node": "ts-node -r tsconfig-paths/register"
+    "ts-node": "ts-node"
   },
   "husky": {
     "hooks": {

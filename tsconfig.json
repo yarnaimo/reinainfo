@@ -18,10 +18,8 @@
     "paths": {
       "*": [
         "node_modules/@types/*",
+        "src/@types/*",
         "web/@types/*"
-      ],
-      "~/*": [
-        "src/*"
       ]
     },
     "types": [
