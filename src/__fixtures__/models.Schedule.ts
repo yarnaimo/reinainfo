@@ -1,6 +1,6 @@
-import { ScheduleAdmin } from '~/models/admin'
-import { Parts } from '~/models/Parts'
-import { parseDate } from '~/utils/day'
+import { ScheduleAdmin } from '../models/admin'
+import { Parts } from '../models/Parts'
+import { parseDate } from '../utils/day'
 
 export const scheduleFixture = (categoryType?: 'up' | 'release') => {
     const schedule = ScheduleAdmin.create()

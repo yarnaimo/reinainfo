@@ -11,7 +11,7 @@ import {
     MinLength,
 } from 'class-validator'
 import { Field, TyreCollection, TyreModel } from 'tyrestore'
-import { day, timeStr, toDateString } from '~/utils/day'
+import { day, timeStr, toDateString } from '../utils/day'
 import { FormattedParts, Parts } from './Parts'
 
 type CategoryType = 'appearance' | 'release'

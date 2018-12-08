@@ -1,8 +1,8 @@
-import { MSchedule } from '~/models/Schedule'
-import { dateRangeQuery } from '~/services/firebase'
-import { twitter } from '~/services/twitter'
 import { ProcessedOpts, respondToSlack } from '.'
 import { ScheduleAdmin } from '../../models/admin'
+import { MSchedule } from '../../models/Schedule'
+import { dateRangeQuery } from '../../services/firebase'
+import { twitter } from '../../services/twitter'
 
 const getByIdInArgs = async ([id]: string[]) => {
     const doc = await ScheduleAdmin.doc(id)

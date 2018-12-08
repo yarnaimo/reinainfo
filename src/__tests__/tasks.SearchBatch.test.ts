@@ -1,8 +1,8 @@
 import { waitAll } from '@yarnaimo/arraymo'
 import { Status } from 'twitter-d'
-import { SearchStateAdmin } from '~/models/admin'
-import { SearchBatch } from '~/tasks/SearchBatch'
-import { day } from '~/utils/day'
+import { SearchStateAdmin } from '../models/admin'
+import { SearchBatch } from '../tasks/SearchBatch'
+import { day } from '../utils/day'
 
 const batch = new SearchBatch()
 let _tweets: Status[] = []

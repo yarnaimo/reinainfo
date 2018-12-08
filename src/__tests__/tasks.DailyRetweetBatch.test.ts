@@ -1,7 +1,7 @@
 import { waitAll } from '@yarnaimo/arraymo'
-import { TweetLogAdmin } from '~/models/admin'
-import { DailyRetweetBatch } from '~/tasks/DailyRetweetBatch'
-import { day } from '~/utils/day'
+import { TweetLogAdmin } from '../models/admin'
+import { DailyRetweetBatch } from '../tasks/DailyRetweetBatch'
+import { day } from '../utils/day'
 
 const batch = new DailyRetweetBatch(day('2018-08-03T09:00'))
 

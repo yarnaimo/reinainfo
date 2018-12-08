@@ -1,10 +1,10 @@
 import { firstAndLast, waitAll } from '@yarnaimo/arraymo'
 import { BatchAdmin } from 'tyrestore/dist/admin'
-import { ScheduleAdmin } from '~/models/admin'
-import { dateRangeQuery } from '~/services/firebase'
-import { createCyclicDates, day, durationStringToMinutes } from '~/utils/day'
 import { ProcessedOpts, respondToSlack } from '.'
+import { ScheduleAdmin } from '../../models/admin'
 import { MSchedule } from '../../models/Schedule'
+import { dateRangeQuery } from '../../services/firebase'
+import { createCyclicDates, day, durationStringToMinutes } from '../../utils/day'
 
 export const refrainCommandHandler = async (
     { args: [action, label, ...args], opts }: ProcessedOpts,

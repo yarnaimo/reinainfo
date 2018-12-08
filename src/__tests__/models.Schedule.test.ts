@@ -1,6 +1,6 @@
 import { trimTemplateString } from '@yarnaimo/arraymo'
 import { ModelType } from 'tyrestore/dist/utils'
-import { ScheduleAdmin } from '~/models/admin'
+import { ScheduleAdmin } from '../models/admin'
 import { scheduleFixture } from '../__fixtures__/models.Schedule'
 
 let s: ModelType<typeof ScheduleAdmin>

@@ -1,7 +1,7 @@
 import { waitAll } from '@yarnaimo/arraymo'
 import { tweetToUrl, TwimoClient } from '@yarnaimo/twimo'
 import { BatchAdmin } from 'tyrestore/dist/admin'
-import { TweetLogAdmin } from '~/models/admin'
+import { TweetLogAdmin } from '../models/admin'
 import { postSlackMessage } from './slack'
 
 export const retweetWithNotification = async (twitter: TwimoClient, ids: string[]) => {

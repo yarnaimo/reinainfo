@@ -1,6 +1,6 @@
 import { css } from 'emotion'
 import { Component } from 'vue-property-decorator'
-import { day, toDateString } from '~/utils/day'
+import { day, toDateString } from '../../src/utils/day'
 import CSchedule from '../components/molecules/CSchedule'
 import { CTweet } from '../components/molecules/CTweet'
 import { EmptyState } from '../components/organisms/EmptyState'

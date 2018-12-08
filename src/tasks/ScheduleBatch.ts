@@ -1,10 +1,9 @@
 import { waitAll } from '@yarnaimo/arraymo'
 import { Dayjs } from 'dayjs'
 import { BatchAdmin } from 'tyrestore/dist/admin'
-import { TweetLogAdmin } from '~/models/admin'
-import { twitter } from '~/services/twitter'
-import { toDateString } from '~/utils/day'
-import { ScheduleAdmin } from '../models/admin'
+import { ScheduleAdmin, TweetLogAdmin } from '../models/admin'
+import { twitter } from '../services/twitter'
+import { toDateString } from '../utils/day'
 import { Batch } from './Batch'
 
 export class ScheduleBatch extends Batch {

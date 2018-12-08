@@ -1,8 +1,8 @@
 import { onlyResolved, trimTemplateString, waitAll } from '@yarnaimo/arraymo'
-import { Category } from '~/models/Schedule'
-import { ScheduleBatch } from '~/tasks/ScheduleBatch'
-import { day, parseDate, timeStr, toDateString } from '~/utils/day'
 import { ScheduleAdmin } from '../models/admin'
+import { Category } from '../models/Schedule'
+import { ScheduleBatch } from '../tasks/ScheduleBatch'
+import { day, parseDate, timeStr, toDateString } from '../utils/day'
 
 const now = day(parseDate('000801.2200'))
 const day1 = now.add(1, 'day')
