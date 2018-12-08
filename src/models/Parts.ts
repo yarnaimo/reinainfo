@@ -1,4 +1,4 @@
-import { globalMatch, unite } from '@yarnaimo/arraymo'
+import { Rstring } from '@yarnaimo/rain'
 import { FieldArray } from 'tyrestore/dist/core/FieldArray'
 
 export interface IPart {
@@ -26,7 +26,7 @@ export const partPattern = (() => {
 
 export class Parts extends FieldArray<IPart> {
     static parse(str: string) {
-        const matches = globalMatch(str, partPattern)
+        const matches = Rstring.globalMatch(str, partPattern)
         const parts = matches.map(([, name = null, ...times]) => {
             const [gatherAt, opensAt, startsAt] = times.map(str => {
                 return str ? `${Number(str.slice(-4, -2))}:${str.slice(-2)}` : null
@@ -46,7 +46,7 @@ export class Parts extends FieldArray<IPart> {
             return time ? time + suffix : null
         }
         return this.array.map((p, i) => {
-            const timesStr = unite(' ', [
+            const timesStr = Rstring.union(' ', [
                 withSuffix(p.gatherAt, '集合'),
                 withSuffix(p.opensAt, '開場'),
                 withSuffix(p.startsAt, '開始'),

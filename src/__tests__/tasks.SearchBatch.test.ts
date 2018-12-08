@@ -1,4 +1,4 @@
-import { waitAll } from '@yarnaimo/arraymo'
+import { Rarray } from '@yarnaimo/rain'
 import { Status } from 'twitter-d'
 import { SearchStateAdmin } from '../models/admin'
 import { SearchBatch } from '../tasks/SearchBatch'
@@ -26,5 +26,5 @@ test('run', async () => {
     const state = await SearchStateAdmin.doc('main')
     expect(state!.prevTweetId).toBe(_tweets[0].id_str)
 
-    await waitAll(docs, d => d.delete())
+    await Rarray.waitAll(docs, d => d.delete())
 })

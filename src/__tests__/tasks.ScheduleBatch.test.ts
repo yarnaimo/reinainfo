@@ -1,4 +1,4 @@
-import { onlyResolved, trimTemplateString, waitAll } from '@yarnaimo/arraymo'
+import { Rarray, Rstring } from '@yarnaimo/rain'
 import { ScheduleAdmin } from '../models/admin'
 import { Category } from '../models/Schedule'
 import { ScheduleBatch } from '../tasks/ScheduleBatch'
@@ -31,7 +31,7 @@ const docs = [
 })
 
 beforeAll(async () => {
-    await waitAll(docs, s => s.save())
+    await Rarray.waitAll(docs, s => s.save())
 })
 
 test('tomorrow', async () => {
@@ -39,7 +39,7 @@ test('tomorrow', async () => {
     const texts = await batch.createTweetTexts(1, 1)
 
     expect(texts).toEqual([
-        trimTemplateString(`
+        Rstring.trimTemplateString(`
             ${toDateString(day1)} の予定 (1/1)
             
             ${timeStr(day1)}〜
@@ -55,7 +55,7 @@ test('next week', async () => {
     const texts = await batch.createTweetTexts(1, 7)
 
     expect(texts).toEqual([
-        trimTemplateString(`
+        Rstring.trimTemplateString(`
             ${toDateString(day1)} 〜 ${toDateString(day7)} の予定 (1/2)
             
             ${toDateString(day1)} ${timeStr(day1)}〜
@@ -63,7 +63,7 @@ test('next week', async () => {
             
             https://t.co
         `),
-        trimTemplateString(`
+        Rstring.trimTemplateString(`
             ${toDateString(day1)} 〜 ${toDateString(day7)} の予定 (2/2)
             
             ${toDateString(day2)} ${timeStr(day2)}〜
@@ -75,7 +75,7 @@ test('next week', async () => {
 })
 
 afterAll(async () => {
-    await onlyResolved(docs, async s => {
+    await Rarray.onlyResolved(docs, async s => {
         await s.delete()
     })
 })

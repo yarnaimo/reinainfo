@@ -1,5 +1,5 @@
 import { ChatPostMessageArguments } from '@slack/client'
-import { Omit } from '@yarnaimo/arraymo'
+import { Omit } from '@yarnaimo/rain'
 import crypto from 'crypto'
 import got from 'got'
 import { send, text } from 'micro'

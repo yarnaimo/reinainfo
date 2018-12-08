@@ -1,5 +1,5 @@
 import { ChatPostMessageArguments, WebClient } from '@slack/client'
-import { Omit } from '@yarnaimo/arraymo'
+import { Omit } from '@yarnaimo/rain'
 import { config } from '../config'
 
 export const slackConfig = config.slack

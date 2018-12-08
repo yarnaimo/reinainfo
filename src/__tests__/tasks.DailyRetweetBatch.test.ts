@@ -1,4 +1,4 @@
-import { waitAll } from '@yarnaimo/arraymo'
+import { Rarray } from '@yarnaimo/rain'
 import { TweetLogAdmin } from '../models/admin'
 import { DailyRetweetBatch } from '../tasks/DailyRetweetBatch'
 import { day } from '../utils/day'
@@ -29,7 +29,7 @@ const logs = [
 
 describe('Name of the group', () => {
     beforeAll(async () => {
-        await waitAll(logs, log => log.save())
+        await Rarray.waitAll(logs, log => log.save())
     })
 
     test('run', async () => {
@@ -39,6 +39,6 @@ describe('Name of the group', () => {
     })
 
     afterAll(async () => {
-        await waitAll(logs, log => log.delete())
+        await Rarray.waitAll(logs, log => log.delete())
     })
 })

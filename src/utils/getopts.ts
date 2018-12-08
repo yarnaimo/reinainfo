@@ -1,4 +1,4 @@
-import { Omit } from '@yarnaimo/arraymo'
+import { Omit } from '@yarnaimo/rain'
 import _getopts from 'getopts'
 
 interface Options {

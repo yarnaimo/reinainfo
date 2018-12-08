@@ -1,4 +1,4 @@
-import { waitAll } from '@yarnaimo/arraymo'
+import { Rarray } from '@yarnaimo/rain'
 import { tweetToUrl, TwimoClient } from '@yarnaimo/twimo'
 import { BatchAdmin } from 'tyrestore/dist/admin'
 import { TweetLogAdmin } from '../models/admin'
@@ -17,7 +17,7 @@ export const retweetWithNotification = async (twitter: TwimoClient, ids: string[
         return log
     })
     const batch = new BatchAdmin()
-    await waitAll(docs, doc => doc.save(batch))
+    await Rarray.waitAll(docs, doc => doc.save(batch))
 
     await batch.commit()
 
