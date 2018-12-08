@@ -9,13 +9,15 @@
     "build": "tsc",
     "build:storybook": "vue-cli-service build:storybook -c storybook",
     "config-env": "yarn ts-node config-env",
+    "debug": "node --inspect -r ts-node/register",
     "dev": "yarn ts-node src/server",
     "nuxt": "nuxt",
     "nuxt:generate": "nuxt generate",
+    "prepare": "yarn build",
     "serve:storybook": "vue-cli-service serve:storybook -p 6006 -c storybook",
-    "start": "NODE_ENV=production yarn ts-node src/server -T",
+    "start": "NODE_ENV=production node dist/src/server",
     "test": "NODE_ENV=test jest -w1",
-    "ts-node": "ts-node -r tsconfig-paths/register"
+    "ts-node": "ts-node"
   },
   "husky": {
     "hooks": {
@@ -30,9 +32,8 @@
     "@slack/client": "^4.3.1",
     "@tensorflow/tfjs": "^0.13.0",
     "@tensorflow/tfjs-node": "^0.1.17",
-    "@yarnaimo/arraymo": "^1.2.1",
+    "@yarnaimo/rain": "^0.1.2",
     "@yarnaimo/twimo": "^1.2.2",
-    "class-validator": "^0.9.1",
     "date-fns": "^2.0.0-alpha.16",
     "dayjs": "^1.7.5",
     "dotenv": "^6.0.0",
@@ -76,18 +77,16 @@
     "@vue/babel-plugin-transform-vue-jsx": "^0.1.0",
     "@vue/cli-service": "^3.0.5",
     "@vue/test-utils": "^1.0.0-beta.25",
-    "@yarnaimo/rain": "^0.0.5",
+    "@yarnaimo/tss": "^0.0.1",
     "nock": "^10.0.0",
     "nuxt-typescript": "^0.11.0",
     "ts-loader": "^5.2.1",
-    "tsconfig-paths-webpack-plugin": "^3.2.0",
-    "typescript": "3.1.6",
     "vue-cli-plugin-storybook": "^0.4.8",
     "vue-property-decorator": "^7.2.0",
     "vue-template-compiler": "^2.5.17"
   },
   "resolutions": {
-    "nuxt-typescript/typescript": "3.1.6"
+    "nuxt-typescript/typescript": "^3.2.2"
   },
   "lint-staged": {
     "./package.json": [

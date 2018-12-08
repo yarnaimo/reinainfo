@@ -1,6 +1,6 @@
-import { trimTemplateString } from '@yarnaimo/arraymo'
+import { Rstring } from '@yarnaimo/rain'
 import { ModelType } from 'tyrestore/dist/utils'
-import { ScheduleAdmin } from '~/models/admin'
+import { ScheduleAdmin } from '../models/admin'
 import { scheduleFixture } from '../__fixtures__/models.Schedule'
 
 let s: ModelType<typeof ScheduleAdmin>
@@ -50,7 +50,7 @@ test('fail validation', async () => {
 
 test('get text', () => {
     expect(s.getTextWith('明日の予定', false)).toBe(
-        trimTemplateString(`
+        Rstring.trimTemplateString(`
             明日の予定
             
             🎤 「Caligula-カリギュラ-」スペシャルイベント第65536弾 Girl’s Party @ サイエンスホール
@@ -66,7 +66,7 @@ test('get text', () => {
 
 test('get text with date', () => {
     expect(s.getTextWith('来週の予定', true)).toBe(
-        trimTemplateString(`
+        Rstring.trimTemplateString(`
             来週の予定
             
             1/17(水)
@@ -85,7 +85,7 @@ test('get text with date (-parts)', () => {
     s = scheduleFixture('up')
 
     expect(s.getTextWith('来週の予定', true)).toBe(
-        trimTemplateString(`
+        Rstring.trimTemplateString(`
             来週の予定
             
             1/17(水) 18:00
@@ -100,7 +100,7 @@ test('get text with date (-appearance)', () => {
     s = scheduleFixture('release')
 
     expect(s.getTextWith('来週の予定', true)).toBe(
-        trimTemplateString(`
+        Rstring.trimTemplateString(`
             来週の予定
             
             1/17(水)

@@ -1,6 +1,6 @@
 import { Query } from 'tyrestore'
-import { day, parseDate } from '~/utils/day'
 import { MSchedule } from '../models/Schedule'
+import { day, parseDate } from '../utils/day'
 
 export const dateRangeQuery = (
     q: Query<typeof MSchedule>,

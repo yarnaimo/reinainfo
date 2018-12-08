@@ -1,10 +1,10 @@
-import { firstAndLast, waitAll } from '@yarnaimo/arraymo'
+import { Rarray } from '@yarnaimo/rain'
 import { BatchAdmin } from 'tyrestore/dist/admin'
-import { ScheduleAdmin } from '~/models/admin'
-import { dateRangeQuery } from '~/services/firebase'
-import { createCyclicDates, day, durationStringToMinutes } from '~/utils/day'
 import { ProcessedOpts, respondToSlack } from '.'
+import { ScheduleAdmin } from '../../models/admin'
 import { MSchedule } from '../../models/Schedule'
+import { dateRangeQuery } from '../../services/firebase'
+import { createCyclicDates, day, durationStringToMinutes } from '../../utils/day'
 
 export const refrainCommandHandler = async (
     { args: [action, label, ...args], opts }: ProcessedOpts,
@@ -15,7 +15,7 @@ export const refrainCommandHandler = async (
     // 'shift shigohaji 1w.-2d.30m --since 180811'
 
     const done = async (docs: MSchedule[], text: string) => {
-        const _docs = firstAndLast(docs)
+        const _docs = Rarray.firstAndLast(docs)
 
         await respondToSlack(responseUrl, {
             attachments: _docs.map(d => d.toAttachment()),
@@ -43,7 +43,7 @@ export const refrainCommandHandler = async (
                 times: Number(times),
             })
 
-            const schedules = await waitAll(dates, async date => {
+            const schedules = await Rarray.waitAll(dates, async date => {
                 const doc = ScheduleAdmin.create()
                 doc.set({
                     category: 'up',
@@ -70,7 +70,7 @@ export const refrainCommandHandler = async (
                 until,
             })
 
-            const schedules = await waitAll(docs, async doc => {
+            const schedules = await Rarray.waitAll(docs, async doc => {
                 const date = day(doc.date).add(min, 'minute')
                 doc.set({ date: date.toDate() })
 
@@ -87,7 +87,7 @@ export const refrainCommandHandler = async (
                 since,
                 until,
             })
-            await waitAll(docs, doc => doc.delete())
+            await Rarray.waitAll(docs, doc => doc.delete())
             await batch.commit()
 
             return await done(docs, ':wastebasket: Deleted')

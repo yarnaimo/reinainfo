@@ -1,5 +1,5 @@
 import { TwimoClient } from '@yarnaimo/twimo'
-import { config } from '~/config'
+import { config } from '../config'
 
 export const twitter = new TwimoClient(config.twitter)
 

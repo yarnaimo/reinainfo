@@ -1,5 +1,5 @@
-import { MSchedule } from '~/models/Schedule'
-import { commandHandler } from '~/server/slack'
+import { MSchedule } from '../models/Schedule'
+import { commandHandler } from '../server/slack'
 
 export const slackDomain = 'https://slack.com'
 export const slackHooksDomain = 'https://hooks.slack.com'

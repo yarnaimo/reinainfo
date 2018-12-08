@@ -1,5 +1,5 @@
 import { MessageAttachment } from '@slack/client'
-import { unite } from '@yarnaimo/arraymo'
+import { Rstring } from '@yarnaimo/rain'
 import {
     IsBoolean,
     IsDate,
@@ -11,7 +11,7 @@ import {
     MinLength,
 } from 'class-validator'
 import { Field, TyreCollection, TyreModel } from 'tyrestore'
-import { day, timeStr, toDateString } from '~/utils/day'
+import { day, timeStr, toDateString } from '../utils/day'
 import { FormattedParts, Parts } from './Parts'
 
 type CategoryType = 'appearance' | 'release'
@@ -191,11 +191,15 @@ export class MSchedule extends TyreModel<ISchedule> implements ISchedule {
     getTextWith(header: string, withDate: boolean) {
         const { date, time, parts } = this.fDate
 
-        return unite([
+        return Rstring.union([
             header,
             '',
-            unite(' ', [withDate && date, time]),
-            unite(' ', [this.categoryObj.emoji, this.title, this.venue && `@ ${this.venue}`]),
+            Rstring.union(' ', [withDate && date, time]),
+            Rstring.union(' ', [
+                this.categoryObj.emoji,
+                this.title,
+                this.venue && `@ ${this.venue}`,
+            ]),
             parts && parts.text,
             '',
             this.way && `参加方法 » ${this.way}`,

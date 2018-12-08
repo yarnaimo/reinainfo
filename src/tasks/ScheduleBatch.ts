@@ -1,10 +1,9 @@
-import { waitAll } from '@yarnaimo/arraymo'
+import { Rarray } from '@yarnaimo/rain'
 import { Dayjs } from 'dayjs'
 import { BatchAdmin } from 'tyrestore/dist/admin'
-import { TweetLogAdmin } from '~/models/admin'
-import { twitter } from '~/services/twitter'
-import { toDateString } from '~/utils/day'
-import { ScheduleAdmin } from '../models/admin'
+import { ScheduleAdmin, TweetLogAdmin } from '../models/admin'
+import { twitter } from '../services/twitter'
+import { toDateString } from '../utils/day'
 import { Batch } from './Batch'
 
 export class ScheduleBatch extends Batch {
@@ -53,7 +52,7 @@ export class ScheduleBatch extends Batch {
 
         if (since === 1 && until === 1) {
             const batch = new BatchAdmin()
-            await waitAll(thread, async ({ id_str }) => {
+            await Rarray.waitAll(thread, async ({ id_str }) => {
                 const log = TweetLogAdmin.create()
                 log.set({
                     isDailyNotification: true,

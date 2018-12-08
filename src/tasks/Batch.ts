@@ -1,5 +1,5 @@
 import { Dayjs } from 'dayjs'
-import { day } from '~/utils/day'
+import { day } from '../utils/day'
 
 export abstract class Batch {
     public now: Dayjs
